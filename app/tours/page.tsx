@@ -6,19 +6,19 @@ const tours = [
     title: 'Mountain Hiking',
     description:
       'Explore scenic trails with varying difficulty levels and breathtaking views.',
-    image: './images/tour1.jpg',
+    image: './images/tour1.webp',
   },
   {
     title: 'Kayaking Adventure',
     description:
       'Enjoy water sports on rivers and lakes surrounded by stunning nature.',
-    image: './images/tour2.jpg',
+    image: './images/tour2.webp',
   },
   {
     title: 'City Sightseeing',
     description:
       "Discover the city's landmarks, local markets, and hidden gems with guided tours.",
-    image: './images/tour3.jpg',
+    image: './images/tour3.webp',
   },
 ];
 
