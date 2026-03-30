@@ -6,19 +6,19 @@ const cultureData = [
     title: 'Colorful Festivals',
     description:
       'Experience traditional celebrations and local customs full of music and dance.',
-    image: './images/culture1.jpg',
+    image: './images/culture1.webp',
   },
   {
     title: 'Traditional Crafts',
     description:
       'Discover handmade arts and crafts reflecting our rich heritage and artistry.',
-    image: './images/culture2.jpg',
+    image: './images/culture2.webp',
   },
   {
     title: 'Historic Landmarks',
     description:
       'Visit centuries-old buildings, temples, and monuments that tell the story of our past.',
-    image: './images/culture3.jpg',
+    image: './images/culture3.webp',
   },
 ];
 

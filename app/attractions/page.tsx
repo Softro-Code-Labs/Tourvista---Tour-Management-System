@@ -6,19 +6,19 @@ const attractions = [
     title: 'Scenic Mountain View',
     description:
       'Enjoy breathtaking mountain landscapes and hiking trails suitable for all levels.',
-    image: './images/attraction1.jpg',
+    image: './images/attraction1.webp',
   },
   {
     title: 'Historic City Center',
     description:
       'Walk through centuries of history in our beautifully preserved city center.',
-    image: './images/attraction2.jpg',
+    image: './images/attraction2.webp',
   },
   {
     title: 'Beach Paradise',
     description:
       'Relax on pristine beaches with golden sand and crystal-clear waters.',
-    image: './images/attraction3.jpg',
+    image: './images/attraction3.webp',
   },
 ];
 
