@@ -2,6 +2,19 @@ import SectionTitle from './components/common/SectionTitle';
 import Hero from './components/Hero';
 import Link from 'next/link';
 
+export const metadata = {
+  title: 'TourVista Tours | Explore Sri Lanka Tours & Destinations',
+  description:
+    'Discover Sri Lanka with TourVista. Explore top destinations, travel guides, and unforgettable tours for international travelers.',
+  keywords: [
+    'Sri Lanka travel',
+    'Sri Lanka tours',
+    'visit Sri Lanka',
+    'Sri Lanka destinations',
+    'Sri Lanka itinerary',
+  ],
+};
+
 export default function Home() {
   return (
     <div className="bg-white text-gray-900">
