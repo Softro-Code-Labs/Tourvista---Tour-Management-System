@@ -1,6 +1,19 @@
 import PlaceCard from '../components/common/PlaceCard';
 import SectionTitle from '../components/common/SectionTitle';
 
+export const metadata = {
+  title: 'Tours & Activities | TourVista Sri Lanka',
+  description:
+    'Discover exciting tours and activities in Sri Lanka with TourVista. Explore mountain hiking, kayaking adventures, city sightseeing, and more for unforgettable travel experiences.',
+  keywords: [
+    'Sri Lanka tours',
+    'Sri Lanka activities',
+    'mountain hiking',
+    'kayaking adventure',
+    'city sightseeing',
+  ],
+};
+
 const tours = [
   {
     title: 'Mountain Hiking',

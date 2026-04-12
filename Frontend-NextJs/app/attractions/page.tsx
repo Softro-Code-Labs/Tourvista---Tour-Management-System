@@ -1,6 +1,18 @@
 import PlaceCard from '../components/common/PlaceCard';
 import SectionTitle from '../components/common/SectionTitle';
 
+export const metadata = {
+  title: 'Top Attractions | TourVista Sri Lanka',
+  description:
+    'Discover the most popular attractions in Sri Lanka. From scenic mountain views to historic landmarks, explore the best places to visit and create unforgettable memories.',
+  keywords: [
+    'Sri Lanka attractions',
+    'Sri Lanka popular destinations',
+    'Sri Lanka top attractions',
+    'Sri Lanka tourist attractions',
+  ],
+};
+
 const attractions = [
   {
     title: 'Scenic Mountain View',

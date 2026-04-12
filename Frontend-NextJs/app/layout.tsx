@@ -3,11 +3,6 @@ import Navbar from './components/NavBar';
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
 
-export const metadata = {
-  title: 'Tourvista Tours',
-  description: 'Explore Sri Lanka with Tourvista',
-};
-
 export default function RootLayout({
   children,
 }: {

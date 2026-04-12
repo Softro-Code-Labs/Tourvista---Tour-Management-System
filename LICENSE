@@ -1,21 +1,46 @@
-MIT License
+Copyright (c) 2026 Softro
 
-Copyright (c) 2026 VP Code Labs
+All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software and associated documentation files (the "Software") are proprietary and confidential intellectual property of Softro.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This Software has been developed specifically for Pushpakumara under a service agreement.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## Usage Rights
+
+Pushpakumara is granted a non-exclusive, non-transferable license to use the Software for internal business operations only.
+
+The client is strictly prohibited from:
+
+- Copying or reproducing the Software
+- Modifying or creating derivative works
+- Distributing, sublicensing, or reselling the Software
+
+without prior written permission from Softro.
+
+## Ownership
+
+All rights, title, and interest in the Software, including source code, architecture, and design, remain solely with Softro unless otherwise agreed in writing.
+
+## Warranty
+
+Softro provides a limited warranty period of **one (1) year** from the date of delivery.
+
+During this period, Softro agrees to:
+
+- Fix bugs and technical issues
+- Provide reasonable maintenance support
+
+This warranty does not cover:
+
+- Third-party service failures
+- Unauthorized modifications
+- Misuse or external system integrations not handled by Softro
+
+## Liability
+
+Softro shall not be held liable for any direct or indirect damages arising from the use of this Software.
+
+## Unauthorized Use
+
+Any unauthorized use, reproduction, or distribution of this Software is strictly prohibited and may result in legal action.

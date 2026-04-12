@@ -1,6 +1,19 @@
 import PlaceCard from '../components/common/PlaceCard';
 import SectionTitle from '../components/common/SectionTitle';
 
+export const metadata = {
+  title: 'Local Culture & Heritage | TourVista Sri Lanka',
+  description:
+    'Immerse yourself in the vibrant traditions, arts, and history of Sri Lanka. Discover the soul of our island through its colorful festivals, traditional crafts, and historic landmarks.',
+  keywords: [
+    'Sri Lanka culture',
+    'Sri Lanka heritage',
+    'Sri Lanka festivals',
+    'Sri Lanka crafts',
+    'Sri Lanka history',
+  ],
+};
+
 const cultureData = [
   {
     title: 'Colorful Festivals',
