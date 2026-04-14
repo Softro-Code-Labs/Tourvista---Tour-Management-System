@@ -28,7 +28,7 @@ export class WebhookService {
           },
         });
 
-        await this.clerkClient.users.updateUser(user.id, {
+        await this.clerkClient.users.updateUserMetadata(user.id, {
           publicMetadata: {
             role: UserRole.USER,
           },
