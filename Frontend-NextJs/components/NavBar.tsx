@@ -24,8 +24,6 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { user, isLoaded } = useUser();
 
-  if (!isLoaded) return null;
-
   const role = user?.publicMetadata?.role as UserRole | undefined;
 
   return (
@@ -71,7 +69,7 @@ export default function Navbar() {
             </Show>
 
             <Show when="signed-in">
-              {role === UserRole.ADMIN && (
+              {isLoaded && role === UserRole.ADMIN && (
                 <Link
                   href="/dashboard"
                   className="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow"
