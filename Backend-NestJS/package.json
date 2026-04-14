@@ -40,6 +40,7 @@
     "passport-custom": "^1.1.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "svix": "^1.90.0",
     "timezone": "^1.0.23",
     "utc": "^0.1.0"
   },
