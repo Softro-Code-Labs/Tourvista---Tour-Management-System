@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from '../infrastructure/prisma/prisma.service';
 import { ClerkWebhookEvent } from '../common/enums/clerk-event-types.enum';
 import { UserRole } from '../common/enums/user-roles.enum';
-import type { ClerkClient } from '@clerk/backend';
+import type { createClerkClient } from '@clerk/backend';
 
 @Injectable()
 export class WebhookService {
   constructor(
     private prisma: PrismaService,
-    private clerkClient: ClerkClient,
+
+    @Inject('ClerkClient')
+    private clerkClient: ReturnType<typeof createClerkClient>,
   ) {}
 
   async handleEvent(event: any) {
