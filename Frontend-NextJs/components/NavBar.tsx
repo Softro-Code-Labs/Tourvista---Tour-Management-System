@@ -19,6 +19,7 @@ export default function Navbar() {
               alt="TourVista Logo"
               width={180}
               height={180}
+              className="h-auto w-auto"
             />
           </Link>
 

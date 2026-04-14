@@ -21,9 +21,15 @@ model User {
   email     String   @unique
   firstName String
   lastName  String
+  role      UserRole @default(USER) 
   createdAt DateTime @default(now())
 
   bookings  Booking[]
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model Booking {

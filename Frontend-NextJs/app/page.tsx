@@ -1,5 +1,5 @@
-import SectionTitle from './components/common/SectionTitle';
-import Hero from './components/Hero';
+import SectionTitle from '../components/common/SectionTitle';
+import Hero from '../components/Hero';
 import Link from 'next/link';
 
 export const metadata = {

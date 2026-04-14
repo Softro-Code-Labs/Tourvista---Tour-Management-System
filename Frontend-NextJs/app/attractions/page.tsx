@@ -1,5 +1,5 @@
-import PlaceCard from '../components/common/PlaceCard';
-import SectionTitle from '../components/common/SectionTitle';
+import PlaceCard from '../../components/common/PlaceCard';
+import SectionTitle from '../../components/common/SectionTitle';
 
 export const metadata = {
   title: 'Top Attractions | TourVista Sri Lanka',
