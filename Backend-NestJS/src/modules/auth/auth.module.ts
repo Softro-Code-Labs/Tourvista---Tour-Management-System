@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ClerkStrategy } from './clerk.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { ClerkClientProvider } from '../providers/clerk-client.provider';
+import { ClerkClientProvider } from '../../infrastructure/providers/clerk/clerk.provider';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

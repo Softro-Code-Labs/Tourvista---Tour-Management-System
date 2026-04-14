@@ -9,7 +9,7 @@ import { Webhook } from 'svix';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import { WebhookService } from './webhook.service';
-import { Public } from '../common/decorators/public.decorator';
+import { Public } from '../../common/decorators/public.decorator';
 
 @Controller('webhooks/clerk')
 export class WebhookController {

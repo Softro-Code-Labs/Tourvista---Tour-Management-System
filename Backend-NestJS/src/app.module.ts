@@ -6,12 +6,11 @@ import { ContactModule } from './contact/contact.module';
 import { PrismaModule } from './infrastructure/prisma/prisma.module';
 import { BookingsModule } from './bookings/bookings.module';
 import Joi from 'joi';
-import { ClerkClientProvider } from './infrastructure/providers/clerk-client.provider';
-import { AuthModule } from './infrastructure/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ClerkAuthGuard } from './common/guard/clerk-auth.guard';
 import { RolesGuard } from './common/guard/roles.guard';
-import { WebhookModule } from './webhook/webhook.module';
+import { WebhookModule } from './modules/webhook/webhook.module';
 
 @Module({
   imports: [
@@ -40,9 +39,6 @@ import { WebhookModule } from './webhook/webhook.module';
   controllers: [AppController],
   providers: [
     AppService,
-
-    // 🔌 External providers
-    ClerkClientProvider,
 
     // 🔐 Auth guard (global)
     {
