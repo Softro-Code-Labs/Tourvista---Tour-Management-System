@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { ContactFormData } from '../types/contact.types';
 import { sendContactMessage } from '../services/contact.service';
 import { contactSchema } from '../schemas/contact.schema';
+import toast from 'react-hot-toast';
 
 export function useContactForm() {
   const [form, setForm] = useState<ContactFormData>({
@@ -13,8 +14,19 @@ export function useContactForm() {
     subject: '',
     message: '',
   });
-
   const [loading, setLoading] = useState(false);
+
+  // Auto fill email and name
+  const { user, isLoaded } = useUser();
+  useEffect(() => {
+    if (!isLoaded || !user) return;
+
+    setForm((prev) => ({
+      ...prev,
+      email: user.emailAddresses[0]?.emailAddress ?? '',
+      name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
+    }));
+  }, [isLoaded, user]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

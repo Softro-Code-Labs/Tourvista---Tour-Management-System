@@ -1,8 +1,10 @@
 import * as express from 'express';
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger, ValidationPipe } from '@nestjs/common';
+
+import { AppModule } from './app.module';
 import { setupSecurity } from './common/security/security.config';
 
 async function bootstrap() {
@@ -32,15 +34,6 @@ async function bootstrap() {
 
   // 📦 JSON parser
   app.use(express.json());
-
-  // 🧪 Global validation pipe
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-    }),
-  );
 
   await app.listen(port);
 

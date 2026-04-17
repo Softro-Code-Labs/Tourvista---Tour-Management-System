@@ -72,7 +72,7 @@ export default function Navbar() {
               {isLoaded && role === UserRole.ADMIN && (
                 <Link
                   href="/dashboard"
-                  className="px-4 py-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow"
+                  className="px-3 py-1 mr-2 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition shadow"
                 >
                   Dashboard
                 </Link>
@@ -104,7 +104,7 @@ export default function Navbar() {
 
         {/* SIDEBAR */}
         <div
-          className={`absolute top-0 left-0 h-full w-[80%] max-w-sm bg-white shadow-xl p-6 flex flex-col transition-transform duration-300 ${
+          className={`absolute top-0 left-0 h-full w-[40%] max-w-sm bg-white shadow-xl p-6 flex flex-col transition-transform duration-300 ${
             open ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
@@ -113,14 +113,14 @@ export default function Navbar() {
             <Image
               src="/logo.webp"
               alt="TourVista Logo"
-              width={120}
+              width={140}
               height={40}
             />
             <button onClick={() => setOpen(false)}>✕</button>
           </div>
 
           {/* NAV LINKS */}
-          <div className="flex flex-col gap-5 text-lg font-medium text-gray-700">
+          <div className="flex flex-col gap-3 font-medium text-gray-700">
             {navItems.map((item) => (
               <Link
                 key={item.name}

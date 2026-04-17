@@ -5,11 +5,14 @@ import {
   Headers,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { Webhook } from 'svix';
 import { ConfigService } from '@nestjs/config';
+
 import type { Request } from 'express';
+
 import { WebhookService } from './webhook.service';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('webhooks/clerk')
 export class WebhookController {
@@ -50,7 +53,7 @@ export class WebhookController {
       throw new UnauthorizedException('Invalid webhook signature');
     }
 
-    // delegate business logic to service
+    // DELEGATED BUSINESS LOGIC
     await this.webhookService.handleEvent(event);
 
     return { success: true };

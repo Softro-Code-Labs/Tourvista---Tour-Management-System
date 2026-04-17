@@ -1,16 +1,20 @@
+import Joi from 'joi';
+
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+
+import { PrismaModule } from './infrastructure/prisma/prisma.module';
+import { WebhookModule } from './webhook/webhook.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { ContactModule } from './contact/contact.module';
+
+import { AuthGuard } from './auth/guards/auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { ContactModule } from './contact/contact.module';
-import { PrismaModule } from './infrastructure/prisma/prisma.module';
-import { BookingsModule } from './bookings/bookings.module';
-import Joi from 'joi';
-import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { ClerkAuthGuard } from './common/guard/clerk-auth.guard';
-import { RolesGuard } from './common/guard/roles.guard';
-import { WebhookModule } from './modules/webhook/webhook.module';
+import { ClerkClientProvider } from './infrastructure/providers/clerk.provider';
 
 @Module({
   imports: [
@@ -30,20 +34,22 @@ import { WebhookModule } from './modules/webhook/webhook.module';
     }),
 
     // 🧩 Feature modules
-    AuthModule,
     PrismaModule,
-    ContactModule,
-    BookingsModule,
     WebhookModule,
+    BookingsModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
 
+    // 🔑 Clerk
+    ClerkClientProvider,
+
     // 🔐 Auth guard (global)
     {
       provide: APP_GUARD,
-      useClass: ClerkAuthGuard,
+      useClass: AuthGuard,
     },
 
     // 🛡️ Role guard (global)

@@ -8,9 +8,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ContactService } from './contact.service';
+
 import { CreateContactDto } from './dto/create-contact.dto';
-import { Public } from '../common/decorators/public.decorator';
-import { Roles } from '../common/decorators/roles.decorator';
+
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 @Controller('v1/contact')
 export class ContactController {
@@ -18,7 +20,6 @@ export class ContactController {
 
   @Public()
   @Post()
-  @Roles('user')
   create(@Body() body: CreateContactDto) {
     return this.contactService.create(body);
   }
