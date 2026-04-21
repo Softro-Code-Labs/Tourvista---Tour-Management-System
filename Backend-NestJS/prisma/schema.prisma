@@ -113,7 +113,6 @@ model Contact {
   message   String
 
   isRead    Boolean  @default(false)  // admin view tracking
-  replied   Boolean  @default(false)
 
   createdAt DateTime @default(now())
 }

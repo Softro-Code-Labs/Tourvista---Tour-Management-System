@@ -1,5 +1,5 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import { ENV } from '@/lib/env';
+import { CLIENT_ENV } from '@/lib/env.client';
 import { ThemeProvider } from './providers';
 import { Toaster } from 'react-hot-toast';
 import './globals.css';
@@ -13,10 +13,10 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <ClerkProvider
-          publishableKey={ENV.CLERK_PUBLISHABLE_KEY}
-          signUpFallbackRedirectUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
-          signInFallbackRedirectUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
-          afterSignOutUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
+          publishableKey={CLIENT_ENV.CLERK_PUBLISHABLE_KEY}
+          signUpFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
+          signInFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
+          afterSignOutUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
         >
           <Toaster position="top-right" />
           <ThemeProvider>{children}</ThemeProvider>

@@ -1,15 +1,18 @@
-import { ENV } from '@/lib/env';
+import { SERVER_ENV } from '@/lib/env.server';
 import { logger } from '@/lib/logger';
 
 export async function fetchSheet(tab: string) {
   try {
-    const res = await fetch(`${ENV.SHEETY_BASE_URL_ATTRACTIONS}/${tab}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
+    const res = await fetch(
+      `${SERVER_ENV.SHEETY_BASE_URL_ATTRACTIONS}/${tab}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-cache',
       },
-      cache: 'no-cache',
-    });
+    );
 
     if (!res.ok) {
       throw new Error(
