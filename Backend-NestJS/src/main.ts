@@ -1,7 +1,10 @@
+import * as express from 'express';
+
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import { AppModule } from './app.module';
 import { setupSecurity } from './common/security/security.config';
 
 async function bootstrap() {
@@ -14,14 +17,23 @@ async function bootstrap() {
   const environment = configService.get<string>('NODE_ENV') ?? 'development';
   const corsOrigin = configService.get<string>('CORS_ORIGIN') ?? '*';
 
+  // 🌐 Global prefix (recommended)
+  app.setGlobalPrefix('api');
+
   // 🌍 CORS
   app.enableCors({
     origin: corsOrigin === '*' ? true : corsOrigin.split(','),
     credentials: true,
   });
 
-  // 🔐 Security
+  // 🔐 Security (helmet, rate limit, etc.)
   setupSecurity(app);
+
+  // ⚠️ Webhook raw body MUST come before JSON parser
+  app.use('/api/webhooks/clerk', express.raw({ type: 'application/json' }));
+
+  // 📦 JSON parser
+  app.use(express.json());
 
   await app.listen(port);
 

@@ -1,7 +1,8 @@
-import './globals.css';
-import Navbar from './components/NavBar';
-import Footer from './components/Footer';
+import { ClerkProvider } from '@clerk/nextjs';
+import { CLIENT_ENV } from '@/lib/env.client';
+import { ThemeProvider } from './providers';
 import { Toaster } from 'react-hot-toast';
+import './globals.css';
 
 export default function RootLayout({
   children,
@@ -9,36 +10,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
-        {/* Toast System (GLOBAL) */}
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#0b1220',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
-              borderRadius: '12px',
-            },
-            success: {
-              iconTheme: {
-                primary: '#22c55e',
-                secondary: '#0b1220',
-              },
-            },
-            error: {
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#0b1220',
-              },
-            },
-          }}
-        />
-
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ClerkProvider
+          publishableKey={CLIENT_ENV.CLERK_PUBLISHABLE_KEY}
+          signUpFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
+          signInFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
+          afterSignOutUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
+        >
+          <Toaster position="top-right" />
+          <ThemeProvider>{children}</ThemeProvider>
+        </ClerkProvider>
       </body>
     </html>
   );

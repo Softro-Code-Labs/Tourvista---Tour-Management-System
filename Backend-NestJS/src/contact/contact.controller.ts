@@ -8,18 +8,24 @@ import {
   Query,
 } from '@nestjs/common';
 import { ContactService } from './contact.service';
+
 import { CreateContactDto } from './dto/create-contact.dto';
 
-@Controller('api/v1/contact')
+import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
+
+@Controller('v1/contact')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
+  @Public()
   @Post()
   create(@Body() body: CreateContactDto) {
     return this.contactService.create(body);
   }
 
   @Get()
+  @Roles('admin')
   findAll(
     @Query('page') page = '1',
     @Query('limit') limit = '10',
@@ -33,6 +39,7 @@ export class ContactController {
   }
 
   @Delete(':id')
+  @Roles('admin')
   delete(@Param('id') id: string) {
     return this.contactService.remove(+id);
   }

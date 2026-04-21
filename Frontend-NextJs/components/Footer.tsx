@@ -1,0 +1,140 @@
+'use client';
+
+import Link from 'next/link';
+import { useTheme } from 'next-themes';
+
+export default function Footer() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
+  return (
+    <footer
+      className={`
+        border-t transition-colors duration-300
+        ${
+          isDark
+            ? 'bg-slate-950 border-white/10 text-white'
+            : 'bg-white border-gray-200 text-slate-900'
+        }
+      `}
+    >
+      <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-10">
+        {/* BRAND */}
+        <div>
+          <h2 className="text-xl font-semibold mb-3">TourVista</h2>
+
+          <p
+            className={
+              isDark ? 'text-white/50 text-sm' : 'text-slate-500 text-sm'
+            }
+          >
+            Discover the beauty of Sri Lanka through unforgettable travel
+            experiences, tours, and adventures.
+          </p>
+        </div>
+
+        {/* QUICK LINKS */}
+        <div>
+          <h3 className="font-medium mb-3">Quick Links</h3>
+
+          <ul
+            className={`space-y-2 text-sm ${isDark ? 'text-white/60' : 'text-slate-500'}`}
+          >
+            <li>
+              <Link href="/">Home</Link>
+            </li>
+            <li>
+              <Link href="/attractions">Attractions</Link>
+            </li>
+            <li>
+              <Link href="/culture">Culture</Link>
+            </li>
+            <li>
+              <Link href="/tours">Tours</Link>
+            </li>
+            <li>
+              <Link href="/contact">Contact</Link>
+            </li>
+          </ul>
+        </div>
+
+        {/* EXPLORE */}
+        <div>
+          <h3 className="font-medium mb-3">Explore Sri Lanka</h3>
+
+          <ul
+            className={`space-y-2 text-sm ${isDark ? 'text-white/60' : 'text-slate-500'}`}
+          >
+            <li>Ella</li>
+            <li>Sigiriya</li>
+            <li>Kandy</li>
+            <li>Galle</li>
+            <li>Mirissa</li>
+          </ul>
+        </div>
+
+        {/* CONTACT */}
+        <div>
+          <h3 className="font-medium mb-3">Contact</h3>
+
+          <ul
+            className={`space-y-2 text-sm ${isDark ? 'text-white/60' : 'text-slate-500'}`}
+          >
+            <li>Email: info@tourvista.com</li>
+            <li>Phone: +94 77 123 4567</li>
+            <li>Colombo, Sri Lanka</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* BOTTOM BAR */}
+      <div
+        className={`
+          border-t
+          ${isDark ? 'border-white/10' : 'border-gray-200'}
+        `}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center text-sm">
+          <p className={isDark ? 'text-white/40' : 'text-slate-500'}>
+            © 2026 TourVista. All rights reserved.
+          </p>
+
+          <div className="flex gap-5 mt-2 md:mt-0">
+            <a
+              href="#"
+              className={
+                isDark
+                  ? 'text-white/50 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-900'
+              }
+            >
+              Privacy
+            </a>
+
+            <a
+              href="#"
+              className={
+                isDark
+                  ? 'text-white/50 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-900'
+              }
+            >
+              Terms
+            </a>
+
+            <a
+              href="#"
+              className={
+                isDark
+                  ? 'text-white/50 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-900'
+              }
+            >
+              Support
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
