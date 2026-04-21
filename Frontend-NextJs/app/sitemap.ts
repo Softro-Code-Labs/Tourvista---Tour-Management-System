@@ -1,31 +1,36 @@
-export default function sitemap() {
-  const baseUrl = 'https://www.tourvistatours.com';
+import type { MetadataRoute } from 'next';
 
-  return [
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = 'https://www.tourvistatours.com';
+  const now = new Date();
+
+  const routes = [
     {
-      url: baseUrl,
-      lastModified: new Date(),
+      path: '',
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/attractions`,
-      lastModified: new Date(),
+      path: '/attractions',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/culture`,
-      lastModified: new Date(),
+      path: '/culture',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/tours`,
-      lastModified: new Date(),
+      path: '/tours',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
+      path: '/contact',
       priority: 0.5,
     },
   ];
+
+  return routes.map((route) => ({
+    url: `${baseUrl}${route.path}`,
+    lastModified: now,
+    changeFrequency: 'weekly',
+    priority: route.priority,
+  }));
 }

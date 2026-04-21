@@ -7,24 +7,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Contact {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String
-  subject   String
-  message   String
-  createdAt DateTime @default(now())
-}
-
 model User {
   id        String   @id // Clerk user ID
   email     String   @unique
   firstName String
   lastName  String
-  role      UserRole @default(USER) 
+  role      UserRole @default(USER)
+
   createdAt DateTime @default(now())
 
   bookings  Booking[]
+  payments  Payment[]
 }
 
 enum UserRole {
@@ -32,18 +25,42 @@ enum UserRole {
   ADMIN
 }
 
+model Tour {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  location    String
+  price       Float
+  duration    Int      // days
+  image       String?
+  isActive    Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings    Booking[]
+}
+
 model Booking {
   id          Int      @id @default(autoincrement())
+
   userId      String
   user        User     @relation(fields: [userId], references: [id])
 
-  tourName    String
+  tourId      Int
+  tour        Tour     @relation(fields: [tourId], references: [id])
+
   startDate   DateTime
   endDate     DateTime
   guests      Int
+
   totalAmount Float
+
   status      BookingStatus @default(PENDING)
-  notes       String
+
+  payment     Payment?
+
+  notes       String?
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -53,4 +70,50 @@ enum BookingStatus {
   PENDING
   CONFIRMED
   CANCELLED
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+
+  bookingId     Int           @unique
+  booking       Booking       @relation(fields: [bookingId], references: [id])
+
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+
+  amount        Float
+
+  method        PaymentMethod @default(WEBXPAY)
+  status        PaymentStatus @default(PENDING)
+
+  transactionId String?       // WebXPay reference
+  gatewayData   Json?         // raw response from WebXPay
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+enum PaymentMethod {
+  WEBXPAY
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+
+  name      String
+  email     String
+  subject   String
+  message   String
+
+  isRead    Boolean  @default(false)  // admin view tracking
+  replied   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
 }

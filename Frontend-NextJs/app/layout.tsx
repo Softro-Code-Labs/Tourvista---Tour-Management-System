@@ -1,8 +1,7 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { ENV } from '@/lib/env';
+import { ThemeProvider } from './providers';
 import { Toaster } from 'react-hot-toast';
-import Navbar from '../components/NavBar';
-import Footer from '../components/Footer';
 import './globals.css';
 
 export default function RootLayout({
@@ -11,13 +10,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="bg-gray-50 text-gray-900 flex flex-col min-h-screen">
-        <ClerkProvider publishableKey={ENV.CLERK_PUBLISHABLE_KEY}>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ClerkProvider
+          publishableKey={ENV.CLERK_PUBLISHABLE_KEY}
+          signUpFallbackRedirectUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
+          signInFallbackRedirectUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
+          afterSignOutUrl={ENV.CLERK_FALLBACK_REDIRECT_URL}
+        >
           <Toaster position="top-right" />
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <ThemeProvider>{children}</ThemeProvider>
         </ClerkProvider>
       </body>
     </html>

@@ -31,13 +31,13 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center bg-[#0b1220] overflow-hidden">
-      {/* background glow */}
+      {/* BACKGROUND GLOW */}
       <div className="absolute inset-0">
         <div className="absolute top-[-200px] left-[-200px] w-[500px] h-[500px] bg-blue-600/30 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] bg-blue-500/20 blur-[120px] rounded-full" />
       </div>
 
-      {/* travel image overlay */}
+      {/* TRAVEL IMAGE OVERLAY */}
       <div
         className="absolute inset-0 opacity-20 bg-cover bg-center"
         style={{
@@ -47,12 +47,12 @@ export default function Hero() {
       />
 
       <div className="relative z-10 text-center max-w-3xl px-4">
-        {/* Brand */}
+        {/* BRAND */}
         <p className="text-blue-400 font-semibold tracking-widest uppercase text-sm">
           TourVista Tours ✈️
         </p>
 
-        {/* Title */}
+        {/* TITLE */}
         <h1 className="text-5xl md:text-6xl font-bold text-white mt-3">
           Explore Sri Lanka in a New Way 🇱🇰
         </h1>
@@ -61,7 +61,7 @@ export default function Hero() {
           Live Wikipedia search • Real destinations • Instant travel insights
         </p>
 
-        {/* Search box */}
+        {/* SEARCH BOX */}
         <div className="mt-8 bg-white/10 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-4">
           <input
             value={query}
@@ -70,7 +70,7 @@ export default function Hero() {
             className="w-full px-4 py-3 rounded-xl bg-white/90 text-black outline-none focus:ring-2 focus:ring-blue-400"
           />
 
-          {/* results */}
+          {/* RESULTS */}
           {results.length > 0 && (
             <div className="mt-4 text-left space-y-2 max-h-64 overflow-auto">
               {results.map((item, i) => (
@@ -88,7 +88,7 @@ export default function Hero() {
           )}
         </div>
 
-        {/* quick search tags */}
+        {/* QUICK SEARCH TAGS */}
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           {['Sri Lanka', 'Ella', 'Sigiriya', 'Galle', 'Kandy'].map((tag) => (
             <button

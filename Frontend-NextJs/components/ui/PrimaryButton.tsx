@@ -17,7 +17,7 @@ export default function PrimaryButton({
       disabled={loading}
       className="relative w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold overflow-hidden group transition-all duration-300 hover:from-blue-500 hover:to-indigo-600 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
     >
-      {/* shine */}
+      {/* SHINE */}
       <span className="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
 
       <span className="relative z-10 flex items-center justify-center gap-2">

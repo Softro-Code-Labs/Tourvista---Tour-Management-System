@@ -1,0 +1,16 @@
+import { fetchSheet } from '@/features/(public)/tours/services/tours.service';
+import { mapTours } from '@/utils/tours.mapper';
+
+export async function getTours() {
+  const [sectionsRes, placesRes, imagesRes] = await Promise.all([
+    fetchSheet('sections'),
+    fetchSheet('places'),
+    fetchSheet('placeImages'),
+  ]);
+
+  return mapTours(
+    sectionsRes.sections,
+    placesRes.places,
+    imagesRes.placeImages,
+  );
+}
