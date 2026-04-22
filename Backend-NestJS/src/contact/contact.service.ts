@@ -18,13 +18,16 @@ export class ContactService {
     limit = 10,
     filters?: {
       search?: string;
-      createdAt?: string;
+      fromDate?: string;
+      toDate?: string;
+      isRead?: string;
     },
   ) {
     const skip = (page - 1) * limit;
 
     let where: any = {};
 
+    // SEARCH FILTER
     if (filters?.search) {
       where = {
         OR: [
@@ -35,11 +38,31 @@ export class ContactService {
       };
     }
 
-    if (filters?.createdAt) {
-      const date = new Date(filters.createdAt);
+    // DATE RANGE FILTER
+    if (filters?.fromDate || filters?.toDate) {
+      where.createdAt = {};
 
-      if (!isNaN(date.getTime())) {
-        where.createdAt = { gte: date };
+      if (filters.fromDate) {
+        const from = new Date(filters.fromDate);
+        if (!isNaN(from.getTime())) {
+          where.createdAt.gte = from;
+        }
+      }
+
+      if (filters.toDate) {
+        const to = new Date(filters.toDate);
+        if (!isNaN(to.getTime())) {
+          where.createdAt.lte = to;
+        }
+      }
+    }
+
+    // IS READ FILTER
+    if (filters?.isRead !== undefined) {
+      if (filters.isRead === 'true') {
+        where.isRead = true;
+      } else if (filters.isRead === 'false') {
+        where.isRead = false;
       }
     }
 
@@ -65,6 +88,13 @@ export class ContactService {
         totalPages: Math.ceil(total / limit),
       },
     };
+  }
+
+  async updateIsRead(id: number, isRead: boolean) {
+    return this.prisma.contact.update({
+      where: { id },
+      data: { isRead },
+    });
   }
 
   async remove(id: number) {

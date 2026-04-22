@@ -1,10 +1,16 @@
 export const SERVER_ENV = {
   NODE_ENV: process.env.NODE_ENV ?? 'development',
 
+  DATABASE_URL: process.env.DATABASE_URL,
+
   SHEETY_BASE_URL_ATTRACTIONS: process.env.SHEETY_BASE_URL_ATTRACTIONS,
   SHEETY_BASE_URL_CULTURE: process.env.SHEETY_BASE_URL_CULTURE,
   SHEETY_BASE_URL_TOURS: process.env.SHEETY_BASE_URL_TOURS,
 };
+
+if (!SERVER_ENV.DATABASE_URL) {
+  throw new Error('❌ DATABASE_URL is not defined');
+}
 
 if (
   !SERVER_ENV.SHEETY_BASE_URL_ATTRACTIONS ||
