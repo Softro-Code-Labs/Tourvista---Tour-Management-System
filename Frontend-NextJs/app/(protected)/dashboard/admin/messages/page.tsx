@@ -1,118 +1,67 @@
 'use client';
 
-import { useTheme } from 'next-themes';
-import { MessageSquare, SlidersHorizontal, Clock } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
+
+import { useMessages } from '@/features/admin/messages/hooks/useMessages';
+import MessageFilters from '@/features/admin/messages/components/MessageFilters';
+import MessageTable from '@/features/admin/messages/components/MessageTable';
+import Pagination from '@/components/tabels/Pagination';
 
 export default function ManageMessages() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const {
+    messages,
+    loading,
+    filters,
+    setFilter,
+    total,
+    totalPages,
+    toggleReadStatus,
+    deleteMessage,
+  } = useMessages();
+
+  const handleLimitChange = (limit: number) => {
+    setFilter('limit', limit);
+    setFilter('page', 1);
+  };
 
   return (
-    <div className="px-6 py-10">
+    <div className="px-6 py-10 min-h-screen transition-colors bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white">
       {/* HEADER */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1
-            className={`text-xl font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            Messages
-          </h1>
+          <h1 className="text-xl font-semibold">Messages</h1>
 
-          <p
-            className={`text-sm mt-1 ${
-              isDark ? 'text-white/50' : 'text-gray-500'
-            }`}
-          >
-            Review and manage inquiries submitted through the contact form
+          <p className="text-sm mt-1 text-slate-500 dark:text-white/50">
+            Manage contact form submissions
           </p>
         </div>
 
-        {/* FILTERS PLACEHOLDER */}
-        <div
-          className={`
-            flex items-center gap-2 px-3 py-2 rounded-lg text-sm
-
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 text-white/60'
-                : 'bg-gray-100 border border-gray-200 text-gray-600'
-            }
-          `}
-        >
+        <div className="flex items-center gap-2 text-sm px-3 py-1 rounded-full border border-slate-200 bg-white text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-white/60">
           <SlidersHorizontal size={14} />
-          Filters (coming soon)
+          Filters
         </div>
       </div>
 
-      {/* EMPTY STATE */}
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div
-          className={`
-            max-w-lg w-full text-center rounded-2xl p-10
-            transition-all duration-300
+      {/* FILTERS */}
+      <MessageFilters filters={filters} setFilter={setFilter} />
 
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 backdrop-blur-xl'
-                : 'bg-white border border-gray-200 shadow-sm'
-            }
-          `}
-        >
-          {/* ICON */}
-          <div
-            className={`
-              mx-auto mb-6 flex items-center justify-center
-              w-14 h-14 rounded-xl
+      {/* TABLE */}
+      <MessageTable
+        messages={messages}
+        loading={loading}
+        onToggleReadStatus={toggleReadStatus}
+        onDelete={deleteMessage}
+      />
 
-              ${
-                isDark
-                  ? 'bg-amber-500/10 text-amber-300'
-                  : 'bg-amber-100 text-amber-600'
-              }
-            `}
-          >
-            <MessageSquare size={22} />
-          </div>
-
-          {/* TITLE */}
-          <h2
-            className={`text-lg font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            Message Inbox Coming Soon
-          </h2>
-
-          {/* DESCRIPTION */}
-          <p
-            className={`mt-2 text-sm leading-relaxed ${
-              isDark ? 'text-white/60' : 'text-gray-500'
-            }`}
-          >
-            All contact form submissions will appear here. You’ll be able to
-            read messages, mark them as viewed, filter by status, and remove
-            irrelevant inquiries.
-          </p>
-
-          {/* STATUS */}
-          <div
-            className={`
-              mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs
-
-              ${
-                isDark
-                  ? 'bg-white/5 border border-white/10 text-white/60'
-                  : 'bg-gray-100 border border-gray-200 text-gray-600'
-              }
-            `}
-          >
-            <Clock size={12} />
-            In Development
-          </div>
-        </div>
-      </div>
+      {/* PAGINATION */}
+      <Pagination
+        page={filters.page}
+        limit={filters.limit}
+        total={total}
+        totalPages={totalPages}
+        onPageChange={(p) => setFilter('page', p)}
+        onLimitChange={handleLimitChange}
+      />
     </div>
   );
 }

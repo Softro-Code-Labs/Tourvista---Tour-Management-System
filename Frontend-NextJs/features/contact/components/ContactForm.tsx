@@ -1,7 +1,7 @@
 'use client';
 
 import { useContactForm } from '../hooks/useContactForm';
-import PrimaryButton from '@/components/ui/PrimaryButton';
+import PrimaryButton from '@/components/common/PrimaryButton';
 
 export default function ContactForm() {
   const { form, loading, handleChange, handleSubmit } = useContactForm();

@@ -1,9 +1,9 @@
-import { ENV } from './env';
+import { SERVER_ENV } from './env.server';
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
 class Logger {
-  private isDev = ENV.NODE_ENV === 'development';
+  private isDev = SERVER_ENV.NODE_ENV === 'development';
 
   private format(level: LogLevel, message: string, meta?: unknown) {
     return {

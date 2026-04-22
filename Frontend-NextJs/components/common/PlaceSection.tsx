@@ -1,9 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useTheme } from 'next-themes';
 import GalleryModal from './GalleryModal';
-import PlaceCard from './PlaceCard';
+import PlaceCard from '../cards/PlaceCard';
 
 type Place = {
   title: string;
@@ -22,16 +21,12 @@ export default function PlaceSection({ title, description, places }: Props) {
   const [selected, setSelected] = useState<Place | null>(null);
   const [showDescription, setShowDescription] = useState(false);
 
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
     <section className="space-y-6">
       {/* TITLE BLOCK */}
       <div className="space-y-2">
         <h2
-          className={`text-2xl font-bold cursor-pointer transition-colors
-            ${isDark ? 'text-white' : 'text-gray-900'}`}
+          className="text-2xl font-bold cursor-pointer transition-colors text-gray-900 dark:text-white"
           onMouseEnter={() => setShowDescription(true)}
           onMouseLeave={() => setShowDescription(false)}
           onClick={() => setShowDescription((v) => !v)}
@@ -41,13 +36,12 @@ export default function PlaceSection({ title, description, places }: Props) {
 
         {/* INLINE DESCRIPTION */}
         <div
-          className={`overflow-hidden transition-all duration-300 ease-in-out
-            ${showDescription ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
+          className={`
+            overflow-hidden transition-all duration-300 ease-in-out
+            ${showDescription ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}
+          `}
         >
-          <p
-            className={`text-sm leading-relaxed
-              ${isDark ? 'text-gray-300' : 'text-gray-600'}`}
-          >
+          <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
             {description}
           </p>
         </div>

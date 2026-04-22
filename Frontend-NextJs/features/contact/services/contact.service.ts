@@ -9,9 +9,13 @@ export async function sendContactMessage(payload: ContactFormData) {
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    throw new Error('Failed to send message');
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(
+      data.message || 'Failed to send message. Please try again.',
+    );
   }
 
-  return res.json();
+  return data;
 }

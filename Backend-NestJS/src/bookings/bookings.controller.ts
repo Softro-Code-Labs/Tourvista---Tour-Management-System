@@ -17,13 +17,14 @@ import { UpdateBookingAdminDto } from './dto/update-booking-admin.dto';
 import { UpdateBookingUserDto } from './dto/update-booking-user.dto';
 
 import { Roles } from '../auth/decorators/roles.decorator';
+import { Role } from '../auth/enums/role.enum';
 
 @Controller('v1/bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  @Roles('user')
+  @Roles(Role.USER)
   create(@Body() body: CreateBookingDto) {
     return this.bookingsService.create(body);
   }
@@ -39,13 +40,13 @@ export class BookingsController {
   }
 
   @Patch(':id/admin')
-  @Roles('admin')
+  @Roles(Role.ADMIN)
   updateByAdmin(@Param('id') id: string, @Body() body: UpdateBookingAdminDto) {
     return this.bookingsService.updateByAdmin(+id, body);
   }
 
   @Patch(':id/user')
-  @Roles('user')
+  @Roles(Role.USER)
   updateByUser(
     @Param('id') id: string,
     @Body() body: UpdateBookingUserDto,

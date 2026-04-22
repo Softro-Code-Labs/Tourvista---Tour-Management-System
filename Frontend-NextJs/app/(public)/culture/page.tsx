@@ -1,4 +1,4 @@
-import { getCulture } from '@/features/(public)/culture/api/getCulture';
+import { getCulture } from '@/features/culture/api/getCulture';
 import SectionTitle from '../../../components/common/SectionTitle';
 import PlaceSection from '@/components/common/PlaceSection';
 

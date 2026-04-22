@@ -1,4 +1,4 @@
-import { fetchSheet } from '@/features/(public)/attractions/services/attractions.service';
+import { fetchSheet } from '@/features/attractions/services/attractions.service';
 import { mapAttractions } from '@/utils/attractions.mapper';
 
 export async function getAttractions() {

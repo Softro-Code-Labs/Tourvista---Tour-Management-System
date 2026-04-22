@@ -1,4 +1,4 @@
-import { getTours } from '@/features/(public)/tours/api/getTours';
+import { getTours } from '@/features/tours/api/getTours';
 import SectionTitle from '../../../components/common/SectionTitle';
 import PlaceSection from '@/components/common/PlaceSection';
 
