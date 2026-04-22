@@ -1,4 +1,4 @@
-import type { Section } from '@/features/(public)/culture/types/culture';
+import type { Section } from '@/features/culture/types/culture';
 
 type RawSection = {
   sectionId: number;

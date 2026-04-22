@@ -11,9 +11,8 @@ import {
   Show,
 } from '@clerk/nextjs';
 
-import { useTheme } from 'next-themes';
-import { UserRole } from '@/features/auth/enums/roles';
-import ThemeToggle from './ui/ThemeToggle';
+import { UserRole } from '@/common/enums/role.enum';
+import ThemeToggle from './common/ThemeToggle';
 
 const navItems = [
   { name: 'Home', href: '/' },
@@ -27,24 +26,11 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   const { user, isLoaded } = useUser();
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   const role = user?.publicMetadata?.role as UserRole | undefined;
 
   return (
     <header className="sticky top-0 z-50">
-      {/* NAVBAR WRAPPER */}
-      <div
-        className={`
-          backdrop-blur-xl border-b transition-colors duration-300
-          ${
-            isDark
-              ? 'bg-slate-950/70 border-white/10 text-white'
-              : 'bg-white/70 border-gray-200 text-slate-900'
-          }
-        `}
-      >
+      <div className="backdrop-blur-xl border-b transition-colors duration-300 bg-white/70 dark:bg-slate-950/70 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
           {/* LOGO */}
           <Link href="/" className="flex items-center gap-2">
@@ -57,55 +43,26 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`
-                  relative group transition
-                  ${
-                    isDark
-                      ? 'text-white/70 hover:text-white'
-                      : 'text-slate-600 hover:text-slate-900'
-                  }
-                `}
+                className="relative group transition text-slate-600 dark:text-white/70 hover:text-slate-900 dark:hover:text-white"
               >
                 {item.name}
 
-                <span
-                  className={`
-                    absolute left-0 -bottom-1 h-[2px] w-0
-                    bg-gradient-to-r from-cyan-500 to-blue-500
-                    group-hover:w-full transition-all duration-300
-                  `}
-                />
+                <span className="absolute left-0 -bottom-1 h-[2px] w-0 bg-gradient-to-r from-cyan-500 to-blue-500 group-hover:w-full transition-all duration-300" />
               </Link>
             ))}
           </nav>
 
-          {/* RIGHT ACTIONS */}
+          {/* RIGHT */}
           <div className="hidden md:flex items-center gap-3">
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <button
-                  className={`
-                    px-4 py-2 rounded-xl border transition
-                    ${
-                      isDark
-                        ? 'border-white/10 text-white hover:bg-white/10'
-                        : 'border-gray-300 text-slate-700 hover:bg-gray-100'
-                    }
-                  `}
-                >
+                <button className="px-4 py-2 rounded-xl border transition border-gray-300 dark:border-white/10 text-slate-700 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10">
                   Login
                 </button>
               </SignInButton>
 
               <SignUpButton mode="modal">
-                <button
-                  className="
-                    px-4 py-2 rounded-xl
-                    bg-gradient-to-r from-cyan-500 to-blue-500
-                    text-white font-medium
-                    hover:opacity-90 transition
-                  "
-                >
+                <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:opacity-90 transition">
                   Sign Up
                 </button>
               </SignUpButton>
@@ -117,14 +74,7 @@ export default function Navbar() {
               {isLoaded && role === UserRole.ADMIN && (
                 <Link
                   href="/dashboard/admin"
-                  className={`
-                    px-4 py-2 rounded-xl border transition
-                    ${
-                      isDark
-                        ? 'bg-white/10 border-white/10 text-white hover:bg-white/20'
-                        : 'bg-gray-100 border-gray-200 text-slate-900 hover:bg-gray-200'
-                    }
-                  `}
+                  className="px-4 py-2 rounded-xl border transition bg-gray-100 dark:bg-white/10 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20"
                 >
                   Dashboard
                 </Link>
@@ -136,13 +86,10 @@ export default function Navbar() {
             </Show>
           </div>
 
-          {/* MOBILE BUTTON */}
+          {/* MOBILE */}
           <button
             onClick={() => setOpen(true)}
-            className={`
-              md:hidden text-2xl
-              ${isDark ? 'text-white' : 'text-slate-900'}
-            `}
+            className="md:hidden text-2xl text-slate-900 dark:text-white"
           >
             ☰
           </button>
@@ -151,68 +98,36 @@ export default function Navbar() {
 
       {/* MOBILE MENU */}
       <div className={open ? 'fixed inset-0 z-50' : 'hidden'}>
-        {/* BACKDROP */}
         <div
           onClick={() => setOpen(false)}
           className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         />
 
-        {/* PANEL */}
-        <div
-          className={`
-            absolute top-0 left-0 h-full w-[85%] max-w-sm p-6 flex flex-col
-            transition-colors duration-300
-            ${
-              isDark
-                ? 'bg-slate-950 border-white/10 text-white'
-                : 'bg-white border-gray-200 text-slate-900'
-            }
-            border-r
-          `}
-        >
-          {/* HEADER */}
+        <div className="absolute top-0 left-0 h-full w-[85%] max-w-sm p-6 flex flex-col bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-white/10 text-slate-900 dark:text-white">
           <div className="flex justify-between items-center mb-8">
             <Image src="/logo.webp" alt="TourVista" width={130} height={40} />
             <button onClick={() => setOpen(false)}>✕</button>
           </div>
 
-          {/* LINKS */}
           <div className="flex flex-col gap-4 text-sm">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`
-                  py-2 px-2 rounded-lg transition
-                  ${
-                    isDark
-                      ? 'text-white/70 hover:text-white hover:bg-white/10'
-                      : 'text-slate-700 hover:text-slate-900 hover:bg-gray-100'
-                  }
-                `}
+                className="py-2 px-2 rounded-lg transition text-slate-700 dark:text-white/70 hover:text-slate-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10"
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* FOOTER */}
           <div className="mt-auto flex flex-col gap-3 pt-8">
             <ThemeToggle />
 
             <Show when="signed-out">
               <SignInButton mode="modal">
-                <button
-                  className={`
-                    w-full py-3 rounded-xl border
-                    ${
-                      isDark
-                        ? 'border-white/10 text-white'
-                        : 'border-gray-300 text-slate-900'
-                    }
-                  `}
-                >
+                <button className="w-full py-3 rounded-xl border border-gray-300 dark:border-white/10 text-slate-900 dark:text-white">
                   Login
                 </button>
               </SignInButton>
@@ -228,58 +143,21 @@ export default function Navbar() {
               {role === UserRole.ADMIN && (
                 <Link
                   href="/dashboard/admin"
-                  className={`
-                    w-full py-3 rounded-xl text-center border
-                    ${
-                      isDark
-                        ? 'bg-white/10 border-white/10 text-white'
-                        : 'bg-gray-100 border-gray-200 text-slate-900'
-                    }
-                  `}
+                  className="w-full py-3 rounded-xl text-center border bg-gray-100 dark:bg-white/10 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white"
                 >
                   Dashboard
                 </Link>
               )}
 
-              <div
-                className={`
-                  flex items-center justify-center gap-3
-                  px-3 py-2 rounded-xl border
-                  transition-all duration-300
-
-                  ${
-                    isDark
-                      ? 'border-white/10 bg-white/5 hover:bg-white/10'
-                      : 'border-gray-200 bg-white hover:bg-gray-50'
-                  }
-                `}
-              >
-                {/* USER INFO */}
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="shrink-0">
-                    <UserButton />
-                  </div>
-
-                  {/* TEXT BLOCK */}
-                  <div className="leading-tight min-w-0">
-                    <p
-                      className={`
-                        text-sm font-medium truncate
-                        ${isDark ? 'text-white' : 'text-slate-900'}
-                      `}
-                    >
-                      {user?.firstName} {user?.lastName}
-                    </p>
-
-                    <p
-                      className={`
-                        text-xs truncate
-                        ${isDark ? 'text-white/50' : 'text-slate-500'}
-                      `}
-                    >
-                      {user?.emailAddresses[0]?.emailAddress}
-                    </p>
-                  </div>
+              <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5">
+                <UserButton />
+                <div className="leading-tight">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">
+                    {user?.firstName} {user?.lastName}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-white/50">
+                    {user?.emailAddresses[0]?.emailAddress}
+                  </p>
                 </div>
               </div>
             </Show>

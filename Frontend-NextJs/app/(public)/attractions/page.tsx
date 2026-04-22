@@ -1,4 +1,4 @@
-import { getAttractions } from '@/features/(public)/attractions/api/getAttractions';
+import { getAttractions } from '@/features/attractions/api/getAttractions';
 import SectionTitle from '../../../components/common/SectionTitle';
 import PlaceSection from '@/components/common/PlaceSection';
 

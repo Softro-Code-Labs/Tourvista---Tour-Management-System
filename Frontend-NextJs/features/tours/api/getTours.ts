@@ -1,14 +1,14 @@
-import { fetchSheet } from '@/features/(public)/culture/services/culture.service';
-import { mapCulture } from '@/utils/culture.mapper';
+import { fetchSheet } from '@/features/tours/services/tours.service';
+import { mapTours } from '@/utils/tours.mapper';
 
-export async function getCulture() {
+export async function getTours() {
   const [sectionsRes, placesRes, imagesRes] = await Promise.all([
     fetchSheet('sections'),
     fetchSheet('places'),
     fetchSheet('placeImages'),
   ]);
 
-  return mapCulture(
+  return mapTours(
     sectionsRes.sections,
     placesRes.places,
     imagesRes.placeImages,

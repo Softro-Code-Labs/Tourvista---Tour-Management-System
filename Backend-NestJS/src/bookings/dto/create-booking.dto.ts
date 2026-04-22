@@ -14,10 +14,8 @@ export class CreateBookingDto {
   userId!: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Tour name is required' })
-  @MinLength(3, { message: 'Tour name must be at least 3 characters' })
-  @MaxLength(40, { message: 'Tour name must be at most 40 characters' })
-  tourName!: string;
+  @IsNotEmpty({ message: 'Tour ID is required' })
+  tourId!: number;
 
   @IsDateString()
   @IsNotEmpty({ message: 'Start date is required' })

@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import clsx from 'clsx';
-import { useTheme } from 'next-themes';
 
 import {
   LayoutDashboard,
@@ -15,7 +14,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 
-import { UserRole } from '@/features/auth/enums/roles';
+import { UserRole } from '@/common/enums/role.enum';
 import { isAdmin } from '@/lib/auth';
 
 type NavItem = {
@@ -32,9 +31,6 @@ type NavSection = {
 export default function SideBar() {
   const pathname = usePathname();
   const { user } = useUser();
-  const { theme } = useTheme();
-
-  const isDark = theme === 'dark';
 
   const role = user?.publicMetadata?.role as UserRole | undefined;
 
@@ -53,11 +49,7 @@ export default function SideBar() {
         {
           title: 'Management',
           items: [
-            {
-              label: 'Tour Plans',
-              href: '/dashboard/admin/tours',
-              icon: Map,
-            },
+            { label: 'Tour Plans', href: '/dashboard/admin/tours', icon: Map },
             {
               label: 'Bookings',
               href: '/dashboard/admin/bookings',
@@ -73,11 +65,7 @@ export default function SideBar() {
         {
           title: 'Users',
           items: [
-            {
-              label: 'All Users',
-              href: '/dashboard/admin/users',
-              icon: Users,
-            },
+            { label: 'All Users', href: '/dashboard/admin/users', icon: Users },
           ],
         },
         {
@@ -94,44 +82,15 @@ export default function SideBar() {
     : [];
 
   return (
-    <aside
-      className={clsx(
-        `
-        w-64 h-screen sticky top-0 flex flex-col
-        border-r backdrop-blur-xl
-        transition-colors duration-300
-        `,
-        isDark
-          ? 'bg-slate-950/70 border-white/10 text-white'
-          : 'bg-white/70 border-gray-200 text-slate-900',
-      )}
-    >
+    <aside className="w-64 h-screen sticky top-0 flex flex-col border-r backdrop-blur-xl transition-colors duration-300 bg-white/70 dark:bg-slate-950/70 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white">
       {/* BRAND HEADER */}
-      <div
-        className={clsx(
-          `
-          px-6 py-5 border-b
-          `,
-          isDark ? 'border-white/10' : 'border-gray-200',
-        )}
-      >
+      <div className="px-6 py-5 border-b border-gray-200 dark:border-white/10">
         <div className="flex flex-col gap-1">
-          <h2
-            className="
-              text-lg font-semibold tracking-tight
-              bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500
-              bg-clip-text text-transparent
-            "
-          >
+          <h2 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
             Tourvista Tours
           </h2>
 
-          <p
-            className={clsx(
-              'text-xs',
-              isDark ? 'text-white/40' : 'text-slate-500',
-            )}
-          >
+          <p className="text-xs text-slate-500 dark:text-white/40">
             Admin Control Center
           </p>
         </div>
@@ -141,12 +100,7 @@ export default function SideBar() {
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {sections.map((section) => (
           <div key={section.title}>
-            <p
-              className={clsx(
-                'px-3 mb-2 text-[11px] uppercase tracking-wider',
-                isDark ? 'text-white/30' : 'text-slate-400',
-              )}
-            >
+            <p className="px-3 mb-2 text-[11px] uppercase tracking-wider text-slate-400 dark:text-white/30">
               {section.title}
             </p>
 
@@ -164,38 +118,31 @@ export default function SideBar() {
                     href={item.href}
                     className={clsx(
                       `
-                      relative flex items-center gap-3
-                      px-3 py-2 rounded-lg
-                      transition-all duration-300
+                        relative flex items-center gap-3
+                        px-3 py-2 rounded-lg
+                        transition-all duration-300
+                        hover:bg-gray-100 dark:hover:bg-white/5
                       `,
                       isActive
-                        ? isDark
-                          ? 'text-white'
-                          : 'text-slate-900'
-                        : isDark
-                          ? 'text-white/60 hover:text-white'
-                          : 'text-slate-500 hover:text-slate-900',
+                        ? 'text-slate-900 dark:text-white'
+                        : 'text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white',
                     )}
                   >
                     {/* ACTIVE BACKGROUND */}
                     <span
                       className={clsx(
                         `
-                        absolute inset-0 rounded-lg transition-all duration-300
+                          absolute inset-0 rounded-lg transition-all duration-300
                         `,
                         isActive
-                          ? isDark
-                            ? 'bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-indigo-500/20'
-                            : 'bg-blue-100'
-                          : isDark
-                            ? 'hover:bg-white/5'
-                            : 'hover:bg-gray-100',
+                          ? 'bg-blue-100 dark:bg-gradient-to-r dark:from-cyan-950 dark:via-blue-950 dark:to-indigo-950'
+                          : '',
                       )}
                     />
 
                     {/* ACTIVE GLOW (dark only) */}
-                    {isActive && isDark && (
-                      <span className="absolute inset-0 rounded-lg bg-cyan-500/10 blur-xl opacity-40" />
+                    {isActive && (
+                      <span className="absolute inset-0 rounded-lg bg-cyan-500/10 blur-xl opacity-40 dark:block hidden" />
                     )}
 
                     {/* ICON */}
@@ -204,12 +151,8 @@ export default function SideBar() {
                       className={clsx(
                         'relative z-10 transition',
                         isActive
-                          ? isDark
-                            ? 'text-cyan-300'
-                            : 'text-blue-600'
-                          : isDark
-                            ? 'text-white/40 group-hover:text-white'
-                            : 'text-slate-400 group-hover:text-slate-900',
+                          ? 'text-blue-600 dark:text-cyan-300'
+                          : 'text-slate-400 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white',
                       )}
                     />
 
@@ -226,16 +169,7 @@ export default function SideBar() {
       </nav>
 
       {/* FOOTER */}
-      <div
-        className={clsx(
-          `
-          px-4 py-4 border-t text-xs
-          `,
-          isDark
-            ? 'border-white/10 text-white/30'
-            : 'border-gray-200 text-slate-500',
-        )}
-      >
+      <div className="px-4 py-4 border-t border-gray-200 dark:border-white/10 text-xs text-slate-500 dark:text-white/30">
         © {new Date().getFullYear()} Tourvista Tours. All rights reserved.
       </div>
     </aside>

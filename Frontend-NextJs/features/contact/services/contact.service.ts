@@ -1,12 +1,7 @@
 import { ContactFormData } from '../types/contact.types';
-import { CLIENT_ENV } from '@/lib/env.client';
 
 export async function sendContactMessage(payload: ContactFormData) {
-  const url = CLIENT_ENV.DATABASE_URL
-    ? `${CLIENT_ENV.DATABASE_URL}/api/v1/contact`
-    : '/api/v1/contact';
-
-  const res = await fetch(url, {
+  const res = await fetch('/api/v1/contact', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -14,9 +9,13 @@ export async function sendContactMessage(payload: ContactFormData) {
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) {
-    throw new Error('Failed to send message');
+  const data = await res.json();
+
+  if (!res.ok || !data.success) {
+    throw new Error(
+      data.message || 'Failed to send message. Please try again.',
+    );
   }
 
-  return res.json();
+  return data;
 }

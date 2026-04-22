@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useTheme } from 'next-themes';
 
 type Place = {
   title: string;
@@ -16,20 +15,16 @@ export default function PlaceCard({
   image,
   onClick,
 }: Place) {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
     <div
       onClick={onClick}
-      className={`
+      className="
         group relative rounded-2xl overflow-hidden cursor-pointer
         border transition-all duration-300
-
         hover:-translate-y-1 hover:shadow-xl
-
-        ${isDark ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200'}
-      `}
+        bg-white dark:bg-white/5
+        border-gray-200 dark:border-white/10
+      "
     >
       {/* IMAGE */}
       <div className="relative h-52 overflow-hidden">
@@ -46,53 +41,38 @@ export default function PlaceCard({
 
         {/* OVERLAY */}
         <div
-          className={`
+          className="
             absolute inset-0
-            ${
-              isDark
-                ? 'bg-gradient-to-t from-black/70 via-black/20 to-transparent'
-                : 'bg-gradient-to-t from-white/60 via-white/10 to-transparent'
-            }
-          `}
+            bg-gradient-to-t from-white/60 via-white/10 to-transparent
+            dark:from-black/70 dark:via-black/20 dark:to-transparent
+          "
         />
       </div>
 
       {/* CONTENT */}
       <div className="p-5">
         <h3
-          className={`
+          className="
             text-lg font-semibold transition
-            ${
-              isDark
-                ? 'text-white group-hover:text-cyan-300'
-                : 'text-slate-900 group-hover:text-blue-600'
-            }
-          `}
+            text-slate-900 dark:text-white
+            group-hover:text-blue-600 dark:group-hover:text-cyan-300
+          "
         >
           {title}
         </h3>
 
-        <p
-          className={`
-            text-sm mt-2 leading-relaxed
-            ${isDark ? 'text-white/60' : 'text-slate-500'}
-          `}
-        >
+        <p className="text-sm mt-2 leading-relaxed text-slate-500 dark:text-white/60">
           {description}
         </p>
 
-        {/* subtle indicator line */}
+        {/* indicator line */}
         <div
-          className={`
+          className="
             mt-4 h-[2px] w-0 group-hover:w-full
             transition-all duration-500 rounded-full
-
-            ${
-              isDark
-                ? 'bg-gradient-to-r from-cyan-400 to-blue-500'
-                : 'bg-gradient-to-r from-blue-500 to-indigo-500'
-            }
-          `}
+            bg-gradient-to-r from-blue-500 to-indigo-500
+            dark:from-cyan-400 dark:to-blue-500
+          "
         />
       </div>
     </div>
