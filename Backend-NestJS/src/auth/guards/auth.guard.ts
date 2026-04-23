@@ -45,7 +45,7 @@ export class AuthGuard implements CanActivate {
     // 4. GET USER FROM CLERK
     const user = await this.clerkClient.users.getUser(payload.sub);
 
-    // 5. ATTACH USER (IMPORTANT)
+    // 5. ATTACH USER
     request.user = {
       id: user.id,
       role: (user.publicMetadata as any)?.role || UserRole.USER,

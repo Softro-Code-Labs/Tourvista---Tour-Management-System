@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import type { ClerkClient } from '@clerk/backend';
 
-import { PrismaService } from '../infrastructure/prisma/prisma.service';
+import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
-import { ClerkWebhookEvent } from '../common/enums/event.enum';
-import { UserRole } from '../common/enums/role.enum';
+import { ClerkWebhookEvent } from '../../common/enums/event.enum';
+import { UserRole } from '../../common/enums/role.enum';
 
 @Injectable()
 export class WebhookService {
