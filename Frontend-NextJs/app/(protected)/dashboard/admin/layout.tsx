@@ -1,5 +1,5 @@
-import { UserRole } from '@/features/auth/enums/roles';
-import { isAdmin } from '@/lib/auth';
+import { UserRole } from '@/common/enums/role.enum';
+import { isAdmin } from '@/utils/auth-utils';
 import { currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 

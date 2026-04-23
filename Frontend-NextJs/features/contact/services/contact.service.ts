@@ -1,21 +1,13 @@
-import { ContactFormData } from '../types/contact.types';
+import { apiRequest } from '@/lib/api/handler';
+import { ContactFormData, ContactResponse } from '../types/contact.types';
 
-export async function sendContactMessage(payload: ContactFormData) {
-  const res = await fetch('/api/v1/contact', {
+const BASE_PATH = '/api/v1/contact';
+
+export async function sendContactMessage(
+  payload: ContactFormData,
+): Promise<ContactResponse> {
+  return apiRequest<ContactResponse>(BASE_PATH, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(payload),
   });
-
-  const data = await res.json();
-
-  if (!res.ok || !data.success) {
-    throw new Error(
-      data.message || 'Failed to send message. Please try again.',
-    );
-  }
-
-  return data;
 }

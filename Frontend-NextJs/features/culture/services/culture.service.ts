@@ -1,5 +1,5 @@
-import { SERVER_ENV } from '@/lib/env.server';
-import { logger } from '@/lib/logger';
+import { SERVER_ENV } from '@/config/env.server';
+import { logger } from '@/core/logger';
 
 export async function fetchSheet(tab: string) {
   try {
@@ -25,7 +25,7 @@ export async function fetchSheet(tab: string) {
 
     return data;
   } catch (error) {
-    logger.error(`fetchSheet error [${tab}]:`, error);
+    logger.error(`fetchSheet error [${tab}]: ${error}`);
 
     return {
       [tab]: [],

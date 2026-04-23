@@ -1,115 +1,66 @@
 'use client';
 
-import { useTheme } from 'next-themes';
-import { CalendarCheck, SlidersHorizontal, Clock } from 'lucide-react';
+import { CalendarCheck, SlidersHorizontal, Clock, Inbox } from 'lucide-react';
 
 export default function ManageBookings() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
-    <div className="px-6 py-10">
+    <div className="space-y-8">
       {/* HEADER */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1
-            className={`text-xl font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Bookings
           </h1>
-
-          <p
-            className={`text-sm mt-1 ${
-              isDark ? 'text-white/50' : 'text-gray-500'
-            }`}
-          >
+          <p className="text-sm mt-1 text-gray-500 dark:text-slate-400">
             View and manage customer reservations, statuses, and schedules
           </p>
         </div>
 
         {/* FILTER PLACEHOLDER */}
-        <div
-          className={`
-            flex items-center gap-2 px-3 py-2 rounded-lg text-sm
-
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 text-white/60'
-                : 'bg-gray-100 border border-gray-200 text-gray-600'
-            }
-          `}
-        >
-          <SlidersHorizontal size={14} />
-          Filters (coming soon)
+        <div className="flex items-center gap-2 self-start px-4 py-2 rounded-xl text-sm font-medium transition-all border bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-600 dark:text-slate-400">
+          <SlidersHorizontal size={16} />
+          <span>Filters</span>
+          <span className="ml-1 px-1.5 py-0.5 text-[10px] rounded bg-gray-100 dark:bg-white/10 uppercase tracking-wider font-bold">
+            Soon
+          </span>
         </div>
       </div>
 
-      {/* EMPTY STATE */}
-      <div className="flex items-center justify-center min-h-[60vh]">
+      {/* EMPTY STATE AREA */}
+      <div className="relative flex items-center justify-center min-h-[55vh] rounded-3xl border border-gray-200 dark:border-white/10 bg-white dark:bg-slate-900/50 overflow-hidden shadow-sm">
+        {/* Subtle Background Pattern */}
         <div
-          className={`
-            max-w-lg w-full text-center rounded-2xl p-10
-            transition-all duration-300
+          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        />
 
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 backdrop-blur-xl'
-                : 'bg-white border border-gray-200 shadow-sm'
-            }
-          `}
-        >
-          {/* ICON */}
-          <div
-            className={`
-              mx-auto mb-6 flex items-center justify-center
-              w-14 h-14 rounded-xl
-
-              ${
-                isDark
-                  ? 'bg-indigo-500/10 text-indigo-300'
-                  : 'bg-indigo-100 text-indigo-600'
-              }
-            `}
-          >
-            <CalendarCheck size={22} />
+        <div className="relative z-10 max-w-md w-full text-center p-8">
+          {/* ICON STACK */}
+          <div className="mx-auto mb-6 relative w-16 h-16 flex items-center justify-center">
+            <div className="absolute inset-0 bg-indigo-500/20 dark:bg-indigo-500/10 rounded-2xl rotate-6" />
+            <div className="relative w-14 h-14 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/20">
+              <CalendarCheck size={28} />
+            </div>
           </div>
 
-          {/* TITLE */}
-          <h2
-            className={`text-lg font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            Booking Management Coming Soon
+          {/* TEXT */}
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            Reservations Hub
           </h2>
-
-          {/* DESCRIPTION */}
-          <p
-            className={`mt-2 text-sm leading-relaxed ${
-              isDark ? 'text-white/60' : 'text-gray-500'
-            }`}
-          >
-            This section will display all customer bookings with filtering by
-            status, date, and tour. You'll be able to confirm reservations,
-            track schedules, and manage booking activity in one place.
+          <p className="mt-3 text-sm leading-relaxed text-gray-500 dark:text-slate-400">
+            We are finalizing the reservation engine. Soon you will be able to
+            confirm bookings, automate reminder emails, and manage tour capacity
+            across different dates and time slots.
           </p>
 
-          {/* STATUS */}
-          <div
-            className={`
-              mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs
-
-              ${
-                isDark
-                  ? 'bg-white/5 border border-white/10 text-white/60'
-                  : 'bg-gray-100 border border-gray-200 text-gray-600'
-              }
-            `}
-          >
-            <Clock size={12} />
-            In Development
+          {/* PROGRESS INDICATOR */}
+          <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5 flex flex-col items-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-gray-50 dark:bg-white/5 text-gray-500 dark:text-indigo-400 border border-gray-200 dark:border-white/10">
+              <Clock size={12} className="animate-pulse" />
+              Building Management Tools
+            </div>
           </div>
         </div>
       </div>

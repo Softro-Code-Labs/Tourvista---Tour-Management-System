@@ -1,30 +1,17 @@
 'use client';
 
-import { useTheme } from 'next-themes';
-import { Map, Plus, Clock } from 'lucide-react';
+import { Map, Plus, Clock, Compass } from 'lucide-react';
 
 export default function ManageTours() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
-
   return (
-    <div className="px-6 py-10">
+    <div className="space-y-8">
       {/* HEADER */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1
-            className={`text-xl font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             Tour Plans
           </h1>
-
-          <p
-            className={`text-sm mt-1 ${
-              isDark ? 'text-white/50' : 'text-gray-500'
-            }`}
-          >
+          <p className="text-sm mt-1 text-gray-500 dark:text-slate-400">
             Create, update, and manage travel packages and tour experiences
           </p>
         </div>
@@ -32,86 +19,45 @@ export default function ManageTours() {
         {/* CTA (disabled for now) */}
         <button
           disabled
-          className={`
-            flex items-center gap-2 px-4 py-2 rounded-lg text-sm
-            cursor-not-allowed transition
-
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 text-white/40'
-                : 'bg-gray-100 border border-gray-200 text-gray-400'
-            }
-          `}
+          className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border
+            bg-gray-50 dark:bg-white/5 border-gray-200 dark:border-white/10 
+            text-gray-400 dark:text-white/20 cursor-not-allowed shadow-sm"
         >
-          <Plus size={16} />
-          New Tour (soon)
+          <Plus size={18} />
+          New Tour Plan
         </button>
       </div>
 
-      {/* EMPTY STATE */}
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div
-          className={`
-            max-w-lg w-full text-center rounded-2xl p-10
-            transition-all duration-300
-
-            ${
-              isDark
-                ? 'bg-white/5 border border-white/10 backdrop-blur-xl'
-                : 'bg-white border border-gray-200 shadow-sm'
-            }
-          `}
-        >
-          {/* ICON */}
-          <div
-            className={`
-              mx-auto mb-6 flex items-center justify-center
-              w-14 h-14 rounded-xl
-
-              ${
-                isDark
-                  ? 'bg-cyan-500/10 text-cyan-300'
-                  : 'bg-blue-100 text-blue-600'
-              }
-            `}
-          >
-            <Map size={22} />
+      {/* EMPTY STATE CONTAINER */}
+      <div className="flex items-center justify-center min-h-[55vh] rounded-3xl border-2 border-dashed border-gray-200 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+        <div className="max-w-md w-full text-center p-8 transition-all duration-300">
+          {/* ILLUSTRATIVE ICON */}
+          <div className="relative mx-auto mb-8 w-24 h-24 flex items-center justify-center">
+            {/* Background Pulsing Ring */}
+            <div className="absolute inset-0 rounded-full bg-blue-500/20 dark:bg-cyan-500/10 animate-pulse" />
+            <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-white/10 shadow-xl shadow-blue-500/10 text-blue-600 dark:text-cyan-400">
+              <Compass size={32} className="animate-spin-slow" />
+            </div>
           </div>
 
-          {/* TITLE */}
-          <h2
-            className={`text-lg font-semibold ${
-              isDark ? 'text-white' : 'text-gray-900'
-            }`}
-          >
-            Tour Management Coming Soon
-          </h2>
+          {/* TEXT CONTENT */}
+          <div className="space-y-3">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              No Tour Plans Found
+            </h2>
+            <p className="text-sm leading-relaxed text-gray-500 dark:text-slate-400">
+              Your tour management module is currently being finalized. Soon
+              you'll be able to orchestrate complex itineraries, set seasonal
+              pricing, and manage booking limits from this central hub.
+            </p>
+          </div>
 
-          {/* DESCRIPTION */}
-          <p
-            className={`mt-2 text-sm leading-relaxed ${
-              isDark ? 'text-white/60' : 'text-gray-500'
-            }`}
-          >
-            This module will allow you to create and manage tour plans,
-            including destinations, pricing, schedules, and availability. Easily
-            update or remove plans as your offerings evolve.
-          </p>
-
-          {/* STATUS */}
-          <div
-            className={`
-              mt-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs
-
-              ${
-                isDark
-                  ? 'bg-white/5 border border-white/10 text-white/60'
-                  : 'bg-gray-100 border border-gray-200 text-gray-600'
-              }
-            `}
-          >
-            <Clock size={12} />
-            In Development
+          {/* STATUS LABEL */}
+          <div className="mt-8 flex items-center justify-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border bg-white dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-500 dark:text-cyan-400/80 shadow-sm">
+              <Clock size={12} />
+              Feature In Development
+            </div>
           </div>
         </div>
       </div>

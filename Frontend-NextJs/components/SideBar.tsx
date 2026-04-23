@@ -1,10 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import clsx from 'clsx';
-
 import {
   LayoutDashboard,
   Map,
@@ -12,166 +11,198 @@ import {
   CreditCard,
   Users,
   MessageSquare,
+  ChevronRight,
+  ChevronLeft,
+  X,
 } from 'lucide-react';
 
 import { UserRole } from '@/common/enums/role.enum';
-import { isAdmin } from '@/lib/auth';
+import { isAdmin } from '@/utils/auth-utils';
+import { cn } from '@/lib/utils';
 
-type NavItem = {
-  label: string;
-  href: string;
-  icon: any;
-};
+interface SideBarProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
 
-type NavSection = {
-  title: string;
-  items: NavItem[];
-};
-
-export default function SideBar() {
+export default function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   const pathname = usePathname();
   const { user } = useUser();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const role = user?.publicMetadata?.role as UserRole | undefined;
-
-  const sections: NavSection[] = isAdmin(role)
-    ? [
-        {
-          title: 'Dashboard',
-          items: [
-            {
-              label: 'Overview',
-              href: '/dashboard/admin',
-              icon: LayoutDashboard,
-            },
-          ],
-        },
-        {
-          title: 'Management',
-          items: [
-            { label: 'Tour Plans', href: '/dashboard/admin/tours', icon: Map },
-            {
-              label: 'Bookings',
-              href: '/dashboard/admin/bookings',
-              icon: Calendar,
-            },
-            {
-              label: 'Payments',
-              href: '/dashboard/admin/payments',
-              icon: CreditCard,
-            },
-          ],
-        },
-        {
-          title: 'Users',
-          items: [
-            { label: 'All Users', href: '/dashboard/admin/users', icon: Users },
-          ],
-        },
-        {
-          title: 'Support',
-          items: [
-            {
-              label: 'Messages',
-              href: '/dashboard/admin/messages',
-              icon: MessageSquare,
-            },
-          ],
-        },
-      ]
-    : [];
+  const sections = isAdmin(role) ? adminNav : [];
 
   return (
-    <aside className="w-64 h-screen sticky top-0 flex flex-col border-r backdrop-blur-xl transition-colors duration-300 bg-white/70 dark:bg-slate-950/70 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white">
-      {/* BRAND HEADER */}
-      <div className="px-6 py-5 border-b border-gray-200 dark:border-white/10">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
-            Tourvista Tours
-          </h2>
+    <>
+      {/* MOBILE OVERLAY */}
+      <div
+        className={cn(
+          'fixed inset-0 z-[60] bg-slate-950/40 backdrop-blur-sm lg:hidden transition-opacity duration-300',
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        )}
+        onClick={() => setIsOpen(false)}
+      />
 
-          <p className="text-xs text-slate-500 dark:text-white/40">
-            Admin Control Center
-          </p>
-        </div>
-      </div>
-
-      {/* NAVIGATION */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        {sections.map((section) => (
-          <div key={section.title}>
-            <p className="px-3 mb-2 text-[11px] uppercase tracking-wider text-slate-400 dark:text-white/30">
-              {section.title}
-            </p>
-
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const isActive =
-                  item.href === pathname
-                    ? pathname?.startsWith(item.href)
-                    : false;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={clsx(
-                      `
-                        relative flex items-center gap-3
-                        px-3 py-2 rounded-lg
-                        transition-all duration-300
-                        hover:bg-gray-100 dark:hover:bg-white/5
-                      `,
-                      isActive
-                        ? 'text-slate-900 dark:text-white'
-                        : 'text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white',
-                    )}
-                  >
-                    {/* ACTIVE BACKGROUND */}
-                    <span
-                      className={clsx(
-                        `
-                          absolute inset-0 rounded-lg transition-all duration-300
-                        `,
-                        isActive
-                          ? 'bg-blue-100 dark:bg-gradient-to-r dark:from-cyan-950 dark:via-blue-950 dark:to-indigo-950'
-                          : '',
-                      )}
-                    />
-
-                    {/* ACTIVE GLOW (dark only) */}
-                    {isActive && (
-                      <span className="absolute inset-0 rounded-lg bg-cyan-500/10 blur-xl opacity-40 dark:block hidden" />
-                    )}
-
-                    {/* ICON */}
-                    <Icon
-                      size={18}
-                      className={clsx(
-                        'relative z-10 transition',
-                        isActive
-                          ? 'text-blue-600 dark:text-cyan-300'
-                          : 'text-slate-400 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white',
-                      )}
-                    />
-
-                    {/* LABEL */}
-                    <span className="relative z-10 text-sm font-medium">
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
+      {/* SIDEBAR ASIDE */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-[70] flex flex-col border-r bg-white dark:bg-slate-950 border-slate-200 dark:border-white/10 transition-all duration-300 ease-in-out lg:relative lg:translate-x-0 h-full',
+          isOpen ? 'translate-x-0 w-[280px]' : '-translate-x-full',
+          isCollapsed ? 'lg:w-20' : 'lg:w-64',
+        )}
+      >
+        {/* BRAND HEADER */}
+        <header className="px-6 py-6 h-[73px] flex items-center justify-between border-b border-slate-200 dark:border-white/10 shrink-0">
+          <div
+            className={cn(
+              'transition-opacity',
+              isCollapsed ? 'lg:opacity-0 lg:hidden' : 'opacity-100',
+            )}
+          >
+            <h2 className="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-400 dark:to-blue-500 bg-clip-text text-transparent">
+              Tourvista Tours
+            </h2>
           </div>
-        ))}
-      </nav>
 
-      {/* FOOTER */}
-      <div className="px-4 py-4 border-t border-gray-200 dark:border-white/10 text-xs text-slate-500 dark:text-white/30">
-        © {new Date().getFullYear()} Tourvista Tours. All rights reserved.
-      </div>
-    </aside>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="lg:hidden p-1 text-slate-500"
+          >
+            <X size={20} />
+          </button>
+
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400"
+          >
+            <ChevronLeft
+              className={cn(
+                'transition-transform duration-300',
+                isCollapsed && 'rotate-180',
+              )}
+              size={18}
+            />
+          </button>
+        </header>
+
+        {/* NAVIGATION */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-8 custom-scrollbar">
+          {sections.map((section) => (
+            <div key={section.title} className="space-y-2">
+              <h3
+                className={cn(
+                  'px-3 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-white/20',
+                  isCollapsed ? 'lg:opacity-0' : 'opacity-100',
+                )}
+              >
+                {section.title}
+              </h3>
+              <div className="space-y-1">
+                {section.items.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== '/dashboard/admin' &&
+                      pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        'group relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200',
+                        isActive
+                          ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                          : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white',
+                      )}
+                    >
+                      <item.icon
+                        className={cn(
+                          'w-5 h-5 shrink-0 transition-colors',
+                          isActive
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300',
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          'text-sm font-semibold flex-1 transition-all duration-300',
+                          isCollapsed ? 'lg:opacity-0 lg:w-0' : 'opacity-100',
+                        )}
+                      >
+                        {item.label}
+                      </span>
+                      {isActive && !isCollapsed && (
+                        <ChevronRight className="w-4 h-4" />
+                      )}
+                      {isActive && (
+                        <div className="absolute left-0 w-1 h-5 bg-blue-600 dark:bg-blue-400 rounded-r-full" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* FOOTER */}
+        <footer className="p-4 border-t border-slate-200 dark:border-white/10 shrink-0">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-center">
+            <p
+              className={cn(
+                'text-[10px] text-slate-500 truncate',
+                isCollapsed && 'lg:hidden',
+              )}
+            >
+              © {new Date().getFullYear()} Tourvista{' '}
+              {user?.publicMetadata?.role === UserRole.ADMIN ? 'Admin' : 'User'}
+            </p>
+            {isCollapsed && (
+              <span className="text-[10px] font-bold text-blue-600">V1</span>
+            )}
+          </div>
+        </footer>
+      </aside>
+    </>
   );
 }
+
+// ... adminNav data stays the same
+
+const adminNav = [
+  {
+    title: 'Dashboard',
+    items: [
+      { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: 'Management',
+    items: [
+      { label: 'Tour Plans', href: '/dashboard/admin/tours', icon: Map },
+      { label: 'Bookings', href: '/dashboard/admin/bookings', icon: Calendar },
+      {
+        label: 'Payments',
+        href: '/dashboard/admin/payments',
+        icon: CreditCard,
+      },
+    ],
+  },
+  {
+    title: 'Users',
+    items: [
+      { label: 'All Users', href: '/dashboard/admin/users', icon: Users },
+    ],
+  },
+  {
+    title: 'Support',
+    items: [
+      {
+        label: 'Messages',
+        href: '/dashboard/admin/messages',
+        icon: MessageSquare,
+      },
+    ],
+  },
+];

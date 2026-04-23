@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { CreateContactDto } from './dto/create-contact.dto';
-import { toSriLankaDateTime } from '../../common/utils/date.util';
 
 @Injectable()
 export class ContactService {
@@ -79,7 +78,6 @@ export class ContactService {
     return {
       data: data.map((item) => ({
         ...item,
-        createdAt: toSriLankaDateTime(item.createdAt),
       })),
       meta: {
         total,

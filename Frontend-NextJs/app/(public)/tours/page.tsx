@@ -3,21 +3,46 @@ import SectionTitle from '../../../components/common/SectionTitle';
 import PlaceSection from '@/components/common/PlaceSection';
 
 export const metadata = {
-  title: 'Tours & Activities | TourVista Sri Lanka',
+  title: 'Tours & Activities | Curated Sri Lankan Adventures | Tourvista Tours',
   description:
-    'Discover exciting tours and activities in Sri Lanka with TourVista. Explore mountain hiking, kayaking adventures, city sightseeing, and more for unforgettable travel experiences.',
+    'Experience the best of Sri Lanka. From the misty peaks of Ella to kayaking in Bentota and historic city walks. Book your authentic Sri Lankan tour with Tourvista today.',
   keywords: [
-    'Sri Lanka tours',
-    'Sri Lanka activities',
-    'mountain hiking',
-    'kayaking adventure',
-    'city sightseeing',
+    'Best Sri Lanka tour packages 2026',
+    'Sri Lanka adventure activities',
+    'Hiking tours Sri Lanka',
+    'Water sports Sri Lanka',
+    'Guided sightseeing tours',
+    'Sri Lanka holiday packages',
   ],
+  openGraph: {
+    title: 'Unforgettable Tours & Activities in Sri Lanka | Tourvista Tours',
+    description:
+      'Adventure, culture, and nature. Explore our handpicked Sri Lankan experiences.',
+    url: 'https://tourvistatours.com/tours',
+    siteName: 'Tourvista Tours',
+    images: [
+      {
+        url: 'https://tourvistatours.com/logo.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Tourvista Tours Sri Lanka',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sri Lanka Tours & Activities | Unforgettable Experiences',
+    description:
+      'Book your next adventure in Sri Lanka. From hiking and kayaking to cultural city walks.',
+    images: ['https://tourvistatours.com/logo.webp'],
+  },
 };
 
-const toursData = await getTours();
+export default async function Tours() {
+  const toursData = await getTours();
 
-export default function Tours() {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <SectionTitle

@@ -1,21 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   getMessages,
   markMessageRead,
   deleteMessageById,
 } from '../services/message.service';
-
 import { Message, MessageFilters } from '../types/message.types';
-import { messageFilterSchema } from '../schemas/message.filter.schema';
-
 import toast from 'react-hot-toast';
 
 export function useMessages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -32,88 +28,45 @@ export function useMessages() {
     key: K,
     value: MessageFilters[K],
   ) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
   };
 
-  const buildQuery = () => {
-    const params = new URLSearchParams();
-
-    const parsed = messageFilterSchema.safeParse({
-      page: filters.page,
-      limit: filters.limit,
-
-      search: filters.search || undefined,
-      isRead: filters.isRead === 'all' ? undefined : filters.isRead === 'true',
-      fromDate: filters.fromDate ? new Date(filters.fromDate) : undefined,
-      toDate: filters.toDate ? new Date(filters.toDate) : undefined,
-    });
-
-    if (!parsed.success) {
-      toast.error(parsed.error.toString());
-      return '';
-    }
-
-    const data = parsed.data;
-
-    params.append('page', String(data.page));
-    params.append('limit', String(data.limit));
-
-    if (data.search) params.append('search', data.search);
-    if (typeof data.isRead === 'boolean') {
-      params.append('isRead', String(data.isRead));
-    }
-    if (data.fromDate) {
-      params.append('fromDate', data.fromDate.toISOString());
-    }
-    if (data.toDate) {
-      params.append('toDate', data.toDate.toISOString());
-    }
-
-    return params.toString();
-  };
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMessages(buildQuery());
-      setMessages(res.data || []);
-      setTotalPages(res.meta?.totalPages || 1);
-      setTotal(res.meta?.total || 0);
+      const res = await getMessages(filters);
+      setMessages(res.data);
+      setTotal(res.meta.total);
+      setTotalPages(res.meta.totalPages);
     } catch (err: any) {
       toast.error(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   const toggleReadStatus = async (id: number) => {
+    const message = messages.find((m) => m.id === id);
+    if (!message) return;
+
+    const newStatus = !message.isRead;
     try {
-      const message = messages.find((m) => m.id === id);
-      if (!message) {
-        toast.error('Message not found to toggle status');
-        return;
-      }
-      const newStatus = !message.isRead;
-
-      await markMessageRead(id, newStatus);
-      toast.success(
-        newStatus
-          ? 'Marked as read successfully'
-          : 'Marked as unread successfully',
-      );
-
       setMessages((prev) =>
         prev.map((m) => (m.id === id ? { ...m, isRead: newStatus } : m)),
       );
+
+      await markMessageRead(id, newStatus);
+      toast.success(`Message marked as ${newStatus ? 'read' : 'unread'}`);
     } catch (err: any) {
+      setMessages((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, isRead: !newStatus } : m)),
+      );
       toast.error(err.message);
     }
   };
 
   const deleteMessage = async (id: number) => {
+    if (!confirm('Are you sure?')) return;
     try {
       await deleteMessageById(id);
       toast.success('Message deleted successfully');
@@ -125,7 +78,7 @@ export function useMessages() {
 
   useEffect(() => {
     fetchMessages();
-  }, [filters]);
+  }, [fetchMessages]);
 
   return {
     messages,

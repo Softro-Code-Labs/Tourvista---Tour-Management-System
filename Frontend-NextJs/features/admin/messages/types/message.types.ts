@@ -8,11 +8,23 @@ export type Message = {
   createdAt: string;
 };
 
+export type PaginationMeta = {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
+
+export type MessageResponse = {
+  data: Message[];
+  meta: PaginationMeta;
+};
+
 export type MessageFilters = {
   page: number;
   limit: number;
-  search: string;
-  isRead: 'all' | 'true' | 'false';
-  fromDate: string;
-  toDate: string;
+  search?: string;
+  isRead?: 'all' | 'true' | 'false';
+  fromDate?: string;
+  toDate?: string;
 };

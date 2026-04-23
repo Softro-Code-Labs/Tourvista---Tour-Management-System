@@ -1,4 +1,4 @@
-import type { Section } from '@/features/culture/types/culture';
+import type { Section } from '@/features/attractions/types/attractions.types.';
 
 type RawSection = {
   sectionId: number;
@@ -20,7 +20,7 @@ type RawImage = {
   imageUrl: string;
 };
 
-export function mapCulture(
+export function mapAttractions(
   rawSections: RawSection[],
   rawPlaces: RawPlace[],
   rawImages: RawImage[],
