@@ -16,8 +16,8 @@ import { QueryBookingDto } from './dto/query-booking.dto';
 import { UpdateBookingAdminDto } from './dto/update-booking-admin.dto';
 import { UpdateBookingUserDto } from './dto/update-booking-user.dto';
 
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enums/role.enum';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/enums/role.enum';
 
 @Controller('v1/bookings')
 export class BookingsController {

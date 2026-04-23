@@ -12,9 +12,9 @@ import { ContactService } from './contact.service';
 
 import { CreateContactDto } from './dto/create-contact.dto';
 
-import { Public } from '../auth/decorators/public.decorator';
-import { Roles } from '../auth/decorators/roles.decorator';
-import { Role } from '../auth/enums/role.enum';
+import { Public } from '../../auth/decorators/public.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { Role } from '../../auth/enums/role.enum';
 
 @Controller('v1/contact')
 export class ContactController {
