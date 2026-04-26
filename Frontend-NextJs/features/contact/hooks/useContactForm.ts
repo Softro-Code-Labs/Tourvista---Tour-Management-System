@@ -1,72 +1,60 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useUser } from '@clerk/nextjs';
-import { ContactFormData } from '../types/contact.types';
-import { sendContactMessage } from '../services/contact.service';
-import { contactSchema } from '../schemas/contact.schema';
 import toast from 'react-hot-toast';
 
-const INITIAL_STATE: ContactFormData = {
-  name: '',
-  email: '',
-  subject: '',
-  message: '',
-};
+import { ContactFormData } from '../types/contact.types';
+import { contactService } from '../services/contact.service';
+import { contactSchema } from '../schemas/contact.schema';
 
 export function useContactForm() {
-  const [form, setForm] = useState<ContactFormData>(INITIAL_STATE);
-  const [loading, setLoading] = useState(false);
-
   const { user, isLoaded } = useUser();
 
+  const methods = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      subject: '',
+      message: '',
+    },
+  });
+
+  const {
+    reset,
+    setValue,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  // Autofill Clerk User Data
   useEffect(() => {
     if (isLoaded && user) {
-      setForm((prev) => ({
-        ...prev,
-        email: prev.email || user.emailAddresses[0]?.emailAddress || '',
-        name:
-          prev.name || `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
-      }));
+      setValue('email', user.emailAddresses[0]?.emailAddress || '');
+      setValue('name', `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim());
     }
-  }, [isLoaded, user]);
+  }, [isLoaded, user, setValue]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setForm((prev) => ({ ...prev, [name]: value }));
-    },
-    [],
-  );
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const validation = contactSchema.safeParse(form);
-    if (!validation.success) {
-      toast.error(validation.error.issues[0].message);
-      return;
-    }
-
-    setLoading(true);
-
+  const onSubmit = async (data: ContactFormData) => {
     try {
-      await sendContactMessage(validation.data);
-
-      toast.success('Message sent successfully ✈️');
-      setForm(INITIAL_STATE);
+      const res = await contactService.create(data);
+      if (res?.success) {
+        toast.success('Message sent! We will get back to you soon.');
+        reset();
+      } else {
+        throw new Error(res?.message || 'Submission failed');
+      }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send message');
-    } finally {
-      setLoading(false);
+      toast.error(err.message || 'Failed to send message. Please try again.');
     }
   };
 
   return {
-    form,
-    loading,
-
-    handleChange,
-    handleSubmit,
+    methods,
+    onSubmit: handleSubmit(onSubmit),
+    loading: isSubmitting,
   };
 }

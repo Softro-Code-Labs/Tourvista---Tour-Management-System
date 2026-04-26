@@ -1,3 +1,4 @@
+import { Transform, Type } from 'class-transformer';
 import {
   IsString,
   IsNumber,
@@ -5,7 +6,6 @@ import {
   IsBoolean,
   IsNotEmpty,
   Min,
-  Max,
   MinLength,
   MaxLength,
 } from 'class-validator';
@@ -29,10 +29,12 @@ export class CreateTourDto {
   @MaxLength(100, { message: 'Location must be at most 100 characters' })
   location!: string;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(0, { message: 'Price must not be negative' })
   price!: number;
 
+  @Type(() => Number)
   @IsNumber()
   @Min(0, { message: 'Duration must not be negative' })
   duration!: number;
@@ -42,6 +44,11 @@ export class CreateTourDto {
   image?: string;
 
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
   @IsBoolean()
   isActive?: boolean;
 }

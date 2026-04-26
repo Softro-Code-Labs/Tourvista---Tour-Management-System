@@ -11,7 +11,9 @@ export async function createRequest(
   requireAuth: boolean = true,
 ) {
   const headers = new Headers(options.headers);
-  headers.set('Content-Type', 'application/json');
+  if (!(options.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
 
   if (requireAuth) {
     const { getToken } = await auth();

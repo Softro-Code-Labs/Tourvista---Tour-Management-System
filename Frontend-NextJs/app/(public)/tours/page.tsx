@@ -1,6 +1,6 @@
 import { getTours } from '@/features/tours/api/getTours';
-import SectionTitle from '../../../components/common/SectionTitle';
-import PlaceSection from '@/components/common/PlaceSection';
+import SectionTitle from '../../../components/sections/SectionTitle';
+import PlaceSection from '@/components/sections/PlaceSection';
 
 export const metadata = {
   title: 'Tours & Activities | Curated Sri Lankan Adventures | Tourvista Tours',

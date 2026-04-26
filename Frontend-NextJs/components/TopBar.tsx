@@ -52,7 +52,7 @@ export default function TopBar({ onMenuClick }: TopBarProps) {
         <div className="flex items-center gap-2 md:gap-4">
           {mounted ? (
             <>
-              <ThemeToggle variant="compact" />
+              <ThemeToggle variant="default" />
 
               <div className="h-8 w-[1px] bg-slate-200 dark:bg-white/10 mx-1" />
 

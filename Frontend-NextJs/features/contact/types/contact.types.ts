@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export type ContactFormData = z.infer<typeof contactSchema>;
 
-// Backend response structure
+// BACKEND RESPONSE STRUCTURE
 export type ContactResponse = {
   success: boolean;
   message: string;

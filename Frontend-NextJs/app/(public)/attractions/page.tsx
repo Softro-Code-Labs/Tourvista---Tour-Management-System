@@ -1,6 +1,6 @@
 import { getAttractions } from '@/features/attractions/api/getAttractions';
-import SectionTitle from '../../../components/common/SectionTitle';
-import PlaceSection from '@/components/common/PlaceSection';
+import SectionTitle from '../../../components/sections/SectionTitle';
+import PlaceSection from '@/components/sections/PlaceSection';
 
 export const metadata = {
   title: 'Top Attractions in Sri Lanka | Iconic Landmarks & Hidden Gems',

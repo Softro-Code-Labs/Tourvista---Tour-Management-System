@@ -1,6 +1,6 @@
-import SectionDivider from '@/components/common/SectionDivider';
-import SectionTitle from '../../components/common/SectionTitle';
-import Hero from '../../components/Hero';
+import SectionDivider from '@/components/sections/SectionDivider';
+import SectionTitle from '../../components/sections/SectionTitle';
+import Hero from '../../components/sections/Hero';
 import Link from 'next/link';
 import { ShieldCheck, Heart, GraduationCap, Clock } from 'lucide-react';
 

@@ -1,6 +1,6 @@
 import { getCulture } from '@/features/culture/api/getCulture';
-import SectionTitle from '../../../components/common/SectionTitle';
-import PlaceSection from '@/components/common/PlaceSection';
+import SectionTitle from '../../../components/sections/SectionTitle';
+import PlaceSection from '@/components/sections/PlaceSection';
 
 export const metadata = {
   title: 'Local Culture & Heritage | The Soul of Sri Lanka | Tourvista Tours',

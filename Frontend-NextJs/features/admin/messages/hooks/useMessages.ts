@@ -6,40 +6,64 @@ import {
   markMessageRead,
   deleteMessageById,
 } from '../services/message.service';
-import { Message, MessageFilters } from '../types/message.types';
+import {
+  Message,
+  MessageFilters,
+  MessageResponse,
+} from '../types/message.types';
 import toast from 'react-hot-toast';
 
 export function useMessages() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-
+  const [meta, setMeta] = useState<MessageResponse['meta']>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+  });
   const [filters, setFilters] = useState<MessageFilters>({
     page: 1,
     limit: 10,
     search: '',
-    isRead: 'all',
+    isRead: 'false',
     fromDate: '',
     toDate: '',
   });
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const setFilter = <K extends keyof MessageFilters>(
-    key: K,
-    value: MessageFilters[K],
+  const setFilter = (
+    key: keyof MessageFilters,
+    value: MessageFilters[keyof MessageFilters],
   ) => {
-    setFilters((prev) => ({ ...prev, [key]: value, page: 1 }));
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+      page: key === 'page' ? (value as number) : 1,
+    }));
   };
 
   const fetchMessages = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getMessages(filters);
-      setMessages(res.data);
-      setTotal(res.meta.total);
-      setTotalPages(res.meta.totalPages);
+      // CLEAN FILTERS TO AVOID SENDING UNNECESSARY QUERY PARAMS
+      const cleanFilters = Object.fromEntries(
+        Object.entries(filters).filter(([_, v]) => v !== '' && v !== undefined),
+      );
+
+      const res = await getMessages(cleanFilters);
+      if (res.success) {
+        setMessages(res.data.data);
+        setMeta(res.data.meta);
+      } else {
+        toast.error(
+          'Failed to load messages - ' + (res.message || 'Unknown error'),
+        );
+      }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(
+        'Failed to load messages - ' + (err.message || 'Unknown error'),
+      );
     } finally {
       setLoading(false);
     }
@@ -66,13 +90,24 @@ export function useMessages() {
   };
 
   const deleteMessage = async (id: number) => {
-    if (!confirm('Are you sure?')) return;
+    setIsDeleting(true);
     try {
-      await deleteMessageById(id);
-      toast.success('Message deleted successfully');
-      fetchMessages();
+      const res = await deleteMessageById(id);
+      if (res.success || res.id) {
+        toast.success('Message deleted successfully');
+        fetchMessages();
+        return true;
+      } else {
+        toast.error(
+          'Failed to delete message - ' + (res.message || 'Unknown error'),
+        );
+      }
     } catch (err: any) {
-      toast.error(err.message);
+      toast.error(
+        'Failed to delete message - ' + (err.message || 'Unknown error'),
+      );
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -82,16 +117,16 @@ export function useMessages() {
 
   return {
     messages,
+    meta,
     loading,
 
     filters,
     setFilter,
 
-    total,
-    totalPages,
-
     fetchMessages,
     toggleReadStatus,
+
     deleteMessage,
+    isDeleting,
   };
 }

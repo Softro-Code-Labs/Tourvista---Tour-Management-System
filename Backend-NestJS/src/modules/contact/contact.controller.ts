@@ -11,6 +11,7 @@ import {
 import { ContactService } from './contact.service';
 
 import { CreateContactDto } from './dto/create-contact.dto';
+import { FilterContactDto } from './dto/filter-contact.dto';
 
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
@@ -28,20 +29,8 @@ export class ContactController {
 
   @Get()
   @Roles(Role.ADMIN)
-  findAll(
-    @Query('page') page = '1',
-    @Query('limit') limit = '10',
-    @Query('search') search?: string,
-    @Query('fromDate') fromDate?: string,
-    @Query('toDate') toDate?: string,
-    @Query('isRead') isRead?: string,
-  ) {
-    return this.contactService.findAll(+page, +limit, {
-      search,
-      fromDate,
-      toDate,
-      isRead,
-    });
+  findAll(@Query() query: FilterContactDto) {
+    return this.contactService.findAll(query);
   }
 
   @Patch(':id/read')

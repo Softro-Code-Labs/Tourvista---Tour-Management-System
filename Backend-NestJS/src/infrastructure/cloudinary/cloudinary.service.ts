@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import * as path from 'path';
 
 @Injectable()
 export class CloudinaryService {
@@ -10,11 +9,12 @@ export class CloudinaryService {
     file: Express.Multer.File,
     folder: string,
     existingPublicId?: string,
+    data?: { title: string | undefined; location: string | undefined },
   ): Promise<UploadApiResponse> {
     return new Promise((resolve, reject) => {
-      const publicId =
-        existingPublicId ||
-        `${path.parse(file.originalname).name}-${Date.now()}`;
+      const publicId = existingPublicId
+        ? existingPublicId.split('/').pop()
+        : `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
 
       const upload = this.v2.uploader.upload_stream(
         {
@@ -23,10 +23,10 @@ export class CloudinaryService {
           overwrite: true,
           invalidate: true,
           transformation: [
-            { width: 800, height: 600, crop: 'limit' },
-            { quality: 'auto' },
-            { fetch_format: 'auto' },
+            { width: 1280, height: 720, crop: 'fill', gravity: 'auto' },
+            { quality: 'auto', fetch_format: 'auto' },
           ],
+          context: { alt: data?.title, caption: data?.location },
         },
         (error, result) => {
           if (error) return reject(error);
@@ -38,11 +38,23 @@ export class CloudinaryService {
     });
   }
 
+  async deleteImage(publicId: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.v2.uploader.destroy(
+        publicId,
+        { invalidate: true },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+    });
+  }
+
   extractPublicId(url: string): string {
     const parts = url.split('/');
-    const lastPart = parts.pop() || '';
-    const fileName = lastPart.split('.')[0];
-
-    return fileName;
+    const uploadIndex = parts.findIndex((part) => part === 'upload');
+    const publicIdWithExtension = parts.slice(uploadIndex + 2).join('/');
+    return publicIdWithExtension.split('.')[0];
   }
 }

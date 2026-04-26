@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CloudinaryService } from '../../infrastructure/cloudinary/cloudinary.service';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { CreateTourDto } from './dto/create-tour.dto';
@@ -12,6 +12,20 @@ export class ToursService {
     private cloudinary: CloudinaryService,
   ) {}
 
+  async getStats() {
+    const [total, active, inactive] = await Promise.all([
+      this.prisma.tour.count(),
+      this.prisma.tour.count({ where: { isActive: true } }),
+      this.prisma.tour.count({ where: { isActive: false } }),
+    ]);
+
+    return {
+      total,
+      active,
+      inactive,
+    };
+  }
+
   async create(data: CreateTourDto, file?: Express.Multer.File) {
     let imageUrl = data.image;
 
@@ -19,6 +33,8 @@ export class ToursService {
       const uploadResult = await this.cloudinary.uploadImage(
         file,
         'tour-plans',
+        undefined,
+        { title: data.title, location: data.location },
       );
       imageUrl = uploadResult.secure_url;
     }
@@ -40,7 +56,7 @@ export class ToursService {
 
     const where: any = {};
 
-    // 🔍 SEARCH FILTER
+    // SEARCH FILTER
     if (filters.search) {
       where.OR = [
         { title: { contains: filters.search, mode: 'insensitive' } },
@@ -49,15 +65,7 @@ export class ToursService {
       ];
     }
 
-    // 📍 LOCATION FILTER
-    if (filters.location) {
-      where.location = {
-        contains: filters.location,
-        mode: 'insensitive',
-      };
-    }
-
-    // 💰 PRICE RANGE FILTER
+    // PRICE RANGE FILTER
     if (filters.minPrice || filters.maxPrice) {
       where.price = {
         ...(filters.minPrice && { gte: Number(filters.minPrice) }),
@@ -65,7 +73,7 @@ export class ToursService {
       };
     }
 
-    // 🔘 ACTIVE FILTER
+    // ACTIVE FILTER
     if (filters.isActive !== undefined) {
       where.isActive = filters.isActive;
     }
@@ -100,24 +108,37 @@ export class ToursService {
   async update(id: number, data: UpdateTourDto, file?: Express.Multer.File) {
     const updateData: any = { ...data };
 
+    // HANDLE IMAGE UPDATE
     if (file) {
-      const currentTour = await this.prisma.tour.findUnique({ where: { id } });
-      let existingId: string | undefined;
+      const existingId = data.image
+        ? this.cloudinary.extractPublicId(data.image)
+        : undefined;
 
-      if (currentTour?.image) {
-        existingId = this.cloudinary.extractPublicId(currentTour.image);
+      const { secure_url } = await this.cloudinary.uploadImage(
+        file,
+        'tour-plans',
+        existingId,
+        { title: data.title, location: data.location },
+      );
+
+      updateData.image = secure_url;
+    }
+    // HANDLE IMAGE REMOVAL
+    else if (data.image === null || data.image === '') {
+      const current = await this.prisma.tour.findUnique({
+        where: { id },
+        select: { image: true },
+      });
+
+      if (current?.image) {
+        const publicId = this.cloudinary.extractPublicId(current.image);
+        await this.cloudinary
+          .deleteImage(publicId)
+          .catch((err) => Logger.error(err));
       }
 
-      const uploadResult = await this.cloudinary.uploadImage(
-        file,
-        'tourvista/tours',
-        existingId,
-      );
-      updateData.image = uploadResult.secure_url;
+      updateData.image = null;
     }
-
-    if (data.price) updateData.price = Number(data.price);
-    if (data.duration) updateData.duration = Number(data.duration);
 
     return this.prisma.tour.update({
       where: { id },
@@ -126,6 +147,19 @@ export class ToursService {
   }
 
   async remove(id: number) {
+    const tour = await this.prisma.tour.findUnique({ where: { id } });
+
+    // DELETE IMAGE FROM CLOUDINARY IF EXISTS
+    if (tour?.image) {
+      this.cloudinary
+        .deleteImage(this.cloudinary.extractPublicId(tour.image))
+        .catch((error) => {
+          Logger.error(
+            `Failed to delete image for tour ID ${id} from Cloudinary: ${error}`,
+          );
+        });
+    }
+
     return this.prisma.tour.delete({
       where: { id },
     });
