@@ -1,5 +1,5 @@
 import { fetchSheet } from '@/features/tours/services/tours.service';
-import { mapTours } from '@/utils/tours.mapper';
+import { mapTours } from '@/features/tours/utils/tours.mapper';
 
 export async function getTours() {
   const [sectionsRes, placesRes, imagesRes] = await Promise.all([

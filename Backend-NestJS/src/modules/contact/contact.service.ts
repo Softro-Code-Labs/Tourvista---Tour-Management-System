@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { CreateContactDto } from './dto/create-contact.dto';
-import { toSriLankaDateTime } from '../../common/utils/date.util';
+import { FilterContactDto } from './dto/filter-contact.dto';
 
 @Injectable()
 export class ContactService {
@@ -13,29 +13,20 @@ export class ContactService {
     });
   }
 
-  async findAll(
-    page = 1,
-    limit = 10,
-    filters?: {
-      search?: string;
-      fromDate?: string;
-      toDate?: string;
-      isRead?: string;
-    },
-  ) {
+  async findAll(filters: FilterContactDto) {
+    const page = Number(filters.page || 1);
+    const limit = Number(filters.limit || 10);
     const skip = (page - 1) * limit;
 
-    let where: any = {};
+    const where: any = {};
 
     // SEARCH FILTER
     if (filters?.search) {
-      where = {
-        OR: [
-          { name: { contains: filters.search, mode: 'insensitive' } },
-          { email: { contains: filters.search, mode: 'insensitive' } },
-          { subject: { contains: filters.search, mode: 'insensitive' } },
-        ],
-      };
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        { email: { contains: filters.search, mode: 'insensitive' } },
+        { subject: { contains: filters.search, mode: 'insensitive' } },
+      ];
     }
 
     // DATE RANGE FILTER
@@ -45,6 +36,7 @@ export class ContactService {
       if (filters.fromDate) {
         const from = new Date(filters.fromDate);
         if (!isNaN(from.getTime())) {
+          from.setHours(0, 0, 0, 0);
           where.createdAt.gte = from;
         }
       }
@@ -52,6 +44,7 @@ export class ContactService {
       if (filters.toDate) {
         const to = new Date(filters.toDate);
         if (!isNaN(to.getTime())) {
+          to.setHours(23, 59, 59, 999);
           where.createdAt.lte = to;
         }
       }
@@ -59,11 +52,7 @@ export class ContactService {
 
     // IS READ FILTER
     if (filters?.isRead !== undefined) {
-      if (filters.isRead === 'true') {
-        where.isRead = true;
-      } else if (filters.isRead === 'false') {
-        where.isRead = false;
-      }
+      where.isRead = filters.isRead;
     }
 
     const [data, total] = await this.prisma.$transaction([
@@ -77,10 +66,7 @@ export class ContactService {
     ]);
 
     return {
-      data: data.map((item) => ({
-        ...item,
-        createdAt: toSriLankaDateTime(item.createdAt),
-      })),
+      data,
       meta: {
         total,
         page,

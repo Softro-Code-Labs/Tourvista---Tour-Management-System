@@ -25,6 +25,12 @@ import { Role } from '../../auth/enums/role.enum';
 export class ToursController {
   constructor(private readonly toursService: ToursService) {}
 
+  @Get('stats')
+  @Roles(Role.ADMIN)
+  getStats() {
+    return this.toursService.getStats();
+  }
+
   @Post()
   @Roles(Role.ADMIN)
   @UseInterceptors(FileInterceptor('image'))

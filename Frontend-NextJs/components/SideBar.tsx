@@ -1,10 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import clsx from 'clsx';
-
 import {
   LayoutDashboard,
   Map,
@@ -12,166 +11,224 @@ import {
   CreditCard,
   Users,
   MessageSquare,
+  ChevronLeft,
+  X,
+  Sparkles,
 } from 'lucide-react';
 
 import { UserRole } from '@/common/enums/role.enum';
-import { isAdmin } from '@/lib/auth';
+import { isAdmin } from '@/utils/auth-utils';
+import { cn } from '@/lib/utils';
 
-type NavItem = {
-  label: string;
-  href: string;
-  icon: any;
-};
+interface SideBarProps {
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+}
 
-type NavSection = {
-  title: string;
-  items: NavItem[];
-};
-
-export default function SideBar() {
+export default function SideBar({ isOpen, setIsOpen }: SideBarProps) {
   const pathname = usePathname();
   const { user } = useUser();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const role = user?.publicMetadata?.role as UserRole | undefined;
-
-  const sections: NavSection[] = isAdmin(role)
-    ? [
-        {
-          title: 'Dashboard',
-          items: [
-            {
-              label: 'Overview',
-              href: '/dashboard/admin',
-              icon: LayoutDashboard,
-            },
-          ],
-        },
-        {
-          title: 'Management',
-          items: [
-            { label: 'Tour Plans', href: '/dashboard/admin/tours', icon: Map },
-            {
-              label: 'Bookings',
-              href: '/dashboard/admin/bookings',
-              icon: Calendar,
-            },
-            {
-              label: 'Payments',
-              href: '/dashboard/admin/payments',
-              icon: CreditCard,
-            },
-          ],
-        },
-        {
-          title: 'Users',
-          items: [
-            { label: 'All Users', href: '/dashboard/admin/users', icon: Users },
-          ],
-        },
-        {
-          title: 'Support',
-          items: [
-            {
-              label: 'Messages',
-              href: '/dashboard/admin/messages',
-              icon: MessageSquare,
-            },
-          ],
-        },
-      ]
-    : [];
+  const sections = isAdmin(role) ? adminNav : [];
 
   return (
-    <aside className="w-64 h-screen sticky top-0 flex flex-col border-r backdrop-blur-xl transition-colors duration-300 bg-white/70 dark:bg-slate-950/70 border-gray-200 dark:border-white/10 text-slate-900 dark:text-white">
-      {/* BRAND HEADER */}
-      <div className="px-6 py-5 border-b border-gray-200 dark:border-white/10">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold tracking-tight bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent">
-            Tourvista Tours
-          </h2>
+    <>
+      {/* MOBILE OVERLAY */}
+      <div
+        className={cn(
+          'fixed inset-0 z-[60] bg-slate-950/20 backdrop-blur-sm lg:hidden transition-opacity duration-300',
+          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none',
+        )}
+        onClick={() => setIsOpen(false)}
+      />
 
-          <p className="text-xs text-slate-500 dark:text-white/40">
-            Admin Control Center
-          </p>
-        </div>
-      </div>
-
-      {/* NAVIGATION */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
-        {sections.map((section) => (
-          <div key={section.title}>
-            <p className="px-3 mb-2 text-[11px] uppercase tracking-wider text-slate-400 dark:text-white/30">
-              {section.title}
-            </p>
-
-            <div className="space-y-1">
-              {section.items.map((item) => {
-                const Icon = item.icon;
-                const isActive =
-                  item.href === pathname
-                    ? pathname?.startsWith(item.href)
-                    : false;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={clsx(
-                      `
-                        relative flex items-center gap-3
-                        px-3 py-2 rounded-lg
-                        transition-all duration-300
-                        hover:bg-gray-100 dark:hover:bg-white/5
-                      `,
-                      isActive
-                        ? 'text-slate-900 dark:text-white'
-                        : 'text-slate-500 dark:text-white/60 hover:text-slate-900 dark:hover:text-white',
-                    )}
-                  >
-                    {/* ACTIVE BACKGROUND */}
-                    <span
-                      className={clsx(
-                        `
-                          absolute inset-0 rounded-lg transition-all duration-300
-                        `,
-                        isActive
-                          ? 'bg-blue-100 dark:bg-gradient-to-r dark:from-cyan-950 dark:via-blue-950 dark:to-indigo-950'
-                          : '',
-                      )}
-                    />
-
-                    {/* ACTIVE GLOW (dark only) */}
-                    {isActive && (
-                      <span className="absolute inset-0 rounded-lg bg-cyan-500/10 blur-xl opacity-40 dark:block hidden" />
-                    )}
-
-                    {/* ICON */}
-                    <Icon
-                      size={18}
-                      className={clsx(
-                        'relative z-10 transition',
-                        isActive
-                          ? 'text-blue-600 dark:text-cyan-300'
-                          : 'text-slate-400 dark:text-white/40 group-hover:text-slate-900 dark:group-hover:text-white',
-                      )}
-                    />
-
-                    {/* LABEL */}
-                    <span className="relative z-10 text-sm font-medium">
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
+      {/* SIDEBAR ASIDE */}
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 z-[70] flex flex-col border-r bg-[#fcfcfd] dark:bg-[#020617] border-slate-100 dark:border-slate-800/50 transition-all duration-500 ease-in-out lg:relative lg:translate-x-0 h-full',
+          isOpen ? 'translate-x-0 w-[290px]' : '-translate-x-full',
+          isCollapsed ? 'lg:w-24' : 'lg:w-72',
+        )}
+      >
+        {/* BRAND HEADER */}
+        <header className="px-6 py-6 h-[81px] flex items-center justify-between border-b border-slate-100 dark:border-slate-800/50 shrink-0">
+          <div
+            className={cn(
+              'flex items-center gap-3 transition-opacity duration-300',
+              isCollapsed ? 'lg:opacity-0 lg:hidden' : 'opacity-100',
+            )}
+          >
+            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-blue-500/20">
+              T
+            </div>
+            <div className="space-y-0.5">
+              <h2 className="text-lg font-black tracking-tighter text-slate-900 dark:text-white leading-none">
+                Tourvista<span className="text-blue-500"> Tours</span>
+              </h2>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none">
+                Admin Studio
+              </p>
             </div>
           </div>
-        ))}
-      </nav>
 
-      {/* FOOTER */}
-      <div className="px-4 py-4 border-t border-gray-200 dark:border-white/10 text-xs text-slate-500 dark:text-white/30">
-        © {new Date().getFullYear()} Tourvista Tours. All rights reserved.
-      </div>
-    </aside>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-xl"
+          >
+            <X size={20} />
+          </button>
+
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 dark:text-slate-600 hover:text-blue-600 transition-colors cursor-pointer"
+          >
+            <ChevronLeft
+              className={cn(
+                'transition-transform duration-500 ease-in-out',
+                isCollapsed && 'rotate-180 text-blue-500',
+              )}
+              size={18}
+            />
+          </button>
+        </header>
+
+        {/* NAVIGATION */}
+        <nav className="flex-1 overflow-y-auto p-5 space-y-9 custom-scrollbar">
+          {sections.map((section) => (
+            <div key={section.title} className="space-y-3">
+              <h3
+                className={cn(
+                  'px-4 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400/80 dark:text-slate-600 transition-opacity duration-300',
+                  isCollapsed ? 'lg:opacity-0' : 'opacity-100',
+                )}
+              >
+                {section.title}
+              </h3>
+              <div className="space-y-1.5">
+                {section.items.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== '/dashboard/admin' &&
+                      pathname.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        'group relative flex items-center transition-all duration-300 ease-in-out rounded-xl',
+                        isActive
+                          ? 'font-bold bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm border border-slate-100 dark:border-slate-800'
+                          : 'text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-900/50 hover:text-slate-900 dark:hover:text-white',
+                        isCollapsed
+                          ? 'lg:justify-center lg:px-0 lg:py-4'
+                          : 'gap-3.5 px-4 py-3.5',
+                      )}
+                    >
+                      <item.icon
+                        className={cn(
+                          'w-5 h-5 shrink-0 transition-all duration-300',
+                          isActive
+                            ? 'text-blue-600 dark:text-blue-400'
+                            : 'text-slate-400 group-hover:text-blue-500 dark:group-hover:text-blue-400 group-hover:scale-110',
+                        )}
+                        strokeWidth={isActive ? 2.5 : 2}
+                      />
+
+                      <span
+                        className={cn(
+                          'text-sm transition-all duration-500 ease-in-out whitespace-nowrap',
+                          isCollapsed
+                            ? 'lg:opacity-0 lg:w-0 lg:absolute'
+                            : 'opacity-100',
+                          isActive
+                            ? 'font-black tracking-tight text-slate-950 dark:text-white'
+                            : 'font-semibold',
+                        )}
+                      >
+                        {item.label}
+                      </span>
+
+                      {isActive && (
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-blue-600 dark:bg-blue-400 rounded-r-full animate-in fade-in slide-in-from-left-2" />
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* FOOTER */}
+        <footer className="p-5 border-t border-slate-100 dark:border-slate-800/50 shrink-0 bg-white/50 dark:bg-black/10">
+          <div className="flex items-center gap-3 p-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 shadow-inner">
+            <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-blue-500 border border-slate-200 dark:border-slate-700 shrink-0">
+              <Sparkles size={18} className="animate-pulse" />
+            </div>
+            <div
+              className={cn(
+                'flex-1 overflow-hidden transition-all duration-300',
+                isCollapsed && 'lg:hidden',
+              )}
+            >
+              <p className="text-xs font-black text-slate-900 dark:text-white truncate">
+                Tourvista{' '}
+                {user?.publicMetadata?.role === UserRole.ADMIN
+                  ? 'Admin'
+                  : 'User'}
+              </p>
+              <p className="text-[10px] font-bold text-emerald-500 flex items-center gap-1.5 leading-none mt-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Sync Active
+              </p>
+            </div>
+          </div>
+        </footer>
+      </aside>
+    </>
   );
 }
+
+const adminNav = [
+  {
+    title: 'Core Activity',
+    items: [
+      { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },
+    ],
+  },
+  {
+    title: 'Logistics',
+    items: [
+      { label: 'Tour Packages', href: '/dashboard/admin/tours', icon: Map },
+      {
+        label: 'Bookings Hub',
+        href: '/dashboard/admin/bookings',
+        icon: Calendar,
+      },
+      {
+        label: 'Financials',
+        href: '/dashboard/admin/payments',
+        icon: CreditCard,
+      },
+    ],
+  },
+  {
+    title: 'Community',
+    items: [
+      { label: 'Client Base', href: '/dashboard/admin/users', icon: Users },
+    ],
+  },
+  {
+    title: 'Communications',
+    items: [
+      {
+        label: 'Inquiry Inbox',
+        href: '/dashboard/admin/messages',
+        icon: MessageSquare,
+      },
+    ],
+  },
+];

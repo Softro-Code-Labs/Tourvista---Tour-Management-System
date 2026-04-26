@@ -1,13 +1,12 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import { CLIENT_ENV } from '@/lib/env.client';
-import { ThemeProvider } from './providers';
 import { Toaster } from 'react-hot-toast';
+import { ThemeProvider } from './providers';
+import { CLIENT_ENV } from '@/config/env.client';
+import { Geist } from 'next/font/google';
+import { cn } from '@/lib/utils';
 import './globals.css';
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
-
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export default function RootLayout({
   children,
@@ -15,7 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={cn('font-sans', geist.variable)}
+    >
       <body>
         <ClerkProvider
           publishableKey={CLIENT_ENV.CLERK_PUBLISHABLE_KEY}

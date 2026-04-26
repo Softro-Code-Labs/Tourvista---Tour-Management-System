@@ -1,7 +1,14 @@
 'use client';
 
-import { Users, MapPin, Globe, Calendar, MessageSquare } from 'lucide-react';
-
+import { useState, useEffect } from 'react';
+import {
+  Users,
+  MapPin,
+  Globe,
+  Calendar,
+  MessageSquare,
+  TrendingUp,
+} from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -13,10 +20,7 @@ import {
   BarChart,
   Bar,
 } from 'recharts';
-
-import { useTheme } from 'next-themes';
-
-/* ---------------- MOCK DATA (realistic) ---------------- */
+import { cn } from '@/lib/utils';
 
 const monthlyData = [
   { month: 'Jan', users: 320, bookings: 85, income: 2100 },
@@ -34,193 +38,195 @@ const monthlyData = [
 ];
 
 const cards = [
-  { title: 'Total Users', value: '1,248', icon: Users },
-  { title: 'Tour Plans', value: '5', icon: MapPin },
-  { title: 'Total Income', value: '$12,450', icon: Globe },
-  { title: 'Bookings', value: '412', icon: Calendar },
-  { title: 'Messages', value: '12', icon: MessageSquare },
+  {
+    title: 'Total Users',
+    value: '1,248',
+    icon: Users,
+    color: 'text-blue-500',
+    bg: 'bg-blue-500/10',
+  },
+  {
+    title: 'Tour Plans',
+    value: '5',
+    icon: MapPin,
+    color: 'text-emerald-500',
+    bg: 'bg-emerald-500/10',
+  },
+  {
+    title: 'Total Income',
+    value: '$12,450',
+    icon: Globe,
+    color: 'text-violet-500',
+    bg: 'bg-violet-500/10',
+  },
+  {
+    title: 'Bookings',
+    value: '412',
+    icon: Calendar,
+    color: 'text-amber-500',
+    bg: 'bg-amber-500/10',
+  },
+  {
+    title: 'Messages',
+    value: '12',
+    icon: MessageSquare,
+    color: 'text-rose-500',
+    bg: 'bg-rose-500/10',
+  },
 ];
 
 export default function AdminDashboard() {
-  const { theme } = useTheme();
-  const isDark = theme === 'dark';
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
-    <div
-      className={`
-        p-10 min-h-screen transition-colors duration-300
-        ${isDark ? 'bg-slate-950 text-white' : 'bg-gray-50 text-slate-900'}
-      `}
-    >
+    <div className="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       {/* HEADER */}
-      <div className="flex items-start justify-between mb-10">
+      <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Admin Dashboard
-          </h1>
-
-          <p
-            className={
-              isDark
-                ? 'text-white/40 text-sm mt-1'
-                : 'text-slate-500 text-sm mt-1'
-            }
-          >
-            Real-time insights for users, bookings, income and activity
+          <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+            Real-time analytics and platform activity overview
           </p>
         </div>
 
-        <div
-          className={`
-            flex items-center gap-2 px-3 py-1.5 rounded-full text-xs
-            border backdrop-blur-xl
-            ${
-              isDark
-                ? 'bg-white/5 border-white/10 text-white/60'
-                : 'bg-white border-gray-200 text-slate-600'
-            }
-          `}
-        >
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          Live data
+        <div className="flex items-center gap-2 self-start px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-600 dark:text-emerald-400 shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          Live Platform Data
         </div>
       </div>
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-6 mb-10">
-        {cards.map((item, i) => {
-          const Icon = item.icon;
-
-          return (
-            <div
-              key={i}
-              className={`
-                rounded-2xl p-5 transition
-
-                backdrop-blur-xl border
-
-                ${
-                  isDark
-                    ? 'bg-white/5 border-white/10 hover:bg-white/10'
-                    : 'bg-white border-gray-200 hover:shadow-md'
-                }
-              `}
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p
-                    className={
-                      isDark
-                        ? 'text-xs text-white/50'
-                        : 'text-xs text-slate-500'
-                    }
-                  >
-                    {item.title}
-                  </p>
-
-                  <h2 className="text-xl font-semibold mt-1">{item.value}</h2>
-                </div>
-
-                <Icon
-                  size={18}
-                  className={isDark ? 'text-cyan-300' : 'text-blue-500'}
-                />
+      {/* STATS CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-10">
+        {cards.map((item, i) => (
+          <div
+            key={i}
+            className="group relative overflow-hidden rounded-2xl p-5 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
+          >
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-tight">
+                  {item.title}
+                </p>
+                <h2 className="text-2xl font-bold mt-1 tracking-tight">
+                  {item.value}
+                </h2>
+              </div>
+              <div
+                className={cn(
+                  'p-2 rounded-lg transition-transform group-hover:scale-110',
+                  item.bg,
+                )}
+              >
+                <item.icon size={20} className={item.color} />
               </div>
             </div>
-          );
-        })}
+            {/* Subtle background glow on hover */}
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        ))}
       </div>
 
-      {/* CHARTS */}
+      {/* CHARTS SECTION */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* USERS */}
-        <div
-          className={`
-            p-6 rounded-2xl border backdrop-blur-xl
+        <ChartCard
+          title="Users Growth"
+          icon={TrendingUp}
+          dataKey="users"
+          color="#3b82f6"
+          type="line"
+        />
+        <ChartCard
+          title="Bookings Trend"
+          icon={Calendar}
+          dataKey="bookings"
+          color="#10b981"
+          type="bar"
+        />
+        <ChartCard
+          title="Income Flow"
+          icon={Globe}
+          dataKey="income"
+          color="#8b5cf6"
+          type="line"
+        />
+      </div>
+    </div>
+  );
+}
 
-            ${
-              isDark ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200'
-            }
-          `}
-        >
-          <h3 className="text-sm font-semibold mb-4">Users Growth</h3>
+function ChartCard({ title, icon: Icon, dataKey, color, type }: any) {
+  return (
+    <div className="p-6 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm">
+      <div className="flex items-center gap-2 mb-6">
+        <Icon size={16} className="text-slate-400" />
+        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-300">
+          {title}
+        </h3>
+      </div>
 
-          <ResponsiveContainer width="100%" height={220}>
+      <div className="h-[220px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          {type === 'line' ? (
             <LineChart data={monthlyData}>
               <CartesianGrid
-                stroke={isDark ? 'rgba(255,255,255,0.05)' : '#e5e7eb'}
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="currentColor"
+                className="text-gray-100 dark:text-white/5"
               />
-              <XAxis dataKey="month" stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <YAxis stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <Tooltip />
+              <XAxis
+                dataKey="month"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#94a3b8', fontSize: 12 }}
+                dy={10}
+              />
+              <YAxis hide />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#0f172a',
+                  border: 'none',
+                  borderRadius: '8px',
+                  color: '#fff',
+                }}
+                itemStyle={{ color: '#fff' }}
+              />
               <Line
                 type="monotone"
-                dataKey="users"
-                stroke={isDark ? '#22d3ee' : '#2563eb'}
-                strokeWidth={2}
+                dataKey={dataKey}
+                stroke={color}
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6, strokeWidth: 0 }}
               />
             </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* BOOKINGS */}
-        <div
-          className={`
-            p-6 rounded-2xl border backdrop-blur-xl
-
-            ${
-              isDark ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200'
-            }
-          `}
-        >
-          <h3 className="text-sm font-semibold mb-4">Bookings Trend</h3>
-
-          <ResponsiveContainer width="100%" height={220}>
+          ) : (
             <BarChart data={monthlyData}>
               <CartesianGrid
-                stroke={isDark ? 'rgba(255,255,255,0.05)' : '#e5e7eb'}
+                strokeDasharray="3 3"
+                vertical={false}
+                stroke="currentColor"
+                className="text-gray-100 dark:text-white/5"
               />
-              <XAxis dataKey="month" stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <YAxis stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <Tooltip />
-              <Bar
-                dataKey="bookings"
-                fill={isDark ? '#60a5fa' : '#3b82f6'}
-                radius={[6, 6, 0, 0]}
+              <XAxis
+                dataKey="month"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: '#94a3b8', fontSize: 12 }}
+                dy={10}
               />
+              <YAxis hide />
+              <Tooltip cursor={{ fill: 'transparent' }} />
+              <Bar dataKey={dataKey} fill={color} radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* INCOME */}
-        <div
-          className={`
-            p-6 rounded-2xl border backdrop-blur-xl
-
-            ${
-              isDark ? 'bg-white/5 border-white/10' : 'bg-white border-gray-200'
-            }
-          `}
-        >
-          <h3 className="text-sm font-semibold mb-4">Income Growth</h3>
-
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={monthlyData}>
-              <CartesianGrid
-                stroke={isDark ? 'rgba(255,255,255,0.05)' : '#e5e7eb'}
-              />
-              <XAxis dataKey="month" stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <YAxis stroke={isDark ? '#94a3b8' : '#64748b'} />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="income"
-                stroke={isDark ? '#a78bfa' : '#7c3aed'}
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+          )}
+        </ResponsiveContainer>
       </div>
     </div>
   );

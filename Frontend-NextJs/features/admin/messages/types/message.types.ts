@@ -8,11 +8,21 @@ export type Message = {
   createdAt: string;
 };
 
+export type MessageResponse = {
+  data: Message[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
 export type MessageFilters = {
+  search?: string;
+  isRead?: 'all' | 'true' | 'false';
+  fromDate?: string;
+  toDate?: string;
   page: number;
   limit: number;
-  search: string;
-  isRead: 'all' | 'true' | 'false';
-  fromDate: string;
-  toDate: string;
 };
