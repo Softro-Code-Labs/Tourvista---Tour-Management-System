@@ -20,6 +20,7 @@ const NAV_ITEMS = [
   { name: 'Attractions', href: '/attractions' },
   { name: 'Culture', href: '/culture' },
   { name: 'Tours', href: '/tours' },
+  { name: 'Packages', href: '/packages' },
   { name: 'Contact', href: '/contact' },
 ] as const;
 

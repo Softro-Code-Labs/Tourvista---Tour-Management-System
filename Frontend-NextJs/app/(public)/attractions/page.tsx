@@ -24,7 +24,7 @@ export const metadata = {
     siteName: 'Tourvista Tours',
     images: [
       {
-        url: 'https://tourvistatours.com/logo.webp',
+        url: '/images/og-packages.png',
         width: 1200,
         height: 630,
         alt: 'Tourvista Tours Sri Lanka',
@@ -38,7 +38,7 @@ export const metadata = {
     title: 'Sri Lanka Attractions | The Ultimate Sightseeing Guide',
     description:
       'Explore Sigiriya, Ella, and the beautiful South Coast with Tourvista.',
-    images: ['https://tourvistatours.com/logo.webp'],
+    images: ['/images/og-packages.png'],
   },
 };
 

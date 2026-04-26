@@ -80,7 +80,7 @@ export default function ManageTours() {
             Tour <span className="text-blue-600">Management</span>
           </h1>
 
-          <p className="text-base text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
+          <p className="text-base font-medium text-slate-500 dark:text-slate-400 max-w-xl leading-relaxed">
             Manage your travel inventory, optimize pricing, and track package
             performance across all global destinations.
           </p>

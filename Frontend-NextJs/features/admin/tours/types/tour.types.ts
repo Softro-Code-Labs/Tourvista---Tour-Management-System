@@ -13,13 +13,17 @@ export interface TourStats {
 }
 
 export interface TourResponse {
-  data: Tour[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
+  success: boolean;
+  data: {
+    data: Tour[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
   };
+  message?: string;
 }
 
 export interface TourFilters {

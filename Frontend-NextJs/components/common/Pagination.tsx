@@ -20,6 +20,7 @@ import { cn } from '@/lib/utils';
 interface PaginationProps {
   page: number;
   limit: number;
+  limits?: number[];
   total: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -30,6 +31,7 @@ interface PaginationProps {
 export default function Pagination({
   page,
   limit,
+  limits,
   total,
   totalPages,
   onPageChange,
@@ -81,7 +83,7 @@ export default function Pagination({
               side="top"
               className="rounded-xl border-slate-200 dark:border-slate-800"
             >
-              {[10, 25, 50, 100].map((pageSize) => (
+              {(limits || [10, 25, 50, 100]).map((pageSize) => (
                 <SelectItem
                   key={pageSize}
                   value={`${pageSize}`}

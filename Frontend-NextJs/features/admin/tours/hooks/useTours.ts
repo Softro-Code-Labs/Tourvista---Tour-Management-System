@@ -16,7 +16,7 @@ export function useTours() {
     active: 0,
     inactive: 0,
   });
-  const [meta, setMeta] = useState<TourResponse['meta']>({
+  const [meta, setMeta] = useState<TourResponse['data']['meta']>({
     total: 0,
     page: 1,
     limit: 10,

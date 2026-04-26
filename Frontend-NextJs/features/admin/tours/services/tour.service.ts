@@ -1,5 +1,7 @@
+import { TourResponse } from '../types/tour.types';
+
 export const tourService = {
-  async getAll(params: Record<string, any> = {}) {
+  async getAll(params: Record<string, any> = {}): Promise<TourResponse> {
     const query = new URLSearchParams(params).toString();
     const res = await fetch(`/api/v1/tours?${query}`);
     return res.json();

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     siteName: 'Tourvista Tours',
     images: [
       {
-        url: 'https://tourvistatours.com/images/contact.jpg',
+        url: '/images/og-packages.png',
         width: 1200,
         height: 630,
         alt: 'Contact Tourvista Tours Sri Lanka',
@@ -32,6 +32,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Contact Tourvista Sri Lanka',
     description: 'Plan your dream Sri Lankan vacation with our expert guides.',
+    images: ['/images/og-packages.png'],
   },
 };
 

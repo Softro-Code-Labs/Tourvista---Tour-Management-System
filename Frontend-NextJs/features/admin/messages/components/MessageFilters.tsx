@@ -54,7 +54,7 @@ export default function MessageFilters({ filters, setFilter }: Props) {
           </div>
           <div>
             <h2 className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
-              Message Filters
+              Inquiry Filters
             </h2>
             <p className="text-[12px] font-medium text-slate-400">
               Refine your inbox with powerful filters to find messages faster.

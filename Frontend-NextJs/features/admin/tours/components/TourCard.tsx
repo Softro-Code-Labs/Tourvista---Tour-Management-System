@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MapPin, Clock, Banknote, Edit3, Trash2, ImageOff } from 'lucide-react';
+import { MapPin, Clock, Edit3, Trash2, ImageOff } from 'lucide-react';
 import { Tour } from '../types/tour.types';
+import Image from 'next/image';
 
 interface TourCardProps {
   tour: Tour;
@@ -31,9 +32,10 @@ export default function TourCard({ tour, onEdit, onDelete }: TourCardProps) {
             </span>
           </div>
         ) : (
-          <img
+          <Image
             src={displayImage}
             alt={tour.title}
+            fill
             onError={() => setImgError(true)}
             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
           />
