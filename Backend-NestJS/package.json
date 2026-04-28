@@ -1,8 +1,7 @@
 {
   "name": "tourvistatours",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Tour Management System Backend",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -15,6 +14,8 @@
     "start:nodemon": "nodemon --watch src --ext ts --exec ts-node src/main.ts",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
+    "prisma:deploy": "prisma migrate deploy",
+    "prisma:reset": "prisma migrate reset",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -23,21 +24,22 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@clerk/backend": "^3.2.8",
     "@nestjs/common": "^11.0.1",
-    "@nestjs/config": "^4.0.3",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/mapped-types": "^2.1.1",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.19.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
-    "dayjs": "^1.11.20",
+    "cloudinary": "^1.41.3",
     "express-rate-limit": "^8.3.2",
     "helmet": "^8.1.0",
     "joi": "^18.1.2",
+    "multer": "^2.1.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "timezone": "^1.0.23",
-    "utc": "^0.1.0"
+    "svix": "^1.90.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -47,6 +49,7 @@
     "@nestjs/testing": "^11.0.1",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
+    "@types/multer": "^2.1.0",
     "@types/node": "^24.0.0",
     "@types/supertest": "^7.0.0",
     "dotenv": "^17.4.1",

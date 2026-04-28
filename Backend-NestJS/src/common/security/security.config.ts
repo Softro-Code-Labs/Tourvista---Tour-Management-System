@@ -1,6 +1,7 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
-import { rateLimiter } from './rate-limit.config';
+
+import { rateLimiter } from './throttler.config';
 import { sanitizeMiddleware } from './sanitize.config';
 
 export function setupSecurity(app: INestApplication) {
@@ -18,7 +19,7 @@ export function setupSecurity(app: INestApplication) {
   // 🧼 Custom sanitization middleware
   app.use(sanitizeMiddleware);
 
-  // ✅ Global validation
+  // 🧪 Global validation
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
