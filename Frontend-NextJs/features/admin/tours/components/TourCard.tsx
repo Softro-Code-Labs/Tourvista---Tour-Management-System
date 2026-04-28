@@ -14,12 +14,6 @@ interface TourCardProps {
 export default function TourCard({ tour, onEdit, onDelete }: TourCardProps) {
   const [imgError, setImgError] = useState(false);
 
-  // FALLBACK FOR EMPTY STRINGS OR BROKEN URLs
-  const displayImage =
-    !tour.image || imgError
-      ? 'https://images.unsplash.com/photo-1488646015819-4e56f6984a8d?q=80&w=500&auto=format&fit=crop'
-      : tour.image;
-
   return (
     <div className="group flex flex-col sm:flex-row bg-white dark:bg-slate-900 rounded-[1.5rem] border border-slate-200/60 dark:border-slate-800/60 overflow-hidden hover:border-blue-400 dark:hover:border-blue-500/50 hover:shadow-2xl hover:shadow-blue-500/5 transition-all duration-300">
       {/* IMAGE SECTION */}
@@ -33,7 +27,7 @@ export default function TourCard({ tour, onEdit, onDelete }: TourCardProps) {
           </div>
         ) : (
           <Image
-            src={displayImage}
+            src={tour.image ? tour.image : ''}
             alt={tour.title}
             fill
             onError={() => setImgError(true)}
@@ -92,9 +86,7 @@ export default function TourCard({ tour, onEdit, onDelete }: TourCardProps) {
           </div>
 
           <div className="text-sm font-black text-slate-900 dark:text-white">
-            <span className="text-[9px] text-slate-400 font-bold mr-1">
-              LKR
-            </span>
+            <span className="text-[9px] text-slate-400 font-bold mr-1">$</span>
             {tour.price.toLocaleString()}
           </div>
         </div>

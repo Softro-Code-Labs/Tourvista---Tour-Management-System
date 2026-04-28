@@ -3,12 +3,10 @@
 import { useState } from 'react';
 import { SlidersHorizontal, Inbox, Sparkles, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
 import { useMessages } from '@/features/admin/messages/hooks/useMessages';
 import MessageFilters from '@/features/admin/messages/components/MessageFilters';
 import MessageTable from '@/features/admin/messages/components/MessageTable';
 import { Message } from '@/features/admin/messages/types/message.types';
-
 import Pagination from '@/components/common/Pagination';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
 
@@ -23,35 +21,21 @@ export default function ManageMessages() {
     deleteMessage,
     isDeleting,
   } = useMessages();
-
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
     message: Message | null;
-  }>({
-    open: false,
-    message: null,
-  });
-
-  const promptDelete = (message: Message) =>
-    setDeleteDialog({ open: true, message });
+  }>({ open: false, message: null });
 
   const confirmDeletion = async () => {
     if (!deleteDialog.message) return;
-    const success = await deleteMessage(deleteDialog.message.id);
-    if (success) {
+    if (await deleteMessage(deleteDialog.message.id))
       setDeleteDialog({ open: false, message: null });
-    }
-  };
-
-  const handleLimitChange = (limit: number) => {
-    setFilter('limit', limit);
-    setFilter('page', 1);
   };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#020617] p-4 md:p-8 transition-colors duration-500">
       <div className="max-w-[1400px] mx-auto space-y-8">
-        {/* STUDIO HEADER */}
+        {/* SYNCED HEADER */}
         <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
@@ -67,7 +51,7 @@ export default function ManageMessages() {
               </div>
               <div>
                 <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                  Inbox Studio
+                  Inbox <span className="text-blue-600">Studio</span>
                 </h1>
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
@@ -88,7 +72,7 @@ export default function ManageMessages() {
                   System Status
                 </p>
                 <p className="text-xs font-bold text-emerald-500 flex items-center justify-end gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />{' '}
                   Live Sync Active
                 </p>
               </div>
@@ -100,31 +84,23 @@ export default function ManageMessages() {
           </div>
         </header>
 
-        {/* CONTENT STUDIO AREA */}
         <main className="space-y-8">
-          <section className="relative z-20">
-            <MessageFilters filters={filters} setFilter={setFilter} />
-          </section>
-
+          <MessageFilters filters={filters} setFilter={setFilter} />
           <section
             className={cn(
-              'relative transition-all duration-500 ease-in-out',
+              'relative transition-all duration-500',
               loading
-                ? 'opacity-40 blur-[2px] pointer-events-none scale-[0.99]'
-                : 'opacity-100 blur-0 scale-100',
+                ? 'opacity-40 blur-[2px] pointer-events-none'
+                : 'opacity-100',
             )}
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/[0.02] to-transparent -z-10 rounded-[3rem]" />
-
             <MessageTable
               messages={messages}
               loading={loading}
               onToggleReadStatus={toggleReadStatus}
-              onDelete={promptDelete}
+              onDelete={(m) => setDeleteDialog({ open: true, message: m })}
             />
           </section>
-
-          {/* FOOTER PAGINATION CONTAINER */}
           <footer className="mt-12 p-2 rounded-[2rem] bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-sm">
             <Pagination
               page={filters.page}
@@ -132,7 +108,10 @@ export default function ManageMessages() {
               total={meta.total}
               totalPages={meta.totalPages}
               onPageChange={(p) => setFilter('page', p)}
-              onLimitChange={handleLimitChange}
+              onLimitChange={(l) => {
+                setFilter('limit', l);
+                setFilter('page', 1);
+              }}
             />
           </footer>
         </main>

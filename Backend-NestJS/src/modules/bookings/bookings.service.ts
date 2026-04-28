@@ -3,70 +3,76 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { QueryBookingDto } from './dto/query-booking.dto';
+import { FilterBookingDto } from './dto/filter-booking.dto';
 import { UpdateBookingAdminDto } from './dto/update-booking-admin.dto';
 import { UpdateBookingUserDto } from './dto/update-booking-user.dto';
+
+import { UserRole } from '../../common/enums/role.enum';
 
 @Injectable()
 export class BookingsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateBookingDto) {
-    return this.prisma.booking.create({
+  async create(userId: string, data: CreateBookingDto) {
+    const booking = await this.prisma.booking.create({
       data: {
         ...data,
-        startDate: new Date(data.startDate),
-        endDate: new Date(data.endDate),
+        userId: userId,
+      },
+      select: {
+        id: true,
       },
     });
+
+    return { bookingId: booking.id };
   }
 
-  async findAll(query: QueryBookingDto) {
-    const page = Number(query.page) || 1;
-    const limit = Number(query.limit) || 10;
+  async findAll(userId: string, role: string, filters: FilterBookingDto) {
+    const page = Number(filters.page) || 1;
+    const limit = Number(filters.limit) || 10;
     const skip = (page - 1) * limit;
 
     const where: any = {};
 
-    // Filter by user ID
-    if (query.userId) {
-      where.userId = query.userId;
+    // FILTER BY USER ID
+    if (role === UserRole.USER) {
+      where.userId = userId;
     }
 
-    // Filter by status
-    if (query.status) {
-      where.status = query.status;
+    // FILTER BY STATUS
+    if (filters.status) {
+      where.status = filters.status;
     }
 
-    // Filter by user email (relation)
-    if (query.userEmail) {
-      where.user = {
-        email: {
-          contains: query.userEmail,
-          mode: 'insensitive',
-        },
-      };
-    }
-
-    // Date range filter
-    if (query.fromDate || query.toDate) {
+    // DATE RANGE FILTER
+    if (filters.fromDate || filters.toDate) {
       where.createdAt = {};
 
-      if (query.fromDate) {
-        where.createdAt.gte = new Date(query.fromDate);
+      if (filters.fromDate) {
+        const from = new Date(filters.fromDate);
+        if (!isNaN(from.getTime())) {
+          from.setHours(0, 0, 0, 0);
+          where.createdAt.gte = from;
+        }
       }
 
-      if (query.toDate) {
-        where.createdAt.lte = new Date(query.toDate);
+      if (filters.toDate) {
+        const to = new Date(filters.toDate);
+        if (!isNaN(to.getTime())) {
+          to.setHours(23, 59, 59, 999);
+          where.createdAt.lte = to;
+        }
       }
     }
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.booking.findMany({
         where,
-        include: {
-          user: true,
-        },
+        ...(role === UserRole.ADMIN && {
+          include: {
+            user: true,
+          },
+        }),
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
@@ -99,16 +105,49 @@ export class BookingsService {
   }
 
   async updateByUser(id: number, userId: string, data: UpdateBookingUserDto) {
+    const current = await this.prisma.booking.findUnique({
+      where: { id },
+    });
+
+    if (!current || current.userId !== userId) {
+      throw new Error('Booking not found or unauthorized');
+    }
+
+    let updateData: any = {
+      ...data,
+    };
+
+    if (
+      data.numberOfTravellers &&
+      data.numberOfTravellers !== current.numberOfTravellers
+    ) {
+      const pricePerTraveller =
+        current.totalAmount / current.numberOfTravellers;
+
+      updateData.totalAmount = data.numberOfTravellers * pricePerTraveller;
+    }
+
     return this.prisma.booking.updateMany({
-      where: {
-        id,
-        userId,
-      },
-      data,
+      where: { id },
+      data: updateData,
     });
   }
 
-  async remove(id: number) {
+  async remove(id: number, userId: string, role: string) {
+    if (role === UserRole.ADMIN) {
+      return this.prisma.booking.delete({
+        where: { id },
+      });
+    }
+
+    const current = await this.prisma.booking.findUnique({
+      where: { id },
+    });
+
+    if (!current || current.userId !== userId) {
+      throw new Error('Booking not found or unauthorized');
+    }
+
     return this.prisma.booking.delete({
       where: { id },
     });
