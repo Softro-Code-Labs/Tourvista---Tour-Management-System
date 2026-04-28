@@ -35,7 +35,7 @@ export default function TourFilterBar({ filters, onChange, onClear }: Props) {
         <div className="flex items-center justify-between md:justify-start gap-0 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-800 p-1">
           <div className="relative flex items-center flex-1 md:flex-none">
             <span className="px-2 text-[10px] font-black text-slate-400 tracking-tighter">
-              LKR
+              $
             </span>
             <Input
               type="number"
@@ -48,7 +48,7 @@ export default function TourFilterBar({ filters, onChange, onClear }: Props) {
           <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-700 mx-1" />
           <div className="relative flex items-center flex-1 md:flex-none">
             <span className="px-2 text-[10px] font-black text-slate-400 tracking-tighter">
-              LKR
+              $
             </span>
             <Input
               type="number"

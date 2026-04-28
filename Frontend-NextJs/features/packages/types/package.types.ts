@@ -5,6 +5,8 @@ export interface Package {
   location: string;
   price: number;
   duration: number;
+  minGuests: number;
+  maxGuests: number;
   image?: string;
   isActive: boolean;
   createdAt: string;

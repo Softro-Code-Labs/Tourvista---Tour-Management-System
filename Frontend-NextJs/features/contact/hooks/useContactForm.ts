@@ -30,7 +30,7 @@ export function useContactForm() {
     formState: { isSubmitting },
   } = methods;
 
-  // Autofill Clerk User Data
+  // AUTO-FILL NAME AND EMAIL IF USER IS LOGGED IN
   useEffect(() => {
     if (isLoaded && user) {
       setValue('email', user.emailAddresses[0]?.emailAddress || '');
@@ -45,7 +45,9 @@ export function useContactForm() {
         toast.success('Message sent! We will get back to you soon.');
         reset();
       } else {
-        throw new Error(res?.message || 'Submission failed');
+        toast.error(
+          res?.message || 'Failed to send message. Please try again.',
+        );
       }
     } catch (err: any) {
       toast.error(err.message || 'Failed to send message. Please try again.');

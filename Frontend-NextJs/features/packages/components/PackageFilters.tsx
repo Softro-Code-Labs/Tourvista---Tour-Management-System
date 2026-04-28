@@ -50,7 +50,7 @@ export function PackageSearchFilters({
             </div>
             <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
-                Budget Range (LKR)
+                Budget Range ($)
               </span>
               <div className="flex items-center gap-2">
                 <input

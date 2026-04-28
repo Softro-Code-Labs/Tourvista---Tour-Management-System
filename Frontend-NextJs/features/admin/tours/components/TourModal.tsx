@@ -12,13 +12,13 @@ import {
   Loader2,
   MapPin,
   RotateCcw,
+  Users,
   X,
 } from 'lucide-react';
 
 import { tourSchema, TourFormData } from '../schema/tour.schema';
 import { Tour } from '../types/tour.types';
 import { tourService } from '../services/tour.service';
-
 import {
   Dialog,
   DialogContent,
@@ -44,7 +44,6 @@ interface Props {
 
 export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [preview, setPreview] = useState<string | null>(null);
   const [isImageRemoved, setIsImageRemoved] = useState(false);
 
@@ -62,7 +61,6 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
     if (isOpen) {
       setPreview(tour?.image || null);
       setIsImageRemoved(false);
-
       reset(
         tour
           ? {
@@ -71,14 +69,11 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               location: tour.location,
               price: tour.price,
               duration: tour.duration,
+              minGuests: tour.minGuests,
+              maxGuests: tour.maxGuests,
               isActive: tour.isActive,
             }
           : {
-              title: '',
-              description: '',
-              location: '',
-              price: 0,
-              duration: 0,
               isActive: true,
             },
       );
@@ -109,7 +104,6 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
 
   const onSubmit = async (data: TourFormData) => {
     const formData = new FormData();
-
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, String(value));
     });
@@ -161,18 +155,20 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-    toast.success('Form cleared');
+
+    toast.success('Form reset successfully!');
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[640px] max-h-[95vh] overflow-y-auto rounded-[2.5rem] border-none shadow-2xl p-0 transition-all duration-500">
-        {/* HEADER SECTION */}
+        {/* HEADER */}
         <div className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div className="space-y-1">
             <DialogTitle className="text-2xl font-black tracking-tight text-slate-900 dark:text-white">
               {tour ? 'Edit Package' : 'Create New Plan'}
             </DialogTitle>
+
             <p className="text-xs font-medium text-slate-400 uppercase tracking-widest">
               {tour
                 ? 'Update your tour plan details'
@@ -206,12 +202,11 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
           onSubmit={handleSubmit(onSubmit, onInvalid)}
           className="p-8 space-y-8"
         >
-          {/* IMAGE SECTION */}
+          {/* IMAGE */}
           <div className="space-y-3">
             <Label className="text-sm font-bold flex items-center gap-2">
               <ImagePlus size={16} className="text-blue-500" /> Cover Media
             </Label>
-
             {preview ? (
               <div className="group relative aspect-[16/9] w-full overflow-hidden rounded-3xl border-4 border-white dark:border-slate-800 shadow-xl">
                 <img
@@ -219,6 +214,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                   alt="Preview"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
+
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Button
                     type="button"
@@ -242,6 +238,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                     size={32}
                   />
                 </div>
+
                 <p className="text-sm font-bold text-slate-500 uppercase tracking-tighter">
                   Click to upload 16:9 photo
                 </p>
@@ -256,7 +253,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
             />
           </div>
 
-          {/* BASIC INFO SECTION */}
+          {/* TITLE */}
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="title" className="text-sm font-bold">
@@ -270,6 +267,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               />
             </div>
 
+            {/* LOCATION AND DURATION */}
             <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label className="text-sm font-bold flex items-center gap-2">
@@ -281,6 +279,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                   className="h-12 rounded-xl border-slate-100 bg-slate-50/50"
                 />
               </div>
+
               <div className="space-y-2">
                 <Label className="text-sm font-bold flex items-center gap-2">
                   <Clock size={14} className="text-blue-500" /> Duration
@@ -298,8 +297,50 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               </div>
             </div>
 
+            {/* GUEST LIMITS SECTION */}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label className="text-sm font-bold flex items-center gap-2">
+                  <Users size={14} className="text-blue-500" /> Min Guests
+                </Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    {...register('minGuests', { valueAsNumber: true })}
+                    min={1}
+                    max={100}
+                    placeholder="1"
+                    className="h-12 rounded-xl border-slate-100 bg-slate-50/50 pr-12"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400 uppercase">
+                    Min
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-sm font-bold flex items-center gap-2">
+                  <Users size={14} className="text-blue-500" /> Max Guests
+                </Label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    {...register('maxGuests', { valueAsNumber: true })}
+                    min={1}
+                    max={100}
+                    placeholder="10"
+                    className="h-12 rounded-xl border-slate-100 bg-slate-50/50 pr-12"
+                  />
+                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400 uppercase">
+                    Max
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* PRICING */}
             <div className="space-y-2">
-              <Label className="text-sm font-bold">Pricing (LKR)</Label>
+              <Label className="text-sm font-bold">Pricing</Label>
               <Controller
                 name="price"
                 control={control}
@@ -307,18 +348,19 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                   <NumericFormat
                     value={field.value ?? ''}
                     thousandSeparator
-                    prefix="LKR "
+                    prefix="$ "
                     allowNegative={false}
                     onValueChange={(values) => {
-                      field.onChange(values.floatValue ?? 0);
+                      field.onChange(values.floatValue);
                     }}
                     className="w-full h-14 px-4 rounded-xl bg-gray-200/10 dark:bg-gray-400/10 border-1 border-slate-200 focus:outline-none focus:border-gray-400 focus:ring-3 focus:ring-gray-300 dark:focus:ring-gray-200/10 transition-all"
-                    placeholder="LKR 0"
+                    placeholder="$ 0"
                   />
                 )}
               />
             </div>
 
+            {/* DESCRIPTION */}
             <div className="space-y-2">
               <Label className="text-sm font-bold flex items-center gap-2">
                 <Info size={14} className="text-blue-500" /> Detailed
@@ -333,7 +375,8 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
             </div>
           </div>
 
-          {/* FOOTER SECTION */}
+          {/* FOOTER */}
+
           <DialogFooter className="sticky bottom-0 bg-white dark:bg-slate-900 py-4 px-8 border-t border-slate-100 dark:border-slate-800 flex flex-row items-center gap-3">
             <Button
               type="button"
@@ -343,7 +386,9 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
             >
               Discard
             </Button>
+
             <div className="flex-1" />
+
             <Button
               type="button"
               variant="outline"
@@ -353,6 +398,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               <RotateCcw size={16} className="text-slate-400" />
               <span className="hidden sm:inline">Reset</span>
             </Button>
+
             <Button
               type="submit"
               disabled={isSubmitting}
@@ -363,6 +409,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               ) : (
                 <>
                   {tour ? 'Update Package' : 'Publish Plan'}
+
                   <ArrowRight size={18} className="opacity-70" />
                 </>
               )}

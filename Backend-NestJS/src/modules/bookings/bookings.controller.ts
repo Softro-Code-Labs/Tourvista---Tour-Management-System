@@ -12,12 +12,13 @@ import {
 import { BookingsService } from './bookings.service';
 
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { QueryBookingDto } from './dto/query-booking.dto';
+import { FilterBookingDto } from './dto/filter-booking.dto';
 import { UpdateBookingAdminDto } from './dto/update-booking-admin.dto';
 import { UpdateBookingUserDto } from './dto/update-booking-user.dto';
 
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/enums/role.enum';
+import { GetUser } from '../../auth/decorators/get-user.decorator';
 
 @Controller('v1/bookings')
 export class BookingsController {
@@ -25,13 +26,17 @@ export class BookingsController {
 
   @Post()
   @Roles(Role.USER)
-  create(@Body() body: CreateBookingDto) {
-    return this.bookingsService.create(body);
+  create(@GetUser('id') userId: string, @Body() body: CreateBookingDto) {
+    return this.bookingsService.create(userId, body);
   }
 
   @Get()
-  findAll(@Query() query: QueryBookingDto) {
-    return this.bookingsService.findAll(query);
+  findAll(
+    @GetUser('id') userId: string,
+    @GetUser('role') role: string,
+    @Query() query: FilterBookingDto,
+  ) {
+    return this.bookingsService.findAll(userId, role, query);
   }
 
   @Get(':id')
@@ -49,14 +54,18 @@ export class BookingsController {
   @Roles(Role.USER)
   updateByUser(
     @Param('id') id: string,
+    @GetUser('userId') userId: string,
     @Body() body: UpdateBookingUserDto,
-    @Query('userId') userId: string,
   ) {
     return this.bookingsService.updateByUser(+id, userId, body);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookingsService.remove(+id);
+  remove(
+    @GetUser('id') userId: string,
+    @GetUser('role') role: string,
+    @Param('id') id: string,
+  ) {
+    return this.bookingsService.remove(+id, userId, role);
   }
 }

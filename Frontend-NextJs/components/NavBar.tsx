@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { name: 'Culture', href: '/culture' },
   { name: 'Tours', href: '/tours' },
   { name: 'Packages', href: '/packages' },
+  { name: 'Reservations', href: '/reservations' },
   { name: 'Contact', href: '/contact' },
 ] as const;
 

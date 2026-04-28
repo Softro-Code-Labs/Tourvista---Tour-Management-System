@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNumber,
@@ -6,37 +7,33 @@ import {
   MinLength,
   MaxLength,
   IsNotEmpty,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateBookingDto {
-  @IsString()
-  @IsNotEmpty({ message: 'User ID is required' })
-  userId!: string;
-
-  @IsString()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Tour ID must be a number' })
   @IsNotEmpty({ message: 'Tour ID is required' })
   tourId!: number;
 
-  @IsDateString()
+  @IsDateString({}, { message: 'Start date must be a valid ISO date string' })
   @IsNotEmpty({ message: 'Start date is required' })
-  startDate!: string;
+  arrivalDate!: string;
 
-  @IsDateString()
-  @IsNotEmpty({ message: 'End date is required' })
-  endDate!: string;
-
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Number of guests must be a number' })
   @IsNotEmpty({ message: 'Number of guests is required' })
-  @Min(1, { message: 'Number of guests must not be negative' })
-  guests!: number;
+  @Min(1, { message: 'There must be at least 1 guest' })
+  numberOfTravellers!: number;
 
-  @IsNumber()
+  @Type(() => Number)
+  @IsNumber({}, { message: 'Total amount must be a number' })
   @IsNotEmpty({ message: 'Total amount is required' })
-  @Min(1, { message: 'Total amount must not be negative' })
+  @Min(0, { message: 'Total amount cannot be negative' })
   totalAmount!: number;
 
   @IsString()
-  @MinLength(3, { message: 'Notes must be at least 3 characters' })
+  @IsOptional()
   @MaxLength(200, { message: 'Notes must be at most 200 characters' })
-  notes!: string;
+  notes?: string;
 }

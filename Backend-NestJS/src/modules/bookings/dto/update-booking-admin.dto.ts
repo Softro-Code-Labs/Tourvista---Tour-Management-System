@@ -1,17 +1,8 @@
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-
-export enum BookingStatus {
-  PENDING = 'PENDING',
-  CONFIRMED = 'CONFIRMED',
-  CANCELLED = 'CANCELLED',
-}
+import { IsEnum, IsOptional } from 'class-validator';
+import { BookingStatus } from '../../../common/enums/booking-status.enum';
 
 export class UpdateBookingAdminDto {
   @IsOptional()
   @IsEnum(BookingStatus)
   status?: BookingStatus;
-
-  @IsOptional()
-  @IsNumber()
-  totalAmount?: number;
 }

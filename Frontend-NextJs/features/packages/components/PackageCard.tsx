@@ -19,11 +19,21 @@ export function PackageCard({ pkg }: { pkg: Package }) {
   const [showDetails, setShowDetails] = useState(false);
   const [imgError, setImgError] = useState(false);
 
-  // FALLBACK FOR EMPTY STRINGS OR BROKEN URLs
-  const displayImage =
-    !pkg.image || imgError
-      ? 'https://images.unsplash.com/photo-1488646015819-4e56f6984a8d?q=80&w=500&auto=format&fit=crop'
-      : pkg.image;
+  // HELPER TO GENERATE BOOKING URL WITH ENCRYPTED PACKAGE ID
+  const generateBookingUrl = () => {
+    const encodedId = btoa(pkg.id.toString());
+
+    const params = new URLSearchParams({
+      p: encodedId,
+      t: pkg.title,
+      loc: pkg.location,
+      price: pkg.price.toString(),
+      dur: pkg?.duration.toString(),
+      min: pkg?.minGuests.toString(),
+      max: pkg?.maxGuests.toString(),
+    });
+    return `/bookings?${params.toString()}`;
+  };
 
   return (
     <div className="group relative bg-white dark:bg-slate-900 rounded-[3.5rem] overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-[0_40px_80px_-15px_rgba(0,0,0,0.1)] transition-all duration-700">
@@ -38,11 +48,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
           </div>
         ) : (
           <Image
-            src={
-              pkg.image === '' || pkg.image === undefined
-                ? 'https://images.unsplash.com/photo-1488646015819-4e56f6984a8d?q=80&w=500&auto=format&fit=crop'
-                : pkg.image
-            }
+            src={pkg.image ? pkg.image : ''}
             alt={pkg.title}
             onError={() => setImgError(true)}
             fill
@@ -61,7 +67,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
 
           <div className="px-5 py-2.5 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl">
             <p className="text-sm font-black text-blue-600 uppercase tracking-tighter">
-              LKR {pkg.price.toLocaleString()}
+              $ {pkg.price.toLocaleString()}
             </p>
           </div>
         </div>
@@ -120,10 +126,10 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         {/* ACTIONS */}
         <div className="pt-8 border-t border-slate-50 dark:border-slate-800">
           <Link
-            href={`/bookings?packageId=${pkg.id}`}
+            href={generateBookingUrl()}
             className="group/btn relative w-full h-16 bg-slate-900 dark:bg-white text-white dark:text-black rounded-[2rem] flex items-center justify-center gap-3 font-black text-xs uppercase tracking-[0.2em] overflow-hidden transition-all active:scale-[0.97]"
           >
-            <span className="relative z-10">Reserve This Experience</span>
+            <span className="relative z-10">Book Now</span>
             <ArrowRight
               size={18}
               className="relative z-10 group-hover/btn:translate-x-2 transition-transform"

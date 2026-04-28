@@ -8,6 +8,7 @@ import {
   Min,
   MinLength,
   MaxLength,
+  Max,
 } from 'class-validator';
 
 export class CreateTourDto {
@@ -38,6 +39,17 @@ export class CreateTourDto {
   @IsNumber()
   @Min(0, { message: 'Duration must not be negative' })
   duration!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1, { message: 'Minimum guests must be at least 1' })
+  minGuests!: number;
+
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1, { message: 'Maximum guests must be at least 1' })
+  @Max(100, { message: 'Maximum guests cannot exceed 100' })
+  maxGuests!: number;
 
   @IsOptional()
   @IsString()
