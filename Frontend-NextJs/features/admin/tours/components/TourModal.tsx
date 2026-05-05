@@ -353,7 +353,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                     onValueChange={(values) => {
                       field.onChange(values.floatValue);
                     }}
-                    className="w-full h-14 px-4 rounded-xl bg-gray-200/10 dark:bg-gray-400/10 border-1 border-slate-200 focus:outline-none focus:border-gray-400 focus:ring-3 focus:ring-gray-300 dark:focus:ring-gray-200/10 transition-all"
+                    className="w-full h-14 px-4 rounded-xl bg-gray-200/10 dark:bg-gray-400/10 border-1 border-slate-200 dark:border-slate-200/10 focus:outline-none focus:border-gray-400 focus:ring-3 focus:ring-gray-300 dark:focus:ring-gray-200/10 transition-all"
                     placeholder="$ 0"
                   />
                 )}
@@ -376,7 +376,6 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
           </div>
 
           {/* FOOTER */}
-
           <DialogFooter className="sticky bottom-0 bg-white dark:bg-slate-900 py-4 px-8 border-t border-slate-100 dark:border-slate-800 flex flex-row items-center gap-3">
             <Button
               type="button"

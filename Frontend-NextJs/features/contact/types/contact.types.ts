@@ -4,8 +4,8 @@ import { z } from 'zod';
 export type ContactFormData = z.infer<typeof contactSchema>;
 
 // BACKEND RESPONSE STRUCTURE
-export type ContactResponse = {
+export interface ContactResponse {
   success: boolean;
   message: string;
   data?: any;
-};
+}

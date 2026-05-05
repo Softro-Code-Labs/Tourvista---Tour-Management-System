@@ -14,6 +14,9 @@ import {
   ChevronLeft,
   X,
   Sparkles,
+  MapPin,
+  Palmtree,
+  MapPinned,
 } from 'lucide-react';
 
 import { UserRole } from '@/common/enums/role.enum';
@@ -194,15 +197,39 @@ export default function SideBar({ isOpen, setIsOpen }: SideBarProps) {
 
 const adminNav = [
   {
-    title: 'Core Activity',
+    title: 'Analytics',
     items: [
-      { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },
+      {
+        label: 'System Overview',
+        href: '/dashboard/admin',
+        icon: LayoutDashboard,
+      },
+    ],
+  },
+  {
+    title: 'Content Manager',
+    items: [
+      {
+        label: 'Attractions',
+        href: '/dashboard/admin/contact-center/attractions',
+        icon: MapPin,
+      },
+      {
+        label: 'Culture',
+        href: '/dashboard/admin/contact-center/culture',
+        icon: Palmtree,
+      },
+      {
+        label: 'Showcases',
+        href: '/dashboard/admin/contact-center/showcases',
+        icon: MapPinned,
+      },
     ],
   },
   {
     title: 'Logistics',
     items: [
-      { label: 'Tour Packages', href: '/dashboard/admin/tours', icon: Map },
+      { label: 'Tour Catalog', href: '/dashboard/admin/tours', icon: Map },
       {
         label: 'Bookings Hub',
         href: '/dashboard/admin/bookings',
@@ -216,16 +243,16 @@ const adminNav = [
     ],
   },
   {
-    title: 'Community',
+    title: 'User Management',
     items: [
-      { label: 'Client Base', href: '/dashboard/admin/users', icon: Users },
+      { label: 'Customer Base', href: '/dashboard/admin/users', icon: Users },
     ],
   },
   {
-    title: 'Communications',
+    title: 'Support',
     items: [
       {
-        label: 'Inquiry Inbox',
+        label: 'Inquiry Center',
         href: '/dashboard/admin/messages',
         icon: MessageSquare,
       },

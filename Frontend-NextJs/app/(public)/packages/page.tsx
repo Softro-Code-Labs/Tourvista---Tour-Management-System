@@ -9,7 +9,7 @@ export const metadata: Metadata = {
     'Sri Lanka Tours',
     'Luxury Travel Sri Lanka',
     'Tour Packages',
-    'TourVista',
+    'Tourvista Tours',
   ],
   authors: [{ name: 'TourVista' }],
   openGraph: {
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return (
     <main className="relative min-h-screen bg-[#fcfcfd] dark:bg-[#020617] pt-40 pb-32 overflow-hidden">
-      {/* STUDIO DECORATIVE ELEMENTS */}
+      {/* DECORATIVE ELEMENTS */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-950/20 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 dark:opacity-10 pointer-events-none" />
 
@@ -67,7 +67,7 @@ export default function PackagesPage() {
             <p className="max-w-xl text-lg font-medium text-slate-500 dark:text-slate-400 leading-relaxed">
               Experience the soul of Sri Lanka with our curated collection of
               premium tour packages. From misty tea mountains to golden coastal
-              escapes, each adventure is designed to immerse you in the island’s
+              escapes, each adventure is designed to immerse you in the island's
               unparalleled beauty and culture.
             </p>
           </div>

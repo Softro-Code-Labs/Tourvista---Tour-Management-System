@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Sparkles,
-  SlidersHorizontal,
 } from 'lucide-react';
 import { useTours } from '@/features/admin/tours/hooks/useTours';
 import TourList from '@/features/admin/tours/components/TourList';
@@ -171,19 +170,18 @@ export default function ManageTours() {
             onCreate={() => setModal({ open: true, tour: null })}
             onResetFilters={clearFilters}
           />
-          <footer className="mt-8 pt-4 border-t border-slate-200 dark:border-white/5">
-            <Pagination
-              page={meta.page}
-              limit={meta.limit}
-              total={meta.total}
-              totalPages={meta.totalPages}
-              onPageChange={(p) => setFilter('page', p)}
-              onLimitChange={(l) => {
-                setFilter('limit', l);
-                setFilter('page', 1);
-              }}
-            />
-          </footer>
+
+          <Pagination
+            page={meta.page}
+            limit={meta.limit}
+            total={meta.total}
+            totalPages={meta.totalPages}
+            onPageChange={(p) => setFilter('page', p)}
+            onLimitChange={(l) => {
+              setFilter('limit', l);
+              setFilter('page', 1);
+            }}
+          />
         </main>
 
         <TourModal

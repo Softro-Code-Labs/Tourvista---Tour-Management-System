@@ -4,18 +4,15 @@ import { useState } from 'react';
 import { ChevronDown, Info } from 'lucide-react';
 import GalleryModal from '../common/GalleryModal';
 import PlaceCard from '../cards/PlaceCard';
-
-interface Place {
-  title: string;
-  description: string;
-  image: string;
-  images?: string[];
-}
+import {
+  Attraction,
+  AttractionItem,
+} from '@/features/attractions/types/attractions.types';
 
 interface PlaceSectionProps {
   title: string;
   description: string;
-  places: Place[];
+  places: Attraction['attractionItems'];
 }
 
 export default function PlaceSection({
@@ -23,7 +20,7 @@ export default function PlaceSection({
   description,
   places,
 }: PlaceSectionProps) {
-  const [selected, setSelected] = useState<Place | null>(null);
+  const [selected, setSelected] = useState<AttractionItem | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -68,22 +65,27 @@ export default function PlaceSection({
 
       {/* CARD GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-        {places.map((place, i) => (
+        {places.map((place, index) => (
           <div
-            key={`${place.title}-${i}`}
+            key={index}
             className="transform transition-all duration-500"
-            style={{ transitionDelay: `${i * 100}ms` }}
+            style={{ transitionDelay: `${index * 100}ms` }}
           >
-            <PlaceCard {...place} onClick={() => setSelected(place)} />
+            <PlaceCard
+              title={place.title}
+              description={place.description}
+              image={place.mainImageUrl}
+              onClick={() => setSelected(place)}
+            />
           </div>
         ))}
       </div>
 
       {/* MODAL SYSTEM */}
-      {selected?.images && (
+      {selected?.gallery && (
         <GalleryModal
           title={selected.title}
-          images={selected.images}
+          images={selected.gallery.map((image) => image.imageUrl)}
           onClose={() => setSelected(null)}
         />
       )}

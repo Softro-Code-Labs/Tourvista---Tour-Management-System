@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { packageService } from '../services/package.service';
 import {
   Package,
   PackageFilters,
   PackagesResponse,
 } from '../types/package.types';
-import { packageService } from '../services/package.service';
 import toast from 'react-hot-toast';
 
 export function usePackages() {
@@ -28,19 +28,17 @@ export function usePackages() {
     maxPrice: '',
   });
 
-  const fetchPackages = async () => {
+  const fetchPackages = useCallback(async () => {
     setLoading(true);
     try {
       const cleanFilters = Object.fromEntries(
         Object.entries(filters).filter(([_, v]) => v !== '' && v !== undefined),
       );
 
-      const finalParams = {
+      const res = await packageService.getAll({
         ...cleanFilters,
         isActive: true,
-      };
-
-      const res = await packageService.getAll(finalParams);
+      });
 
       if (res.success) {
         setPackages(res.data.data);
@@ -57,7 +55,7 @@ export function usePackages() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters]);
 
   const clearFilters = () =>
     setFilters({
@@ -69,17 +67,22 @@ export function usePackages() {
     });
 
   useEffect(() => {
-    const timer = setTimeout(fetchPackages, 400);
+    const timer = setTimeout(() => {
+      fetchPackages();
+    }, 400);
+
     return () => clearTimeout(timer);
   }, [filters]);
 
   return {
     packages,
     meta,
-    loading,
 
     filters,
     setFilters,
     clearFilters,
+
+    refresh: fetchPackages,
+    loading,
   };
 }

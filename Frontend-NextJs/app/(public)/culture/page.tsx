@@ -1,6 +1,5 @@
-import { getCulture } from '@/features/culture/api/getCulture';
 import SectionTitle from '../../../components/sections/SectionTitle';
-import PlaceSection from '@/components/sections/PlaceSection';
+import CultureUserList from '@/features/culture/components/CultureUserList';
 
 export const metadata = {
   title: 'Local Culture & Heritage | The Soul of Sri Lanka | Tourvista Tours',
@@ -40,9 +39,7 @@ export const metadata = {
   },
 };
 
-const cultureData = await getCulture();
-
-export default function Culture() {
+export default function CulturePage() {
   return (
     <div className="max-w-7xl mx-auto p-6">
       <SectionTitle
@@ -50,14 +47,7 @@ export default function Culture() {
         description="Immerse yourself in the vibrant traditions, arts, and history of Sri Lanka. Discover the soul of our island through its colorful festivals, traditional crafts, and historic landmarks. Experience the warmth and richness of our culture on your next adventure with Tourvista Tours."
       />
 
-      {cultureData.map((section) => (
-        <PlaceSection
-          key={section.section}
-          title={section.section}
-          description={section.description}
-          places={section.places}
-        />
-      ))}
+      <CultureUserList />
     </div>
   );
 }

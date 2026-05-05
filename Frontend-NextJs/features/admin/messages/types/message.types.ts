@@ -1,4 +1,4 @@
-export type Message = {
+export interface Message {
   id: number;
   name: string;
   email: string;
@@ -6,9 +6,9 @@ export type Message = {
   message: string;
   isRead: boolean;
   createdAt: string;
-};
+}
 
-export type MessageResponse = {
+export interface MessageResponse {
   data: Message[];
   meta: {
     total: number;
@@ -16,13 +16,13 @@ export type MessageResponse = {
     limit: number;
     totalPages: number;
   };
-};
+}
 
-export type MessageFilters = {
+export interface MessageFilters {
   search?: string;
   isRead?: 'all' | 'true' | 'false';
   fromDate?: string;
   toDate?: string;
   page: number;
   limit: number;
-};
+}

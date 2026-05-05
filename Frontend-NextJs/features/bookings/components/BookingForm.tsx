@@ -3,20 +3,22 @@
 import { useEffect, useState } from 'react';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, min } from 'date-fns';
-import { NumericFormat } from 'react-number-format';
+import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 import {
   Users,
   Calendar as CalendarIcon,
   MessageSquare,
-  CreditCard,
+  ArrowLeft,
+  CheckCircle2,
 } from 'lucide-react';
 
-import { cn } from '@/lib/utils';
-import { bookingSchema, type BookingFormData } from '../schemas/booking.schema';
-import { useBooking } from '../hooks/useBooking';
-import { PaymentType } from '@/common/enums/payment-type.enum';
+import {
+  bookingSchema,
+  type BookingFormData,
+} from '../schemas/bookings.schema';
+import { useBooking } from '../hooks/useBookings';
+import { PaymentModal } from '@/features/payments/components/PaymentModal';
 
 import { ActionButton } from '@/components/common/ActionButton';
 import { Button } from '@/components/ui/button';
@@ -36,7 +38,9 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-type ButtonView = 'initial' | 'payment-options' | 'advance-input';
+import { cn } from '@/lib/utils';
+import { formatReservationId } from '@/lib/format/ids';
+import { PaymentType } from '@/common/enums/payment-type.enum';
 
 interface Props {
   tourId: number;
@@ -53,28 +57,21 @@ export function BookingForm({
   maxGuests,
   onTotalChange,
 }: Props) {
-  const [view, setView] = useState<ButtonView>('initial');
-  const [advanceAmount, setAdvanceAmount] = useState(0);
-  const { isSubmitting, processBooking, initiatePayment } = useBooking();
+  const [createdBookingId, setCreatedBookingId] = useState<number | null>(null);
+  const { isSubmitting, processBooking } = useBooking();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<BookingFormData>({
-    resolver: zodResolver(bookingSchema) as any,
-    defaultValues: {
-      tourId,
-      numberOfTravellers: minGuests,
-      totalAmount: pricePerGuest * minGuests,
-    },
-  });
+  const { register, handleSubmit, reset, watch, setValue, control } =
+    useForm<BookingFormData>({
+      resolver: zodResolver(bookingSchema) as any,
+      defaultValues: {
+        tourId: tourId,
+        numberOfTravellers: minGuests,
+        totalAmount: pricePerGuest * minGuests,
+      },
+    });
 
   const watchedGuestCount = watch('numberOfTravellers');
+  const watchedTotal = watch('totalAmount');
 
   useEffect(() => {
     const total = Number(watchedGuestCount) * pricePerGuest;
@@ -83,26 +80,13 @@ export function BookingForm({
   }, [watchedGuestCount, pricePerGuest, setValue, onTotalChange]);
 
   const onSubmit: SubmitHandler<BookingFormData> = async (data) => {
-    const isAdvance = view === 'advance-input';
-    const amountToPay = isAdvance ? advanceAmount : data.totalAmount;
-
-    if (isAdvance && (!amountToPay || amountToPay <= 0)) {
-      toast.error('Please enter an amount to pay.');
-      return;
-    }
-
     const bookingResult = await processBooking(data);
 
     if (bookingResult?.bookingId) {
-      if (view === 'initial') {
-        reset();
-      } else {
-        initiatePayment(
-          bookingResult.bookingId,
-          amountToPay,
-          isAdvance ? PaymentType.ADVANCE : PaymentType.FULL,
-        );
-      }
+      setCreatedBookingId(bookingResult.bookingId);
+      toast.loading('Booking Created! Now choose a payment plan.', {
+        duration: 10000,
+      });
     }
   };
 
@@ -112,19 +96,64 @@ export function BookingForm({
   };
 
   const baseInput =
-    'w-full bg-slate-50 dark:bg-slate-800/50 border rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-900 dark:text-white pl-12';
-  const getBorderClass = (err?: any) =>
-    err
-      ? 'border-red-500 focus:border-red-500'
-      : 'border-slate-200 dark:border-slate-700 focus:border-blue-500';
+    'w-full bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 transition-all text-slate-900 dark:text-white pl-12';
+
+  if (createdBookingId) {
+    return (
+      <div className="space-y-8 animate-in zoom-in-95 duration-500">
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/10 text-emerald-500 mb-2">
+            <CheckCircle2 size={32} />
+          </div>
+          <h3 className="text-2xl font-black tracking-tight dark:text-white">
+            Almost There!
+          </h3>
+          <p className="text-slate-500 text-sm max-w-[280px] mx-auto">
+            Your itinerary{' '}
+            <span className="font-mono font-bold text-blue-500">
+              {formatReservationId(createdBookingId)}
+            </span>{' '}
+            is ready. Select your payment to secure the spot.
+          </p>
+        </div>
+
+        {/* PAYMENT MODAL */}
+        <div className="p-1 rounded-[2.5rem] bg-gradient-to-b from-slate-200 to-transparent dark:from-slate-800">
+          <div className="bg-white dark:bg-slate-900 rounded-[2.4rem] p-6 shadow-xl">
+            <PaymentModal
+              bookingId={createdBookingId}
+              totalAmount={watchedTotal}
+              initialAmount={watchedTotal}
+              type={PaymentType.FULL}
+              isExistingPayment={false}
+              onCancel={() => setCreatedBookingId(null)}
+              onSuccess={() => {
+                window.location.href = '/reservations';
+              }}
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={() => setCreatedBookingId(null)}
+          className="w-full text-xs font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors py-4"
+        >
+          ← Go back and edit details
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6">
+    <form
+      onSubmit={handleSubmit(onSubmit, onInvalid)}
+      className="space-y-6 animate-in fade-in duration-500"
+    >
       <div className="grid md:grid-cols-2 gap-6">
         {/* ARRIVAL DATE */}
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">
-            Arrival Date
+        <div className="space-y-3">
+          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+            Check-In Date
           </Label>
           <Controller
             control={control}
@@ -136,23 +165,27 @@ export function BookingForm({
                     variant="outline"
                     className={cn(
                       baseInput,
-                      'h-14 cursor-pointer justify-start text-left font-normal relative',
-                      getBorderClass(errors.arrivalDate),
+                      'h-14 cursor-pointer justify-start text-left relative border-2',
                       !field.value && 'text-muted-foreground',
                     )}
                   >
                     <CalendarIcon
-                      className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 z-10"
+                      className="absolute left-5 top-1/2 -translate-y-1/2 text-blue-500 z-10"
                       size={18}
                     />
-                    {field.value ? (
-                      format(new Date(field.value), 'PPP')
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
+                    <span className="uppercase text-md ml-2">
+                      {field.value ? (
+                        format(new Date(field.value), 'PPP')
+                      ) : (
+                        <span>Select a date</span>
+                      )}
+                    </span>
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 rounded-xl" align="start">
+                <PopoverContent
+                  className="w-auto p-0 rounded-[2rem] overflow-hidden border-slate-200 dark:border-slate-800 shadow-2xl"
+                  align="start"
+                >
                   <Calendar
                     mode="single"
                     selected={field.value ? new Date(field.value) : undefined}
@@ -170,13 +203,13 @@ export function BookingForm({
         </div>
 
         {/* TRAVELERS */}
-        <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">
-            Travelers (Min: {minGuests}, Max: {maxGuests})
+        <div className="space-y-3">
+          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+            Travellers Count ({minGuests} - {maxGuests})
           </Label>
           <div className="relative">
             <Users
-              className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 z-10"
+              className="absolute left-5 top-1/2 -translate-y-1/2 text-blue-500 z-10"
               size={18}
             />
             <Controller
@@ -190,13 +223,12 @@ export function BookingForm({
                   <SelectTrigger
                     className={cn(
                       baseInput,
-                      '!h-14 cursor-pointer',
-                      getBorderClass(errors.numberOfTravellers),
+                      '!h-14 cursor-pointer border-2 font-medium',
                     )}
                   >
                     <SelectValue placeholder="Select guests" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl">
+                  <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800">
                     {Array.from(
                       { length: maxGuests - minGuests + 1 },
                       (_, i) => i + minGuests,
@@ -204,7 +236,7 @@ export function BookingForm({
                       <SelectItem
                         key={n}
                         value={String(n)}
-                        className="h-12 pl-4 cursor-pointer"
+                        className="h-12 pl-4 cursor-pointer font-medium"
                       >
                         {n} {n === 1 ? 'Traveller' : 'Travellers'}
                       </SelectItem>
@@ -218,106 +250,41 @@ export function BookingForm({
       </div>
 
       {/* SPECIAL NOTES */}
-      <div className="space-y-2">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-slate-500 block">
-          Special Notes
+      <div className="space-y-3">
+        <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">
+          Preferences & Notes
         </Label>
-        <div className="relative">
+        <div className="relative group">
           <MessageSquare
-            className="absolute left-5 top-5 text-slate-400"
+            className="absolute left-5 top-5 text-slate-400 group-focus-within:text-blue-500 transition-colors"
             size={18}
           />
           <Textarea
             {...register('notes')}
-            rows={3}
-            placeholder="Any special requests or information for your tour?"
-            className={cn(
-              baseInput,
-              'resize-none pt-4',
-              getBorderClass(errors.notes),
-            )}
+            rows={4}
+            placeholder="Dietary requirements, accessibility, or flight info..."
+            className={cn(baseInput, 'resize-none pt-4 border-2')}
           />
         </div>
       </div>
 
-      <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
-        {/* PHASE 1: INITIAL BUTTONS */}
-        {view === 'initial' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <ActionButton
-              text="Payment"
-              onClick={() => setView('payment-options')}
-            />
-            <ActionButton
-              text="Make Reservation"
-              variant="secondary"
-              type="submit"
-              disabled={isSubmitting}
-            />
-            <ActionButton
-              text="Reset Form"
-              variant="outline"
-              onClick={() => reset()}
-            />
-          </div>
-        )}
-
-        {/* PHASE 2: PAYMENT CHOICES */}
-        {view === 'payment-options' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 animate-in fade-in slide-in-from-bottom-2">
-            <ActionButton
-              text="Advance Payment"
-              onClick={() => setView('advance-input')}
-            />
-            <ActionButton
-              text="Full Payment"
-              variant="secondary"
-              type="submit"
-            />
-            <ActionButton
-              text="Back"
-              variant="outline"
-              onClick={() => setView('initial')}
-            />
-          </div>
-        )}
-
-        {/* PHASE 3: ADVANCE AMOUNT INPUT */}
-        {view === 'advance-input' && (
-          <div className="space-y-4 animate-in fade-in zoom-in-95">
-            <div className="relative">
-              <CreditCard
-                className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"
-                size={18}
-              />
-              <NumericFormat
-                value={advanceAmount}
-                thousandSeparator
-                prefix="$ "
-                allowNegative={false}
-                onValueChange={(values) => {
-                  setAdvanceAmount(values.floatValue ?? 0);
-                }}
-                className="w-full pl-12 h-14 px-4 text-sm rounded-xl bg-gray-200/10 dark:bg-slate-800/40 border-1 border-slate-200 dark:border-slate-700 focus:outline-none focus:border-gray-400 focus:ring-3 focus:ring-gray-300 dark:focus:ring-gray-100/20 transition-all"
-                placeholder="$ "
-              />
-            </div>
-            <div className="flex gap-3">
-              <ActionButton
-                text="Pay & Confirm"
-                className="flex-1"
-                type="submit"
-                disabled={isSubmitting}
-              />
-              <ActionButton
-                text="Cancel"
-                className="flex-1"
-                variant="outline"
-                onClick={() => setView('payment-options')}
-              />
-            </div>
-          </div>
-        )}
+      <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <ActionButton
+            text="Confirm Booking"
+            variant="default"
+            type="submit"
+            disabled={isSubmitting}
+            className="flex-[2] h-14"
+          />
+          <ActionButton
+            text="Reset"
+            variant="outline"
+            type="button"
+            onClick={() => reset()}
+            className="flex-1 h-14"
+          />
+        </div>
       </div>
     </form>
   );

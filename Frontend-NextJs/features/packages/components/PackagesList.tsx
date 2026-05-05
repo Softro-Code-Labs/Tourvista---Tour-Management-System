@@ -3,8 +3,8 @@
 import { usePackages } from '../hooks/usePackages';
 import { PackageCard } from './PackageCard';
 import { PackageSearchFilters } from './PackageFilters';
-import Pagination from '@/components/common/Pagination';
 import { Loader2, Compass, SearchX } from 'lucide-react';
+import Pagination from '@/components/common/Pagination';
 
 export default function PackagesList() {
   const { packages, meta, loading, filters, setFilters, clearFilters } =
@@ -55,17 +55,15 @@ export default function PackagesList() {
             ))}
           </div>
 
-          <footer className="mt-20 p-2 rounded-[2.5rem] bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-md">
-            <Pagination
-              page={filters.page}
-              limit={filters.limit}
-              limits={[12, 24, 48]}
-              total={meta.total}
-              totalPages={meta.totalPages}
-              onPageChange={(p) => handleFilterChange('page', p)}
-              onLimitChange={(l) => handleFilterChange('limit', l)}
-            />
-          </footer>
+          <Pagination
+            page={filters.page}
+            limit={filters.limit}
+            limits={[12, 24, 48]}
+            total={meta.total}
+            totalPages={meta.totalPages}
+            onPageChange={(p) => handleFilterChange('page', p)}
+            onLimitChange={(l) => handleFilterChange('limit', l)}
+          />
         </>
       )}
     </div>

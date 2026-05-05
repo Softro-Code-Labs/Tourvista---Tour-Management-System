@@ -101,19 +101,18 @@ export default function ManageMessages() {
               onDelete={(m) => setDeleteDialog({ open: true, message: m })}
             />
           </section>
-          <footer className="mt-12 p-2 rounded-[2rem] bg-white/50 dark:bg-slate-900/50 border border-slate-200/60 dark:border-slate-800/60 backdrop-blur-sm">
-            <Pagination
-              page={filters.page}
-              limit={filters.limit}
-              total={meta.total}
-              totalPages={meta.totalPages}
-              onPageChange={(p) => setFilter('page', p)}
-              onLimitChange={(l) => {
-                setFilter('limit', l);
-                setFilter('page', 1);
-              }}
-            />
-          </footer>
+
+          <Pagination
+            page={filters.page}
+            limit={filters.limit}
+            total={meta.total}
+            totalPages={meta.totalPages}
+            onPageChange={(p) => setFilter('page', p)}
+            onLimitChange={(l) => {
+              setFilter('limit', l);
+              setFilter('page', 1);
+            }}
+          />
         </main>
 
         <DeleteConfirmDialog
