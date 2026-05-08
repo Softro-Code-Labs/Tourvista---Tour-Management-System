@@ -2,17 +2,19 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
-  Logger,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { UploadApiResponse } from 'cloudinary';
+
+import { PrismaService } from '../../infrastructure/prisma/prisma.service';
+import { CloudinaryService } from '../../infrastructure/cloudinary/cloudinary.service';
+
 import { CreateCultureDto } from './dto/create-culture.dto';
 import { UpdateCultureDto } from './dto/update-culture.dto';
-import { PrismaService } from '../../infrastructure/prisma/prisma.service';
 import { CultureQueryDto } from './dto/query-culture.dto';
-import { Prisma } from '@prisma/client';
-import { CloudinaryService } from '../../infrastructure/cloudinary/cloudinary.service';
 import { CreateItemDto } from './dto/create-item.dto';
-import { UploadApiResponse } from 'cloudinary';
 import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
@@ -30,9 +32,9 @@ export class CultureService {
   // -------------------------------------------------------------------------
 
   /**
-   * Persists a new culture category to the database.
-   * @body dto - Validated data for the new culture category.
-   * @returns The newly created culture record.
+   * PERSISTS A NEW CULTURE CATEGORY TO THE DATABASE
+   * @body DTO - VALIDATED DATA FOR THE NEW CULTURE CATEGORY.
+   * @returns THE NEWLY CREATED CULTURE RECORD
    */
   async create(dto: CreateCultureDto) {
     try {
@@ -333,9 +335,9 @@ export class CultureService {
     });
 
     if (!item) throw new NotFoundException('Item not found');
-    if (item._count.gallery + files.length > 10) {
+    if (item._count.gallery + files.length > 20) {
       throw new ConflictException(
-        'Gallery limit reached (Max 10 images total)',
+        'Gallery limit reached (Max 20 images total)',
       );
     }
 
