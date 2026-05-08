@@ -1,6 +1,6 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from 'react-hot-toast';
-import { ThemeProvider } from './providers';
+import { Providers } from './providers';
 import { CLIENT_ENV } from '@/config/env.client';
 import { Geist } from 'next/font/google';
 import { cn } from '@/lib/utils';
@@ -26,8 +26,7 @@ export default function RootLayout({
           signInFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
           afterSignOutUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
         >
-          <Toaster position="top-right" />
-          <ThemeProvider>{children}</ThemeProvider>
+          <Providers>{children}</Providers>
         </ClerkProvider>
       </body>
     </html>

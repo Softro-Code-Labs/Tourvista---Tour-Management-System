@@ -1,5 +1,5 @@
-import { authApi } from '@/lib/api/client';
 import { NextRequest } from 'next/server';
+import { authApi } from '@/lib/api/client';
 
 /**
  * POST: Create a new booking with form data

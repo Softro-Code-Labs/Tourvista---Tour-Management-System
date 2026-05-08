@@ -1,6 +1,5 @@
-import { getAttractions } from '@/features/attractions/api/getAttractions';
 import SectionTitle from '../../../components/sections/SectionTitle';
-import PlaceSection from '@/components/sections/PlaceSection';
+import AttractionsUserList from '@/features/attractions/components/AttractionsUserList';
 
 export const metadata = {
   title: 'Top Attractions in Sri Lanka | Iconic Landmarks & Hidden Gems',
@@ -42,9 +41,7 @@ export const metadata = {
   },
 };
 
-export default async function Attractions() {
-  const attractionsData = await getAttractions();
-
+export default async function AttractionsPage() {
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-16">
       <SectionTitle
@@ -52,14 +49,7 @@ export default async function Attractions() {
         description="Discover Sri Lank's most unforgettable destinations - ancient heritage sites, misty mountain escapes, stunning waterfalls, wildlife safaris, and golden tropical beaches waiting to be explored."
       />
 
-      {attractionsData.map((section) => (
-        <PlaceSection
-          key={section.section}
-          title={section.section}
-          description={section.description}
-          places={section.places}
-        />
-      ))}
+      <AttractionsUserList />
     </div>
   );
 }

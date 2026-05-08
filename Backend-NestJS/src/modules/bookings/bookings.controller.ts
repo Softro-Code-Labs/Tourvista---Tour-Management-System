@@ -12,7 +12,8 @@ import {
 import { BookingsService } from './bookings.service';
 
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { FilterBookingDto } from './dto/filter-booking.dto';
+import { QueryAdminBookingDto } from './dto/query-admin-booking.dto';
+import { QueryUserBookingDto } from './dto/query-user-booking.dto';
 import { UpdateBookingAdminDto } from './dto/update-booking-admin.dto';
 import { UpdateBookingUserDto } from './dto/update-booking-user.dto';
 
@@ -30,18 +31,25 @@ export class BookingsController {
     return this.bookingsService.create(userId, body);
   }
 
-  @Get()
-  findAll(
-    @GetUser('id') userId: string,
-    @GetUser('role') role: string,
-    @Query() query: FilterBookingDto,
-  ) {
-    return this.bookingsService.findAll(userId, role, query);
+  @Get('stats')
+  @Roles(Role.ADMIN)
+  getStats() {
+    return this.bookingsService.getStats();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(+id);
+  @Get('admin')
+  @Roles(Role.ADMIN)
+  findAdminAll(@Query() query: QueryAdminBookingDto) {
+    return this.bookingsService.findAdminAll(query);
+  }
+
+  @Get('user')
+  @Roles(Role.USER)
+  findUserAll(
+    @GetUser('id') userId: string,
+    @Query() query: QueryUserBookingDto,
+  ) {
+    return this.bookingsService.findUserAll(userId, query);
   }
 
   @Patch(':id/admin')
@@ -54,7 +62,7 @@ export class BookingsController {
   @Roles(Role.USER)
   updateByUser(
     @Param('id') id: string,
-    @GetUser('userId') userId: string,
+    @GetUser('id') userId: string,
     @Body() body: UpdateBookingUserDto,
   ) {
     return this.bookingsService.updateByUser(+id, userId, body);
@@ -63,7 +71,7 @@ export class BookingsController {
   @Delete(':id')
   remove(
     @GetUser('id') userId: string,
-    @GetUser('role') role: string,
+    @GetUser('role') role: Role,
     @Param('id') id: string,
   ) {
     return this.bookingsService.remove(+id, userId, role);

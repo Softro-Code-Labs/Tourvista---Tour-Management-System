@@ -1,12 +1,35 @@
-export type Place = {
+export interface Culture {
   title: string;
   description: string;
-  image: string;
-  images?: string[];
-};
+  cultureItems: CultureItem[];
+}
 
-export type Section = {
-  section: string;
+export interface CultureItem {
+  title: string;
   description: string;
-  places: Place[];
-};
+  mainImageUrl: string;
+  gallery: CultureItemGallery[];
+}
+
+export interface CultureItemGallery {
+  imageUrl: string;
+}
+
+export interface CultureResponse {
+  success: boolean;
+  data: {
+    data: Culture[];
+    meta: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+  message?: string;
+}
+
+export interface CultureFilters {
+  page: number;
+  limit: number;
+}

@@ -8,7 +8,7 @@ const LINKS = {
     { name: 'Home', href: '/' },
     { name: 'Attractions', href: '/attractions' },
     { name: 'Culture', href: '/culture' },
-    { name: 'Tours', href: '/tours' },
+    { name: 'Showcases', href: '/showcases' },
     { name: 'Contact', href: '/contact' },
   ],
   explore: ['Ella', 'Sigiriya', 'Kandy', 'Galle', 'Mirissa'],

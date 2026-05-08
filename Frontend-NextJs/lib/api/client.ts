@@ -9,7 +9,7 @@ export const authApi = {
       body: isFormData ? body : JSON.stringify(body),
     });
   },
-  patch: (url: string, body: any) => {
+  patch: (url: string, body?: any) => {
     const isFormData = body instanceof FormData;
     return createRequest(url, {
       method: 'PATCH',

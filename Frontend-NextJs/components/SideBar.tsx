@@ -14,6 +14,9 @@ import {
   ChevronLeft,
   X,
   Sparkles,
+  MapPin,
+  Palmtree,
+  MapPinned,
 } from 'lucide-react';
 
 import { UserRole } from '@/common/enums/role.enum';
@@ -194,39 +197,71 @@ export default function SideBar({ isOpen, setIsOpen }: SideBarProps) {
 
 const adminNav = [
   {
-    title: 'Core Activity',
+    title: 'Analytics',
     items: [
-      { label: 'Overview', href: '/dashboard/admin', icon: LayoutDashboard },
+      {
+        label: 'System Overview',
+        href: '/dashboard/admin/analytics/overview',
+        icon: LayoutDashboard,
+      },
     ],
   },
   {
-    title: 'Logistics',
+    title: 'Content Manager',
     items: [
-      { label: 'Tour Packages', href: '/dashboard/admin/tours', icon: Map },
       {
-        label: 'Bookings Hub',
-        href: '/dashboard/admin/bookings',
+        label: 'Attractions',
+        href: '/dashboard/admin/content-manager/attractions',
+        icon: MapPin,
+      },
+      {
+        label: 'Culture',
+        href: '/dashboard/admin/content-manager/culture',
+        icon: Palmtree,
+      },
+      {
+        label: 'Showcases',
+        href: '/dashboard/admin/content-manager/showcases',
+        icon: MapPinned,
+      },
+    ],
+  },
+  {
+    title: 'Operations',
+    items: [
+      {
+        label: 'Manage Tours',
+        href: '/dashboard/admin/operations/tours',
+        icon: Map,
+      },
+      {
+        label: 'Reservations Hub',
+        href: '/dashboard/admin/operations/reservations',
         icon: Calendar,
       },
       {
-        label: 'Financials',
-        href: '/dashboard/admin/payments',
+        label: 'Payments Hub',
+        href: '/dashboard/admin/operations/payments',
         icon: CreditCard,
       },
     ],
   },
   {
-    title: 'Community',
+    title: 'User Management',
     items: [
-      { label: 'Client Base', href: '/dashboard/admin/users', icon: Users },
+      {
+        label: 'Customer Base',
+        href: '/dashboard/admin/user-management/users',
+        icon: Users,
+      },
     ],
   },
   {
-    title: 'Communications',
+    title: 'Support',
     items: [
       {
-        label: 'Inquiry Inbox',
-        href: '/dashboard/admin/messages',
+        label: 'Inquiry Center',
+        href: '/dashboard/admin/support/inquiries',
         icon: MessageSquare,
       },
     ],
