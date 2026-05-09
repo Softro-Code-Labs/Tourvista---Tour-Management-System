@@ -5,12 +5,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { reservationService } from '../services/reservation.service';
 import { BookingStatus } from '@/common/enums/booking-status.enum';
 import toast from 'react-hot-toast';
+import { ReservationFilters } from '../types/reservation.types';
 
 export const useReservations = () => {
   const queryClient = useQueryClient();
 
   // 1. MANAGE FILTER STATE INTERNALLY
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ReservationFilters>({
     page: 1,
     limit: 10,
     status: undefined as BookingStatus | undefined,

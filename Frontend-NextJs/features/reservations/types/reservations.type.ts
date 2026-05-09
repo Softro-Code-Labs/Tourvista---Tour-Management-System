@@ -18,6 +18,7 @@ export interface Reservation {
     type: PaymentType;
   };
   tour: {
+    id: number;
     title: string;
     minGuests: number;
     maxGuests: number;

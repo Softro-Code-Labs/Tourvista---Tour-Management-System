@@ -22,6 +22,7 @@ import { formatReservationId } from '@/lib/format/ids';
 import { Inbox, ListFilter } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import ReviewModal from '@/features/reviews/components/ReviewModal';
 
 export function ReservationList() {
   const { reservations, meta, filters, setFilter, onLoading, onRefresh } =
@@ -39,6 +40,12 @@ export function ReservationList() {
 
   const [editingReservation, setEditingReservation] =
     useState<Reservation | null>(null);
+
+  const [reviewingTour, setReviewingTour] = useState<{
+    id: number;
+    title: string;
+    tourId: number;
+  } | null>(null);
 
   const [deleteDialog, setDeleteDialog] = useState<{
     open: boolean;
@@ -121,6 +128,13 @@ export function ReservationList() {
             onUpdate={(res) => setEditingReservation(res)}
             onDelete={() =>
               setDeleteDialog({ open: true, reservationId: res.id })
+            }
+            onReview={(reservation) =>
+              setReviewingTour({
+                id: reservation.id,
+                title: reservation.tour.title,
+                tourId: reservation.tour.id,
+              })
             }
           />
         ))}
@@ -229,6 +243,16 @@ export function ReservationList() {
         onClose={() => setDeleteDialog({ open: false, reservationId: null })}
         onConfirm={handleDelete}
       />
+
+      {/* MODAL 4: REVIEW MODAL */}
+      {reviewingTour && (
+        <ReviewModal
+          isOpen={!!reviewingTour}
+          onClose={() => setReviewingTour(null)}
+          tourId={reviewingTour.tourId}
+          tourTitle={reviewingTour.title}
+        />
+      )}
     </>
   );
 }

@@ -1,21 +1,41 @@
-import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNumberString,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class QueryReviewDto {
   @IsOptional()
-  @IsNumberString()
+  @Type(() => Number)
   page?: number;
 
   @IsOptional()
-  @IsNumberString()
+  @Type(() => Number)
   limit?: number;
 
   @IsOptional()
-  @IsNumberString()
-  tourId?: number;
+  @IsString()
+  search?: string;
 
   @IsOptional()
-  @IsNumberString()
-  rating?: number;
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  isVisible?: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  isFeatured?: boolean;
 
   @IsOptional()
   @IsString()

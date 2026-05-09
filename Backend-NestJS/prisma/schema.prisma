@@ -202,6 +202,7 @@ enum BookingStatus {
   PENDING
   ACTIVE
   CONFIRMED
+  COMPLETED
   CANCELLED
 }
 

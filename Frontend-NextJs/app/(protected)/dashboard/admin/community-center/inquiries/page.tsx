@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { SlidersHorizontal, Inbox, Sparkles, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useMessages } from '@/features/admin/support/inquiries/hooks/useMessages';
-import MessageFilters from '@/features/admin/support/inquiries/components/MessageFilters';
-import MessageTable from '@/features/admin/support/inquiries/components/MessageTable';
-import { Message } from '@/features/admin/support/inquiries/types/message.types';
+import { useMessages } from '@/features/admin/community-center/inquiries/hooks/useMessages';
+import MessageFilters from '@/features/admin/community-center/inquiries/components/MessageFilters';
+import MessageTable from '@/features/admin/community-center/inquiries/components/MessageTable';
+import { Message } from '@/features/admin/community-center/inquiries/types/message.types';
 import Pagination from '@/components/common/Pagination';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
 

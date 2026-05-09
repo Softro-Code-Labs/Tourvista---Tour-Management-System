@@ -22,6 +22,7 @@ interface Props {
   onCompletePayment: (id: number) => void;
   onUpdate: (reservation: Reservation) => void;
   onDelete: () => void;
+  onReview: (reservation: Reservation) => void;
   isSubmitting?: boolean;
 }
 
@@ -31,10 +32,12 @@ export function ReservationCard({
   onCompletePayment,
   onUpdate,
   onDelete,
+  onReview,
   isSubmitting,
 }: Props) {
   const hasPayment = !!reservation.payment;
   const isPending = reservation.status === BookingStatus.PENDING;
+  const isCompleted = reservation.status === BookingStatus.COMPLETED;
   const isAdvancePaid = reservation.payment?.type === PaymentType.ADVANCE;
   const isFullPaid = reservation.payment?.type === PaymentType.FULL;
 
@@ -52,6 +55,12 @@ export function ReservationCard({
     ),
 
     [BookingStatus.CONFIRMED]: cn(
+      'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all duration-500',
+      'bg-indigo-100 text-indigo-700',
+      'dark:bg-indigo-500/10 dark:text-indigo-400 dark:border dark:border-indigo-500/20 dark:shadow-[0_0_15px_-5px_rgba(16,185,129,0.3)]',
+    ),
+
+    [BookingStatus.COMPLETED]: cn(
       'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter transition-all duration-500',
       'bg-emerald-100 text-emerald-700',
       'dark:bg-emerald-500/10 dark:text-emerald-400 dark:border dark:border-emerald-500/20 dark:shadow-[0_0_15px_-5px_rgba(16,185,129,0.3)]',
@@ -219,6 +228,21 @@ export function ReservationCard({
               disabled={isSubmitting}
               onClick={() => onCompletePayment(reservation.id)}
             />
+          </div>
+        ) : isCompleted ? (
+          <div className="flex flex-col gap-3">
+            <div className="bg-emerald-500/5 dark:bg-emerald-500/10 p-4 rounded-3xl border border-emerald-500/20">
+              <p className="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase mb-3 text-center tracking-widest">
+                Trip Successfully Finished
+              </p>
+              <ActionButton
+                text="Rate Experience"
+                variant="success"
+                icon={<Edit3 size={14} />}
+                className="w-full !h-12 shadow-lg shadow-emerald-500/20"
+                onClick={() => onReview(reservation)}
+              />
+            </div>
           </div>
         ) : (
           <p className="w-full cursor-pointer group/btn flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-all py-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl hover:border-blue-500/50">

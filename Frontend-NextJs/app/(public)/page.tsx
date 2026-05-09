@@ -2,7 +2,9 @@ import SectionDivider from '@/components/sections/SectionDivider';
 import SectionTitle from '../../components/sections/SectionTitle';
 import Hero from '../../components/sections/Hero';
 import Link from 'next/link';
-import { ShieldCheck, Heart, GraduationCap, Clock } from 'lucide-react';
+import { ShieldCheck, Heart, GraduationCap, Clock, Star } from 'lucide-react';
+import { BrandIcons } from '@/components/Icons';
+import ReviewList from '@/features/reviews/components/ReviewList';
 
 export const metadata = {
   title: 'Tourvista Tours | Premier Sri Lanka Tours & Tailor-Made Travel',
@@ -45,6 +47,21 @@ export const metadata = {
 export default function Home() {
   return (
     <div className="bg-white dark:bg-slate-950 transition-colors duration-300">
+      {/* 1. FLOATING WHATSAPP BUTTON */}
+      <a
+        href="https://wa.me/94742928036"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-[99] flex items-center gap-3 bg-[#25D366] text-white p-3 md:px-5 md:py-3.5 rounded-2xl shadow-[0_10px_40px_-10px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-all group"
+      >
+        <span className="hidden md:block max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 font-bold whitespace-nowrap">
+          Need help? WhatsApp us
+        </span>
+        <div className="w-6 h-6">
+          <BrandIcons.WhatsApp />
+        </div>
+      </a>
+
       <Hero />
 
       {/* CATEGORIES */}
@@ -103,6 +120,10 @@ export default function Home() {
 
       <SectionDivider />
 
+      <ReviewList />
+
+      <SectionDivider />
+
       {/* CTA SECTION */}
       <section className="px-6 py-24 text-center">
         <div className="max-w-3xl mx-auto p-12 rounded-[3rem] bg-gray-50 dark:bg-white/[0.02] border border-gray-100 dark:border-white/5 relative overflow-hidden">
@@ -118,7 +139,7 @@ export default function Home() {
           </p>
 
           <Link
-            href="/contact"
+            href="/packages"
             className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-blue-600 dark:bg-blue-500 text-white font-bold hover:scale-105 hover:shadow-xl hover:shadow-blue-500/20 transition-all relative z-10"
           >
             Plan My Trip <span className="text-xl">✈️</span>
