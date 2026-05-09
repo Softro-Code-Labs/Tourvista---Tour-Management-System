@@ -193,6 +193,7 @@ export class BookingsService {
           },
           tour: {
             select: {
+              id: true,
               title: true,
               minGuests: true,
               maxGuests: true,

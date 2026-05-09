@@ -17,6 +17,7 @@ import {
   MapPin,
   Palmtree,
   MapPinned,
+  Star,
 } from 'lucide-react';
 
 import { UserRole } from '@/common/enums/role.enum';
@@ -257,11 +258,16 @@ const adminNav = [
     ],
   },
   {
-    title: 'Support',
+    title: 'Community Center',
     items: [
       {
-        label: 'Inquiry Center',
-        href: '/dashboard/admin/support/inquiries',
+        label: 'Public Stories',
+        href: '/dashboard/admin/community-center/reviews',
+        icon: Sparkles,
+      },
+      {
+        label: 'Direct Messages',
+        href: '/dashboard/admin/community-center/inquiries',
         icon: MessageSquare,
       },
     ],

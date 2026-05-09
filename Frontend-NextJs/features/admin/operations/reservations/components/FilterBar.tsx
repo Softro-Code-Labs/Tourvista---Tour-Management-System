@@ -37,12 +37,6 @@ export default function ReservationFilterBar({
   onClear,
   isLoading,
 }: Props) {
-  const hasActiveFilters = React.useMemo(() => {
-    return Object.values(filters).some(
-      (val) => val !== undefined && val !== '',
-    );
-  }, [filters]);
-
   return (
     <section className="rounded-[2.5rem] p-6 md:p-8 mb-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/20 dark:shadow-none transition-all">
       {/* 1. TOP HEADER AREA */}

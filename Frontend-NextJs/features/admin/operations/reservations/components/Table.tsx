@@ -4,12 +4,14 @@ import {
   Calendar,
   Users,
   ChevronDown,
-  CheckCircle2,
   XCircle,
-  Clock,
   Trash2,
   Mail,
   MapPin,
+  CheckCheck,
+  ShieldCheck,
+  CircleDot,
+  Timer,
 } from 'lucide-react';
 import { BookingStatus } from '@/common/enums/booking-status.enum';
 import { Reservation } from '../types/reservation.types';
@@ -41,23 +43,30 @@ export default function ReservationTable({
     {
       id: 'PENDING',
       label: 'Pending',
-      icon: Calendar,
+      icon: Timer,
       color:
         'text-amber-600 border-amber-200/50 bg-amber-50 dark:bg-amber-500/10 dark:border-amber-500/20',
     },
     {
       id: 'ACTIVE',
       label: 'Active',
-      icon: Clock,
+      icon: CircleDot,
       color:
         'text-blue-600 border-blue-200/50 bg-blue-50 dark:bg-blue-500/10 dark:border-blue-500/20',
     },
     {
-      id: 'CONFIRMED',
-      label: 'Confirmed',
-      icon: CheckCircle2,
+      id: 'COMPLETED',
+      label: 'Completed',
+      icon: CheckCheck,
       color:
         'text-emerald-600 border-emerald-200/50 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/20',
+    },
+    {
+      id: 'CONFIRMED',
+      label: 'Confirmed',
+      icon: ShieldCheck,
+      color:
+        'text-indigo-600 border-indigo-200/50 bg-indigo-50 dark:bg-indigo-500/10 dark:border-indigo-500/20',
     },
     {
       id: 'CANCELLED',
@@ -310,14 +319,16 @@ function StatusDropdown({ res, options, onStatusChange, isUpdating }: any) {
               onClick={() => onStatusChange(res.id, option.id)}
               className={cn(
                 'rounded-2xl flex items-center gap-3 font-bold text-xs cursor-pointer py-3.5 px-3 mb-1 last:mb-0 transition-colors',
-                option.id === 'ACTIVE' &&
-                  'text-blue-600 focus:bg-blue-50 dark:focus:bg-blue-500/10',
-                option.id === 'CONFIRMED' &&
-                  'text-emerald-600 focus:bg-emerald-50 dark:focus:bg-emerald-500/10',
-                option.id === 'CANCELLED' &&
-                  'text-rose-600 focus:bg-rose-50 dark:focus:bg-rose-500/10',
                 option.id === 'PENDING' &&
-                  'text-amber-600 focus:bg-amber-50 dark:focus:bg-amber-500/10',
+                  'text-amber-600 bg-amber-50/50 focus:bg-amber-100 dark:text-amber-400 dark:bg-amber-500/10',
+                option.id === 'ACTIVE' &&
+                  'text-blue-600 bg-blue-50/50 focus:bg-blue-100 dark:text-blue-400 dark:bg-blue-500/10',
+                option.id === 'CONFIRMED' &&
+                  'text-indigo-600 bg-indigo-50/50 focus:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-500/10',
+                option.id === 'COMPLETED' &&
+                  'text-emerald-600 bg-emerald-50/50 focus:bg-emerald-100 dark:text-emerald-400 dark:bg-emerald-500/10',
+                option.id === 'CANCELLED' &&
+                  'text-rose-600 bg-rose-50/50 focus:bg-rose-100 dark:text-rose-400 dark:bg-rose-500/10',
               )}
             >
               <option.icon

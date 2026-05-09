@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { Mail, Phone, MapPin, ExternalLink } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { BrandIcons } from './Icons';
 
 const LINKS = {
   quick: [
@@ -17,6 +19,34 @@ const LINKS = {
     { name: 'Terms', href: '/terms' },
     { name: 'Support', href: '/support' },
   ],
+  social: [
+    {
+      name: 'Facebook',
+      href: 'https://facebook.com/share/1DPvCoDVr8',
+      icon: BrandIcons.Facebook,
+      color: 'hover:bg-[#1877F2]',
+    },
+    {
+      name: 'Instagram',
+      href: 'https://instagram.com/tourvistatours',
+      icon: BrandIcons.Instagram,
+      color:
+        'hover:bg-gradient-to-tr hover:from-[#f9ce34] hover:via-[#ee2a7b] hover:to-[#6228d7]',
+    },
+    {
+      name: 'TikTok',
+      href: 'https://tiktok.com/@tourvistatours',
+      icon: BrandIcons.TikTok,
+      color:
+        'hover:bg-[#000000] hover:shadow-[2px_2px_0px_#ee1d52,-2px_-2px_0px_#69C9D0]', // Subtle TikTok glitch effect
+    },
+    {
+      name: 'WhatsApp',
+      href: 'https://wa.me/94742928036',
+      icon: BrandIcons.WhatsApp,
+      color: 'hover:bg-[#25D366]',
+    },
+  ],
 };
 
 export default function Footer() {
@@ -27,14 +57,42 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
           {/* BRAND SECTION */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold tracking-tight">
-              Tourvista<span className="text-blue-600"> Tours</span>
-            </h2>
-            <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400 max-w-[240px]">
-              Discover the beauty of Sri Lanka through unforgettable travel
-              experiences, curated tours, and island adventures.
-            </p>
+          <div className="space-y-6">
+            {/* BRAND LOGO */}
+            <div className="space-y-4">
+              <h2 className="text-2xl font-bold tracking-tight">
+                Tourvista<span className="text-blue-600"> Tours</span>
+              </h2>
+              <p className="text-sm leading-relaxed text-slate-500 dark:text-slate-400 max-w-[240px]">
+                Discover the beauty of Sri Lanka through unforgettable travel
+                experiences, curated tours, and island adventures.
+              </p>
+            </div>
+
+            {/* 2. SOCIAL MEDIA ICONS */}
+            <div className="flex items-center gap-3">
+              {LINKS.social.map((social) => {
+                const Icon = social.icon;
+                return (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      'p-2 rounded-lg border transition-all duration-500 ease-out',
+                      'border-slate-200 dark:border-slate-800',
+                      'text-slate-500 dark:text-slate-400',
+                      'hover:text-white hover:border-transparent hover:-translate-y-1.5 hover:shadow-lg',
+                      social.color,
+                    )}
+                    aria-label={social.name}
+                  >
+                    <Icon />
+                  </a>
+                );
+              })}
+            </div>
           </div>
 
           {/* QUICK LINKS */}

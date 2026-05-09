@@ -19,6 +19,21 @@ export class ReviewsService {
   constructor(private prisma: PrismaService) {}
 
   /**
+   * ADMIN: Returns total number of reviews.
+   * Used for analytics.
+   */
+  async getStats() {
+    try {
+      // GET THE GRAND TOTAL
+      const totalCount = await this.prisma.review.count();
+
+      return { total: totalCount };
+    } catch (error) {
+      this.handleError('fetching review stats', error);
+    }
+  }
+
+  /**
    * PUBLIC: Fetches top 10 featured reviews.
    * Prioritizes 'isFeatured' flag and high ratings for marketing sections.
    */
@@ -28,8 +43,10 @@ export class ReviewsService {
         where: { isVisible: true, isFeatured: true },
         take: 10,
         orderBy: [{ rating: 'desc' }, { createdAt: 'desc' }],
-        include: {
-          user: { select: { firstName: true, lastName: true } },
+        select: {
+          rating: true,
+          comment: true,
+          user: { select: { firstName: true, lastName: true, email: true } },
           tour: { select: { title: true } },
         },
       });
@@ -64,13 +81,30 @@ export class ReviewsService {
    * Public users only see 'isVisible: true'. Admins see everything.
    */
   async findAll(query: QueryReviewDto, role: Role) {
-    const { page = 1, limit = 10 } = query;
+    const { page = 1, limit = 10, search, isFeatured, isVisible } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.ReviewWhereInput = {
-      ...(role === Role.ADMIN ? {} : { isVisible: true }),
-      ...(query.tourId && { tourId: Number(query.tourId) }),
-      ...(query.rating && { rating: Number(query.rating) }),
+      ...(role === Role.ADMIN
+        ? isVisible !== undefined
+          ? { isVisible }
+          : {}
+        : { isVisible: true }),
+
+      ...(isFeatured !== undefined && { isFeatured }),
+
+      ...(search && {
+        OR: [
+          { tourId: Number(search) },
+          { rating: Number(search) },
+          { comment: { contains: search, mode: 'insensitive' } },
+          { user: { email: { contains: search, mode: 'insensitive' } } },
+          { user: { firstName: { contains: search, mode: 'insensitive' } } },
+          { user: { lastName: { contains: search, mode: 'insensitive' } } },
+          { tour: { title: { contains: search, mode: 'insensitive' } } },
+        ],
+      }),
+
       ...((query.fromDate || query.toDate) && {
         createdAt: {
           ...(query.fromDate && {

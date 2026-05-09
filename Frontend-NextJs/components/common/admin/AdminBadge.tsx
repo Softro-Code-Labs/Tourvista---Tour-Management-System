@@ -14,6 +14,7 @@ interface AdminBadgeProps {
     | 'indigo'
     | 'violet'
     | 'blue'
+    | 'green'
     | 'cyan'
     | 'orange'
     | 'slate';
@@ -37,6 +38,8 @@ export const AdminBadge = ({
     violet:
       'bg-violet-500/10 border-violet-500/20 text-violet-600 dark:text-violet-400',
     blue: 'bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400',
+    green:
+      'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400',
     cyan: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-600 dark:text-cyan-400',
     orange:
       'bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400',

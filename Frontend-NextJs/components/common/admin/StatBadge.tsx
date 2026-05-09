@@ -10,6 +10,7 @@ interface StatBadgeProps {
   value: string | number;
   unit?: string;
   icon?: LucideIcon;
+  className?: string;
   variant?:
     | 'emerald'
     | 'amber'
@@ -21,7 +22,6 @@ interface StatBadgeProps {
     | 'cyan'
     | 'orange'
     | 'slate';
-  className?: string;
   onClick?: () => void;
 }
 
@@ -30,8 +30,8 @@ export const StatBadge = ({
   value,
   unit,
   icon: Icon = SlidersHorizontal,
-  variant = 'emerald',
   className,
+  variant = 'blue',
   onClick,
 }: StatBadgeProps) => {
   const variantStyles = {

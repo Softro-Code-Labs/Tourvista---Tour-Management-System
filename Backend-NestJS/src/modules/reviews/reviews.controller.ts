@@ -16,17 +16,22 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { QueryReviewDto } from './dto/query-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { GetUser } from '../../auth/decorators/get-user.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 
-@ApiTags('Reviews')
 @Controller('v1/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  @Get('stats')
+  @Roles(Role.ADMIN)
+  getStats() {
+    return this.reviewsService.getStats();
+  }
+
   @Get('featured')
   @Public()
   @ApiOperation({
-    summary: 'Get top 10 featured/high-rated reviews for landing page',
+    summary: 'Public: Get top 10 featured/high-rated reviews for landing page',
   })
   getFeaturedReviews() {
     return this.reviewsService.getFeatured();
@@ -40,8 +45,7 @@ export class ReviewsController {
   }
 
   @Get()
-  @Public()
-  @ApiOperation({ summary: 'Get all visible reviews paginated' })
+  @ApiOperation({ summary: 'Authenticated: Get all visible reviews paginated' })
   findAll(@Query() query: QueryReviewDto, @GetUser('role') role: Role) {
     return this.reviewsService.findAll(query, role);
   }
