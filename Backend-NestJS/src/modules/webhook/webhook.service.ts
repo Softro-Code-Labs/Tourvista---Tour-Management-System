@@ -20,6 +20,8 @@ export class WebhookService {
       case ClerkWebhookEvent.USER_CREATED: {
         const user = event.data;
 
+        console.log(user);
+
         await this.prisma.user.create({
           data: {
             id: user.id,
