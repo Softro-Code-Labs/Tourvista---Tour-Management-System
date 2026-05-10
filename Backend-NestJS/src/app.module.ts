@@ -23,6 +23,7 @@ import { AttractionsModule } from './modules/attractions/attractions.module';
 import { CultureModule } from './modules/culture/culture.module';
 import { ShowcasesModule } from './modules/showcases/showcases.module';
 import { ReviewsModule } from './modules/reviews/reviews.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ReviewsModule } from './modules/reviews/reviews.module';
     CultureModule,
     ShowcasesModule,
     ReviewsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
