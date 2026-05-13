@@ -20,6 +20,8 @@ export class MailService {
       port: Number(process.env.MAIL_PORT),
       secure: process.env.MAIL_PORT === '465',
       family: 4,
+      connectionTimeout: 5000,
+      greetingTimeout: 5000,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
