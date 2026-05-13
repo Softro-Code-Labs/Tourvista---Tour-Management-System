@@ -198,7 +198,7 @@ export default function SideBar({ isOpen, setIsOpen }: SideBarProps) {
 
 const adminNav = [
   {
-    title: 'Analytics',
+    title: 'Analytics', // indigo
     items: [
       {
         label: 'System Overview',
@@ -208,7 +208,7 @@ const adminNav = [
     ],
   },
   {
-    title: 'Content Manager',
+    title: 'Content Manager', // violet
     items: [
       {
         label: 'Attractions',
@@ -228,7 +228,7 @@ const adminNav = [
     ],
   },
   {
-    title: 'Operations',
+    title: 'Operations', // emerald
     items: [
       {
         label: 'Manage Tours',
@@ -248,7 +248,7 @@ const adminNav = [
     ],
   },
   {
-    title: 'User Management',
+    title: 'User Management', // cyan
     items: [
       {
         label: 'Customer Base',
@@ -258,7 +258,7 @@ const adminNav = [
     ],
   },
   {
-    title: 'Community Center',
+    title: 'Community Center', // amber
     items: [
       {
         label: 'Public Stories',
