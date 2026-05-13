@@ -50,10 +50,7 @@ import { UsersModule } from './modules/users/users.module';
         CLERK_SECRET_KEY: Joi.string().required(),
         CLERK_WEBHOOK_SECRET: Joi.string().required(),
 
-        MAIL_HOST: Joi.string().required(),
-        MAIL_PORT: Joi.number().required(),
-        MAIL_USER: Joi.string().required(),
-        MAIL_PASS: Joi.string().required(),
+        RESEND_API_KEY: Joi.string().required(),
         ADMIN_EMAIL: Joi.string().required(),
       }),
     }),
