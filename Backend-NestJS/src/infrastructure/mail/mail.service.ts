@@ -26,7 +26,7 @@ export class MailService {
   async sendInquiryAlert(unreadCount: number = 1) {
     try {
       await this.resend.emails.send({
-        from: 'Tourvista <info@tourvistatours.com>',
+        from: 'Tourvista Tours Inquiries <info@tourvistatours.com>',
         to: [process.env.ADMIN_EMAIL] as string[],
         subject: `🔔 Unread Messages Alert (${unreadCount})`,
         html: getInquiryTemplate(unreadCount),
@@ -45,7 +45,7 @@ export class MailService {
   async sendBookingDetail(bookingData: BookingsEmail) {
     try {
       await this.resend.emails.send({
-        from: 'Tourvista Bookings <support@tourvistatours.com>',
+        from: 'Tourvista Tours Bookings <support@tourvistatours.com>',
         to: [process.env.ADMIN_EMAIL] as string[],
         subject: `🎒 New Booking: ${bookingData.tourTitle}`,
         html: getBookingTemplate(bookingData),
