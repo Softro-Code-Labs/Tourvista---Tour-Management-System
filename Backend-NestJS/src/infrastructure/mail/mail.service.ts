@@ -19,15 +19,16 @@ export class MailService {
       host: process.env.MAIL_HOST,
       port: Number(process.env.MAIL_PORT),
       secure: process.env.MAIL_PORT === '465',
+      family: 4,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-    });
+    } as nodemailer.TransportOptions);
   }
 
   /**
-   * INQUIRY ALERT: Generic reminder only
+   * INQUIRY ALERT: GENERIC REMINDER ONLY
    */
   async sendInquiryAlert(unreadCount: number = 1) {
     try {
@@ -56,7 +57,7 @@ export class MailService {
   }
 
   /**
-   * BOOKING NOTIFICATION: Full details
+   * BOOKING NOTIFICATION: FULL DETAILS
    */
   async sendBookingDetail(bookingData: BookingsEmail) {
     try {
@@ -73,7 +74,7 @@ export class MailService {
               <h3 style="border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;">Booking Details</h3>
               <p><strong>Customer:</strong> ${bookingData.userName}</p>
               <p><strong>Tour:</strong> ${bookingData.tourTitle}</p>
-              <p><strong>Date:</strong> ${bookingData.travelDate}</p>
+              <p><strong>Date:</strong> ${new Date(bookingData.travelDate).toLocaleDateString()}</p>
               <p><strong>Guests:</strong> ${bookingData.paxCount}</p>
               <div style="margin-top: 20px; padding: 15px; background: #ecfdf5; border-radius: 10px; border: 1px solid #d1fae5;">
                 <p style="margin: 0; color: #065f46; font-weight: bold;">Total Paid: $${bookingData.amount}</p>
