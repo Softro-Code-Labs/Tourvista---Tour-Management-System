@@ -1,16 +1,16 @@
-import { SlidersHorizontal, Sparkles } from 'lucide-react';
-import { ReviewsState } from '../types/reviews.type';
+import { SlidersHorizontal, Sparkles, Users } from 'lucide-react';
+import { UsersState } from '../types/users.type';
 import { Skeleton } from '@/components/common/Skeleton';
 import { StatBadge } from '@/components/common/admin/StatBadge';
 import { PageHeader } from '@/components/common/admin/PageHeader';
 import { AdminBadge } from '@/components/common/admin/AdminBadge';
 
 interface Props {
-  stats: ReviewsState | null;
+  stats: UsersState | null;
   isLoading: boolean;
 }
 
-export function ReviewsHeader({ stats, isLoading }: Props) {
+export function UsersHeader({ stats, isLoading }: Props) {
   // 1. REFINED LOADING STATE
   if (isLoading) {
     return (
@@ -37,19 +37,18 @@ export function ReviewsHeader({ stats, isLoading }: Props) {
     <header className="pb-2 space-y-6">
       {/* 2. TOP BADGE */}
       <div className="flex justify-center md:justify-start">
-        <AdminBadge label="Public Stories" variant="amber" />
+        <AdminBadge label="Users" variant="cyan" />
       </div>
 
       {/* 3. MAIN HEADER CONTENT */}
       <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-8">
         <div className="flex-1 w-full">
           <PageHeader
-            title="Guest"
-            highlight="Reviews"
-            subtitle=" Manage and curate traveler feedback. Highlight the best experiences to
-          boost your tour visibility."
-            variant="amber"
-            icon={Sparkles}
+            title="Customer"
+            highlight="Base"
+            subtitle="Manage your users here. You can view all users here."
+            variant="cyan"
+            icon={Users}
           />
         </div>
 
@@ -60,7 +59,7 @@ export function ReviewsHeader({ stats, isLoading }: Props) {
             value={stats?.total || 0}
             unit="Total"
             icon={SlidersHorizontal}
-            variant="amber"
+            variant="cyan"
           />
         </div>
       </div>
