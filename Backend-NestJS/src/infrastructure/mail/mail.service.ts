@@ -16,20 +16,15 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: '74.125.124.108',
-      port: Number(process.env.MAIL_PORT),
-      secure: process.env.MAIL_PORT === '465',
-      family: 4,
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
+      service: 'gmail', // Let Nodemailer handle the host/port/family
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
       },
-      tls: {
-        rejectUnauthorized: false,
-        servername: 'smtp.gmail.com',
-      },
+      // Add these specifically to help with the Render "hang"
+      pool: true,
+      maxConnections: 1,
+      connectionTimeout: 20000,
     } as nodemailer.TransportOptions);
   }
 
