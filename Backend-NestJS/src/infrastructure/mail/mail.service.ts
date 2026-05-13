@@ -16,15 +16,19 @@ export class MailService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      host: process.env.MAIL_HOST,
+      host: '74.125.124.108',
       port: Number(process.env.MAIL_PORT),
       secure: process.env.MAIL_PORT === '465',
       family: 4,
-      connectionTimeout: 5000,
-      greetingTimeout: 5000,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
       auth: {
         user: process.env.MAIL_USER,
         pass: process.env.MAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+        servername: 'smtp.gmail.com',
       },
     } as nodemailer.TransportOptions);
   }
