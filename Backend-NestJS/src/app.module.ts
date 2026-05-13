@@ -16,6 +16,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
 
 import { ClerkClientProvider } from './infrastructure/providers/clerk.provider';
 import { CloudinaryModule } from './infrastructure/cloudinary/cloudinary.module';
+import { MailModule } from './infrastructure/mail/mail.module';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -48,12 +49,19 @@ import { UsersModule } from './modules/users/users.module';
         CLERK_PUBLISHABLE_KEY: Joi.string().required(),
         CLERK_SECRET_KEY: Joi.string().required(),
         CLERK_WEBHOOK_SECRET: Joi.string().required(),
+
+        MAIL_HOST: Joi.string().required(),
+        MAIL_PORT: Joi.number().required(),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASS: Joi.string().required(),
+        ADMIN_EMAIL: Joi.string().required(),
       }),
     }),
 
     // 📦 Database modules
     PrismaModule,
     CloudinaryModule,
+    MailModule,
 
     // 🧩 Feature modules
     WebhookModule,
