@@ -53,7 +53,7 @@ export function AttractionItemCard({ item, onEdit, onDelete }: Props) {
         )}
 
         {/* FLOATING ACTION OVERLAY */}
-        <div className="absolute top-4 right-4 flex gap-2 translate-y-[-10px] opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute top-4 right-4 flex gap-2 translate-y-[-10px] sm:opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
           <Button
             variant="secondary"
             size="icon"
