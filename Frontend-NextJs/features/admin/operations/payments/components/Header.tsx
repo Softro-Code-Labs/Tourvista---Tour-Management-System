@@ -1,18 +1,16 @@
-'use client';
-
-import { SlidersHorizontal, Calendar } from 'lucide-react';
+import { CreditCard, SlidersHorizontal } from 'lucide-react';
+import { PaymentsState } from '../types/payments.type';
 import { Skeleton } from '@/components/common/Skeleton';
-import { AdminBadge } from '@/components/common/admin/AdminBadge';
-import { PageHeader } from '@/components/common/admin/PageHeader';
 import { StatBadge } from '@/components/common/admin/StatBadge';
-import { ReservationsState } from '../types/reservation.types';
+import { PageHeader } from '@/components/common/admin/PageHeader';
+import { AdminBadge } from '@/components/common/admin/AdminBadge';
 
 interface Props {
-  stats: ReservationsState | null;
+  stats: PaymentsState | null;
   isLoading: boolean;
 }
 
-export default function ReservationHeader({ stats, isLoading }: Props) {
+export function PaymentsHeader({ stats, isLoading }: Props) {
   // 1. REFINED LOADING STATE
   if (isLoading) {
     return (
@@ -39,18 +37,18 @@ export default function ReservationHeader({ stats, isLoading }: Props) {
     <header className="pb-2 space-y-6">
       {/* 2. TOP BADGE */}
       <div className="flex justify-center md:justify-start">
-        <AdminBadge label="Reservations" variant="blue" />
+        <AdminBadge label="Payments" variant="emerald" />
       </div>
 
       {/* 3. MAIN HEADER CONTENT */}
       <div className="flex flex-col md:flex-row items-center md:items-end justify-between gap-8">
         <div className="flex-1 w-full">
           <PageHeader
-            title="Reservations"
+            title="Payments"
             highlight="Hub"
-            subtitle="Oversee the complete booking lifecycle. Filter reservations by status type, perform instant cancellations, and manage guest transitions through real-time status updates."
-            icon={Calendar}
-            variant="blue"
+            subtitle="Manage payments, subscriptions, and billing information for your users. Keep your users happy and satisfied."
+            variant="emerald"
+            icon={CreditCard}
           />
         </div>
 
@@ -61,7 +59,7 @@ export default function ReservationHeader({ stats, isLoading }: Props) {
             value={stats?.total || 0}
             unit="Total"
             icon={SlidersHorizontal}
-            variant="blue"
+            variant="emerald"
           />
         </div>
       </div>

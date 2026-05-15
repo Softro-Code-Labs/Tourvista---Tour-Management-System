@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import PackagesList from '@/features/packages/components/PackagesList';
+import { BrandIcons } from '@/components/Icons';
 
 export const metadata: Metadata = {
   title: 'Luxury Tour Packages | TourVista Sri Lanka',
@@ -40,6 +41,21 @@ export const metadata: Metadata = {
 export default function PackagesPage() {
   return (
     <main className="relative min-h-screen bg-[#fcfcfd] dark:bg-[#020617] pt-40 pb-32 overflow-hidden">
+      {/* 1. FLOATING WHATSAPP BUTTON */}
+      <a
+        href="https://wa.me/94742928036"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-[99] flex items-center gap-3 bg-[#25D366] text-white p-3 md:px-5 md:py-3.5 rounded-2xl shadow-[0_10px_40px_-10px_rgba(37,211,102,0.5)] hover:scale-105 active:scale-95 transition-all group"
+      >
+        <span className="hidden md:block max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 font-bold whitespace-nowrap">
+          Need help? WhatsApp us
+        </span>
+        <div className="w-6 h-6">
+          <BrandIcons.WhatsApp />
+        </div>
+      </a>
+
       {/* DECORATIVE ELEMENTS */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-blue-50/50 to-transparent dark:from-blue-950/20 pointer-events-none" />
       <div className="absolute top-0 left-0 w-full h-full bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-20 dark:opacity-10 pointer-events-none" />
