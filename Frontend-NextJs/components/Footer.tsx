@@ -15,9 +15,9 @@ const LINKS = {
   ],
   explore: ['Ella', 'Sigiriya', 'Kandy', 'Galle', 'Mirissa'],
   legal: [
-    { name: 'Privacy', href: '/privacy' },
-    { name: 'Terms', href: '/terms' },
-    { name: 'Support', href: '/support' },
+    { name: 'Privacy Policy', href: '/policies/privacy' },
+    { name: 'Terms & Conditions', href: '/policies/terms' },
+    { name: 'Cancellation & Refunds', href: '/policies/cancellation-policy' },
   ],
   social: [
     {
@@ -35,7 +35,7 @@ const LINKS = {
     },
     {
       name: 'TikTok',
-      href: 'https://tiktok.com/@tourvistatours',
+      href: 'https://www.tiktok.com/@tourvistatours.com',
       icon: BrandIcons.TikTok,
       color:
         'hover:bg-[#000000] hover:shadow-[2px_2px_0px_#ee1d52,-2px_-2px_0px_#69C9D0]', // Subtle TikTok glitch effect

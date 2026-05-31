@@ -37,7 +37,8 @@ export function PaymentModal({
   onCancel,
   onSuccess,
 }: PaymentFormProps) {
-  const { isSubmitting, initiatePayment, settlePayment } = usePayments();
+  const { isSubmitting, initiatePayment } = usePayments();
+  const [isProcessingGateway, setIsProcessingGateway] = useState(false);
   const [paymentView, setPaymentView] = useState<PaymentType | 'options'>(
     isExistingPayment ? type : 'options',
   );
@@ -53,20 +54,47 @@ export function PaymentModal({
 
   const currentType = watch('type');
 
+  // 🔗 THE PAYHERE INTEGRATION LAYER
   const onSubmit: SubmitHandler<PaymentFormData> = async (data) => {
-    try {
-      const result = isExistingPayment
-        ? await settlePayment(paymentId!)
-        : await initiatePayment(data);
+    if (typeof window === 'undefined' || !window.payhere) {
+      toast.error('Payment gateway failed to initialize. Please refresh.');
+      return;
+    }
 
-      if (result) {
-        toast.success(
-          isExistingPayment ? 'Balance Settled!' : 'Payment Initialized!',
+    try {
+      setIsProcessingGateway(true);
+
+      // 1. Hit your NestJS API endpoint to register the intent and fetch signed PayHere values
+      const paymentConfigData = await initiatePayment(data);
+
+      if (!paymentConfigData) {
+        throw new Error(
+          'Failed to retrieve processing configuration parameters.',
         );
-        onSuccess();
       }
+
+      // 2. Map and dispatch values to the native browser SDK window interface instance
+      window.payhere.startPayment(paymentConfigData);
+
+      // 3. Set up the universal listener event hooks right here
+      window.payhere.onCompleted = function onCompleted(orderId: string) {
+        toast.success('Payment successfully authorized!');
+        setIsProcessingGateway(false);
+        onSuccess(); // Close modal and refresh underlying data arrays
+      };
+
+      window.payhere.onDismissed = function onDismissed() {
+        toast.error('Payment sequence window dismissed by user.');
+        setIsProcessingGateway(false);
+      };
+
+      window.payhere.onError = function onError(error: string) {
+        toast.error(`Gateway Processing Error: ${error}`);
+        setIsProcessingGateway(false);
+      };
     } catch (error) {
-      toast.error('Transaction failed. Please try again.');
+      setIsProcessingGateway(false);
+      toast.error('Could not construct payment execution framework.');
     }
   };
 
@@ -101,7 +129,8 @@ export function PaymentModal({
           </div>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+            disabled={isSubmitting || isProcessingGateway}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors disabled:opacity-50"
           >
             <X size={20} className="text-slate-400" />
           </button>
@@ -124,12 +153,13 @@ export function PaymentModal({
               <ActionButton
                 text="Pay Full Amount"
                 onClick={handleFullPayment}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isProcessingGateway}
               />
               <ActionButton
                 text="Pay Advance (25%)"
                 variant="secondary"
                 onClick={switchToAdvance}
+                disabled={isSubmitting || isProcessingGateway}
               />
               <button
                 type="button"
@@ -156,7 +186,10 @@ export function PaymentModal({
                     render={({ field }) => (
                       <NumericFormat
                         value={field.value}
-                        readOnly={currentType === PaymentType.FULL}
+                        readOnly={
+                          currentType === PaymentType.FULL ||
+                          isProcessingGateway
+                        }
                         thousandSeparator
                         prefix="$ "
                         allowNegative={false}
@@ -190,7 +223,8 @@ export function PaymentModal({
                         }}
                         className={cn(
                           'w-full pl-14 h-16 rounded-2xl text-xl font-black transition-all outline-none border-2',
-                          currentType === PaymentType.FULL
+                          currentType === PaymentType.FULL ||
+                            isProcessingGateway
                             ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 text-slate-500'
                             : 'bg-white dark:bg-slate-900 border-blue-500/30 focus:border-blue-500 dark:text-white',
                         )}
@@ -208,11 +242,15 @@ export function PaymentModal({
 
               <div className="flex flex-col gap-3">
                 <ActionButton
-                  text={isSubmitting ? 'Processing...' : 'Confirm & Secure'}
+                  text={
+                    isSubmitting || isProcessingGateway
+                      ? 'Connecting Gateway...'
+                      : 'Confirm & Secure'
+                  }
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isProcessingGateway}
                 />
-                {!isExistingPayment && (
+                {!isExistingPayment && !isProcessingGateway && (
                   <button
                     type="button"
                     onClick={() => setPaymentView('options')}
@@ -227,7 +265,7 @@ export function PaymentModal({
         </form>
 
         {/* Footer Security Note */}
-        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:bg-transparent dark:border-slate-800 flex items-center justify-center gap-2">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
             Encrypted SSL Connection

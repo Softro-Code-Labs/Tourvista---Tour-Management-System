@@ -27,26 +27,26 @@ export function usePayments() {
     }
   };
 
-  const settlePayment = async (id: number): Promise<boolean> => {
-    setIsSubmitting(true);
-    try {
-      const res = await paymentService.update(id);
-      if (res.success) {
-        toast.success('Payment updated successfully!');
-        return true;
-      } else {
-        toast.error(
-          res?.message || 'Failed to update payment. Please try again.',
-        );
-        return false;
-      }
-    } catch (error: any) {
-      toast.error(error.message || 'Server error occurred. Please try again.');
-      return false;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  // const settlePayment = async (id: number): Promise<boolean> => {
+  //   setIsSubmitting(true);
+  //   try {
+  //     const res = await paymentService.update(id);
+  //     if (res.success) {
+  //       toast.success('Payment updated successfully!');
+  //       return true;
+  //     } else {
+  //       toast.error(
+  //         res?.message || 'Failed to update payment. Please try again.',
+  //       );
+  //       return false;
+  //     }
+  //   } catch (error: any) {
+  //     toast.error(error.message || 'Server error occurred. Please try again.');
+  //     return false;
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
 
-  return { isSubmitting, initiatePayment, settlePayment };
+  return { isSubmitting, initiatePayment };
 }
