@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NumericFormat } from 'react-number-format';
@@ -39,6 +39,7 @@ export function PaymentModal({
 }: PaymentFormProps) {
   const { isSubmitting, initiatePayment } = usePayments();
   const [isProcessingGateway, setIsProcessingGateway] = useState(false);
+  const [showEmbeddedTarget, setShowEmbeddedTarget] = useState(false);
   const [paymentView, setPaymentView] = useState<PaymentType | 'options'>(
     isExistingPayment ? type : 'options',
   );
@@ -54,44 +55,98 @@ export function PaymentModal({
 
   const currentType = watch('type');
 
+  // Clean initialization setup for global windows context callbacks before mounting script elements
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    (window as any).seylanMpgsCompleteCallback = () => {
+      toast.success('Payment authorized successfully!');
+      setIsProcessingGateway(false);
+      onSuccess();
+    };
+
+    (window as any).seylanMpgsCancelCallback = () => {
+      toast.error('Payment window dismissed by user.');
+      setIsProcessingGateway(false);
+      setShowEmbeddedTarget(false);
+    };
+
+    (window as any).seylanMpgsErrorCallback = (error: any) => {
+      console.error('MPGS Error:', error);
+      toast.error('An error occurred during payment processing.');
+      setIsProcessingGateway(false);
+      setShowEmbeddedTarget(false);
+    };
+
+    return () => {
+      delete (window as any).seylanMpgsCompleteCallback;
+      delete (window as any).seylanMpgsCancelCallback;
+      delete (window as any).seylanMpgsErrorCallback;
+    };
+  }, [onSuccess]);
+
   // 🔗 THE PAYHERE INTEGRATION LAYER
   const onSubmit: SubmitHandler<PaymentFormData> = async (data) => {
-    if (typeof window === 'undefined' || !window.payhere) {
-      toast.error('Payment gateway failed to initialize. Please refresh.');
-      return;
-    }
-
     try {
       setIsProcessingGateway(true);
 
-      // 1. Hit your NestJS API endpoint to register the intent and fetch signed PayHere values
-      const paymentConfigData = await initiatePayment(data);
+      // 1. Fetch Session values from NestJS backend endpoint
+      const config = await initiatePayment(data);
 
-      if (!paymentConfigData) {
-        throw new Error(
-          'Failed to retrieve processing configuration parameters.',
-        );
+      if (!config || !config.sessionId) {
+        setIsProcessingGateway(false);
+        return;
       }
 
-      // 2. Map and dispatch values to the native browser SDK window interface instance
-      window.payhere.startPayment(paymentConfigData);
+      setShowEmbeddedTarget(true);
 
-      // 3. Set up the universal listener event hooks right here
-      window.payhere.onCompleted = function onCompleted(orderId: string) {
-        toast.success('Payment successfully authorized!');
-        setIsProcessingGateway(false);
-        onSuccess(); // Close modal and refresh underlying data arrays
+      // 2. Dynamically build and append script tag with explicit data callback attributes
+      const scriptUrl =
+        'https://test-seylan.mtf.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+      // Clean up previous instances if any exist
+      const existingScript = document.querySelector(
+        `script[src="${scriptUrl}"]`,
+      );
+      if (existingScript) existingScript.remove();
+
+      const script = document.createElement('script');
+      script.src = scriptUrl;
+      // Map script hooks to the global windows functions we isolated in our mount hook
+      script.setAttribute('data-error', 'seylanMpgsErrorCallback');
+      script.setAttribute('data-cancel', 'seylanMpgsCancelCallback');
+      script.setAttribute('data-complete', 'seylanMpgsCompleteCallback');
+      script.async = true;
+
+      script.onload = () => {
+        if (!(window as any).Checkout) {
+          toast.error('Failed to link into Checkout API context.');
+          return;
+        }
+
+        // 3. Configure Checkout Object - ONLY passing the session object as required by v67+
+        (window as any).Checkout.configure({
+          session: {
+            id: config.sessionId,
+          },
+          // order: {
+          //   id: config.orderId,
+          // },
+        });
+
+        setTimeout(() => {
+          (window as any).Checkout.showPaymentPage();
+          // const target = document.getElementById('embed-target');
+          // if (target) {
+          //   (window as any).Checkout.showEmbeddedPage('#embed-target');
+          // } else {
+          //   toast.error('Embedded viewport container target missing.');
+          //   setIsProcessingGateway(false);
+          // }
+        }, 150);
       };
 
-      window.payhere.onDismissed = function onDismissed() {
-        toast.error('Payment sequence window dismissed by user.');
-        setIsProcessingGateway(false);
-      };
-
-      window.payhere.onError = function onError(error: string) {
-        toast.error(`Gateway Processing Error: ${error}`);
-        setIsProcessingGateway(false);
-      };
+      document.body.appendChild(script);
     } catch (error) {
       setIsProcessingGateway(false);
       toast.error('Could not construct payment execution framework.');
