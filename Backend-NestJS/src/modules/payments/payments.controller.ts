@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -27,17 +28,6 @@ export class PaymentsController {
     return this.paymentsService.getStats();
   }
 
-  // NEED REMOVE LATER
-  // @Post()
-  // @Roles(Role.USER)
-  // @ApiOperation({ summary: 'Create a new payment' })
-  // create(
-  //   @GetUser('id') userId: string,
-  //   @Body() createPaymentDto: CreatePaymentDto,
-  // ) {
-  //   return this.paymentsService.create(userId, createPaymentDto);
-  // }
-
   @Post('/initiate')
   @Roles(Role.USER)
   @ApiOperation({
@@ -55,8 +45,11 @@ export class PaymentsController {
   @ApiOperation({
     summary: 'Asynchronous notification endpoint for PayHere gateway',
   })
-  handleWebhook(@Body() payload: any) {
-    return this.paymentsService.processWebhook(payload);
+  handleWebhook(
+    @Headers('x-notification-secret') secret: string,
+    @Body() payload: any,
+  ) {
+    return this.paymentsService.processWebhook(secret, payload);
   }
 
   @Get('admin')
@@ -64,16 +57,5 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Returns all payments' })
   findAll(@Query() query: QueryPaymentDto) {
     return this.paymentsService.findAll(query);
-  }
-
-  @Patch(':id')
-  @Roles(Role.USER)
-  @ApiOperation({ summary: 'Update a payment' })
-  update(
-    @Param('id') id: string,
-    @GetUser('id') userId: string,
-    @Body() paymentPayload: {},
-  ) {
-    return this.paymentsService.update(+id, userId, paymentPayload);
   }
 }

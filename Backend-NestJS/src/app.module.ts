@@ -57,6 +57,7 @@ import { UsersModule } from './modules/users/users.module';
         SEYLAN_GATEWAY_URL: Joi.string().required(),
         SEYLAN_MERCHANT_ID: Joi.string().required(),
         SEYLAN_API_PASSWORD: Joi.string().required(),
+        SEYLAN_WEBHOOK_SECRET: Joi.string().required(),
       }),
     }),
 

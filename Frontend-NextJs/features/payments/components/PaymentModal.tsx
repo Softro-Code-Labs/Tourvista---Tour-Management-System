@@ -241,7 +241,7 @@ export function PaymentModal({
                         onValueChange={(values) => {
                           const { floatValue } = values;
                           const minAllowed = totalAmount * 0.25;
-                          const maxAllowed = totalAmount;
+                          const maxAllowed = totalAmount * 0.75;
 
                           if (floatValue === undefined) {
                             field.onChange(0);
