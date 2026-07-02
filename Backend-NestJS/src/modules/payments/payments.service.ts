@@ -124,10 +124,8 @@ export class PaymentsService {
     const gatewaySession = await this.seylanMpgsService.initiateCheckoutSession(
       orderId,
       data.amount,
-      'LKR',
+      'USD',
     );
-
-    // console.log(gatewaySession);
 
     // Create a tracking record stub for this specific attempt session instance
     // await this.prisma.payment.create({
@@ -147,9 +145,6 @@ export class PaymentsService {
 
     return {
       sessionId: gatewaySession.session.id,
-      successIndicator: gatewaySession.successIndicator,
-      orderId: orderId,
-      amount: data.amount,
     };
   }
 
@@ -157,6 +152,7 @@ export class PaymentsService {
    * STEP 2: Securely capture payment feedback webhooks without causing unique constraint drops
    */
   async processWebhook(payload: any) {
+    console.log('PAYMENT WEBHOOK:', payload);
     // 1. Verify response validity structure according to Seylan signature parameter metrics
     // If verifying via signature hashes is required, compute matching HMAC keys here.
 

@@ -112,6 +112,7 @@ export function PaymentModal({
 
       const script = document.createElement('script');
       script.src = scriptUrl;
+
       // Map script hooks to the global windows functions we isolated in our mount hook
       script.setAttribute('data-error', 'seylanMpgsErrorCallback');
       script.setAttribute('data-cancel', 'seylanMpgsCancelCallback');
@@ -124,25 +125,14 @@ export function PaymentModal({
           return;
         }
 
-        // 3. Configure Checkout Object - ONLY passing the session object as required by v67+
         (window as any).Checkout.configure({
           session: {
             id: config.sessionId,
           },
-          // order: {
-          //   id: config.orderId,
-          // },
         });
 
         setTimeout(() => {
           (window as any).Checkout.showPaymentPage();
-          // const target = document.getElementById('embed-target');
-          // if (target) {
-          //   (window as any).Checkout.showEmbeddedPage('#embed-target');
-          // } else {
-          //   toast.error('Embedded viewport container target missing.');
-          //   setIsProcessingGateway(false);
-          // }
         }, 150);
       };
 

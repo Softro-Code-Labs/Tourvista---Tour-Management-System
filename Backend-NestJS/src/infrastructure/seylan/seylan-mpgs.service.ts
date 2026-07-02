@@ -54,11 +54,6 @@ export class SeylanMpgsService {
       },
     };
 
-    // 1. Log Outbound Request Context & Body
-    // this.logger.log(
-    //   `[MPGS REQUEST] URL: ${sessionUrl} | Payload: ${JSON.stringify(requestBody)}`,
-    // );
-
     try {
       const response = await fetch(sessionUrl, {
         method: 'POST',
@@ -78,12 +73,6 @@ export class SeylanMpgsService {
           'Gateway communication execution fault.',
         );
       }
-
-      // 2. Log Raw Inbound Response Details
-      // const rawResponseText = await response.text();
-      // this.logger.log(
-      //   `[MPGS RESPONSE] Status: ${response.status} ${response.statusText} | Raw Body: ${rawResponseText}`,
-      // );
 
       const responseData: SeylanCheckoutSessionResponse = await response.json();
 
