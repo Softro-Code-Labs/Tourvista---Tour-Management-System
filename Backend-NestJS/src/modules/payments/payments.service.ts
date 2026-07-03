@@ -4,6 +4,7 @@ import {
   InternalServerErrorException,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -13,7 +14,9 @@ import { BookingStatus } from '../../common/enums/booking-status.enum';
 import { PaymentType } from '../../common/enums/payment-type.enum';
 import { PaymentStatus } from '../../common/enums/payment-status.enum';
 import { SeylanMpgsService } from '../../infrastructure/seylan/seylan-mpgs.service';
-// import { MailService } from '../../infrastructure/mail/mail.service';
+import { PaymentMethod } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { timingSafeEqual } from 'crypto';
 
 @Injectable()
 export class PaymentsService {
@@ -22,7 +25,7 @@ export class PaymentsService {
   constructor(
     private prisma: PrismaService,
     private seylanMpgsService: SeylanMpgsService,
-    // private mailService: MailService,
+    private configService: ConfigService,
   ) {}
 
   /**
@@ -32,62 +35,13 @@ export class PaymentsService {
   async getStats() {
     try {
       // GET THE GRAND TOTAL
-      const totalCount = await this.prisma.user.count();
+      const totalCount = await this.prisma.payment.count();
 
       return { total: totalCount };
     } catch (error) {
       this.handleError('fetching payment stats', error);
     }
   }
-
-  // async create(userId: string, data: CreatePaymentDto) {
-  //   // VALIDATE OWNERSHIP AND EXISTENCE
-  //   const booking = await this.prisma.booking.findUnique({
-  //     where: { id: data.bookingId },
-  //   });
-
-  //   if (!booking || booking.userId !== userId) {
-  //     throw new NotFoundException(
-  //       'The requested booking was not found or access is restricted',
-  //     );
-  //   }
-
-  //   // TODO: PAYMENT GATEWAY
-
-  //   // TRANSACTION: CREATE PAYMENT AND UPDATE BOOKING STATUS
-  //   try {
-  //     return await this.prisma.$transaction(async (tx) => {
-  //       await tx.payment.create({
-  //         data: {
-  //           ...data,
-  //           userId,
-
-  //           // MOCK STATUS
-  //           status: PaymentStatus.SUCCESS, // IN PRODUCTION: PAYMENT GATEWAY NEEDED
-  //         },
-  //       });
-
-  //       await tx.booking.update({
-  //         where: { id: data.bookingId },
-  //         data: {
-  //           status:
-  //             data.type === PaymentType.FULL
-  //               ? BookingStatus.CONFIRMED
-  //               : BookingStatus.ACTIVE,
-  //         },
-  //       });
-
-  //       return true;
-  //     });
-  //   } catch (error) {
-  //     this.logger.error(
-  //       `FAILED_TO_CREATE_PAYMENT: BookingID ${data.bookingId} | ${error}`,
-  //     );
-  //     throw new BadRequestException(
-  //       'Transaction failed: Unable to synchronize payment with booking status',
-  //     );
-  //   }
-  // }
 
   /**
    * Step 1: Create a secure record stub and calculate the gateway signature hash configuration
@@ -127,22 +81,6 @@ export class PaymentsService {
       'USD',
     );
 
-    // Create a tracking record stub for this specific attempt session instance
-    // await this.prisma.payment.create({
-    //   data: {
-    //     bookingId: data.bookingId,
-    //     userId: userId,
-    //     amount: data.amount,
-    //     type: data.type, // FULL or ADVANCE
-    //     status: PaymentStatus.PENDING,
-    //     transactionId: orderId, // Pass our orderId tracking string here initially
-    //     gatewayData: {
-    //       successIndicator: gatewaySession.successIndicator,
-    //       sessionId: gatewaySession.session.id,
-    //     } as any,
-    //   },
-    // });
-
     return {
       sessionId: gatewaySession.session.id,
     };
@@ -151,14 +89,16 @@ export class PaymentsService {
   /**
    * STEP 2: Securely capture payment feedback webhooks without causing unique constraint drops
    */
-  async processWebhook(payload: any) {
-    console.log('PAYMENT WEBHOOK:', payload);
-    // 1. Verify response validity structure according to Seylan signature parameter metrics
-    // If verifying via signature hashes is required, compute matching HMAC keys here.
+  async processWebhook(secret: string, payload: any) {
+    this.verifyWebhookSecret(secret);
 
-    const internalOrderId = payload.order.id; // Retain mapping reference string
+    const internalOrderId = payload.order.id;
     const gatewayTransactionId = payload.transaction.id;
-    const gatewayResult = payload.result; // "SUCCESS", "FAILURE", etc.
+    const gatewayResult = payload.result;
+    const paidAmount = payload.order.amount;
+
+    // 1. Extract the bookingId from the internalOrderId string
+    const bookingId = parseInt(internalOrderId.split('-')[1], 10);
 
     let targetStatus: PaymentStatus = PaymentStatus.FAILED;
     if (gatewayResult === 'SUCCESS') targetStatus = PaymentStatus.SUCCESS;
@@ -166,48 +106,63 @@ export class PaymentsService {
 
     try {
       return await this.prisma.$transaction(async (tx) => {
-        // Query the specific tracking record stub we made during initial checkout generation
-        const currentPayment = await tx.payment.findFirst({
-          where: { transactionId: internalOrderId },
+        // 2. Idempotency Check: Verify if this gateway transaction was already written
+        const existingPayment = await tx.payment.findFirst({
+          where: { transactionId: gatewayTransactionId },
         });
 
-        if (!currentPayment) {
+        if (existingPayment) {
+          return {
+            status: 'acknowledged',
+            message: 'Duplicate transaction skipped',
+          };
+        }
+
+        // 3. Fetch target booking context to extract target userId and calculate total status
+        const targetBooking = await tx.booking.findUnique({
+          where: { id: bookingId },
+          include: { payments: true },
+        });
+
+        if (!targetBooking) {
           throw new NotFoundException(
-            'Payment sequence tracking context lost.',
+            `Booking contextual framework with ID ${bookingId} missing.`,
           );
         }
 
-        await tx.payment.update({
-          where: { id: currentPayment.id },
+        // 4. Dynamic validation of payment type context (FULL vs ADVANCE)
+        // If payment meets or exceeds overall remaining cost, it's FULL. Otherwise ADVANCE.
+        const totalPaidPrior = targetBooking.payments
+          .filter((p) => p.status === PaymentStatus.SUCCESS)
+          .reduce((sum, p) => sum + p.amount, 0);
+
+        const dynamicType =
+          totalPaidPrior + paidAmount >= targetBooking.totalAmount
+            ? PaymentType.FULL
+            : PaymentType.ADVANCE;
+
+        // 5. Create the database record on demand right here
+        await tx.payment.create({
           data: {
+            bookingId: targetBooking.id,
+            userId: targetBooking.userId,
+            amount: paidAmount,
+            type: dynamicType,
+            method: PaymentMethod.SEYLAN_MPGS,
             status: targetStatus,
-            transactionId: gatewayTransactionId, // Commit actual bank network confirmation ID string
+            transactionId: gatewayTransactionId,
             gatewayData: payload as any,
           },
         });
 
-        // Recalculate your historical ledger updates
+        // 6. Recalculate ledger metrics to switch parent booking states
         if (targetStatus === PaymentStatus.SUCCESS) {
-          const allConfirmedPayments = await tx.payment.findMany({
-            where: {
-              bookingId: currentPayment.bookingId,
-              status: PaymentStatus.SUCCESS,
-            },
-          });
-
-          const targetBooking = await tx.booking.findUnique({
-            where: { id: currentPayment.bookingId },
-          });
-
-          const totalAccumulatedFunds = allConfirmedPayments.reduce(
-            (sum, p) => sum + p.amount,
-            0,
-          );
+          const totalAccumulatedFunds = totalPaidPrior + paidAmount;
           const isFullyPaid =
-            totalAccumulatedFunds >= (targetBooking?.totalAmount || 0);
+            totalAccumulatedFunds >= targetBooking.totalAmount;
 
           await tx.booking.update({
-            where: { id: currentPayment.bookingId },
+            where: { id: targetBooking.id },
             data: {
               status: isFullyPaid
                 ? BookingStatus.CONFIRMED
@@ -285,57 +240,33 @@ export class PaymentsService {
     };
   }
 
-  async update(id: number, userId: string, paymentPayload: {}) {
-    // FETCH RECORD WITH RELATION AND VALIDATE
-    const current = await this.prisma.payment.findUnique({
-      where: { id },
-      include: {
-        booking: true,
-      },
-    });
+  /**
+   * Verify Webhook Secret
+   */
+  private verifyWebhookSecret(receivedSecret: string | undefined): void {
+    const expectedSecret = this.configService.get<string>(
+      'SEYLAN_WEBHOOK_SECRET',
+    );
 
-    if (!current || current.userId !== userId) {
-      throw new NotFoundException(
-        'Payment record not found or you lack the necessary permissions',
-      );
+    if (!expectedSecret) {
+      // fail closed if misconfigured — don't silently accept everything
+      this.logger.error('SEYLAN_WEBHOOK_SECRET is not configured');
+      throw new UnauthorizedException('Webhook verification not configured');
     }
 
-    if (!current.booking) {
-      throw new BadRequestException(
-        'Payment reconciliation failed: No linked booking found',
-      );
+    if (!receivedSecret) {
+      throw new UnauthorizedException('Missing notification secret');
     }
 
-    // TODO: PAYMENT GATEWAY
+    const expectedBuf = Buffer.from(expectedSecret);
+    const receivedBuf = Buffer.from(receivedSecret);
 
-    // TRANSACTION: UPDATE PAYMENT AND UPDATE BOOKING STATUS
-    try {
-      await this.prisma.$transaction(async (tx) => {
-        await tx.payment.update({
-          where: { id },
-          data: {
-            amount: current.booking.totalAmount,
-            type: PaymentType.FULL,
-
-            // MOCK STATUS
-            status: PaymentStatus.SUCCESS, // IN PRODUCTION: PAYMENT GATEWAY NEEDED
-          },
-        });
-
-        await tx.booking.update({
-          where: { id: current.bookingId },
-          data: {
-            status: BookingStatus.CONFIRMED,
-          },
-        });
-      });
-
-      return true;
-    } catch (error) {
-      this.logger.error(`FAILED_TO_UPDATE_PAYMENT: PaymentID ${id} | ${error}`);
-      throw new BadRequestException(
-        'Reconciliation failed: The payment and booking status could not be updated',
-      );
+    // timingSafeEqual throws if lengths differ, so check that first
+    if (
+      expectedBuf.length !== receivedBuf.length ||
+      !timingSafeEqual(expectedBuf, receivedBuf)
+    ) {
+      throw new UnauthorizedException('Invalid notification secret');
     }
   }
 

@@ -1,3 +1,4 @@
 export enum PaymentMethod {
-  WEBXPAY = 'WEBXPAY',
+  SEYLAN_MPGS = 'SEYLAN_MPGS',
+  CASH = 'CASH',
 }
