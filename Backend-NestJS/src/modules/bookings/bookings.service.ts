@@ -294,6 +294,13 @@ export class BookingsService {
     return { bookingId: booking.id };
   }
 
+  async updateNotes(id: number, notes: string) {
+    return this.prisma.booking.update({
+      where: { id },
+      data: { notes },
+    });
+  }
+
   async remove(id: number, userId: string, role: Role) {
     const current = await this.prisma.booking.findUnique({
       where: { id },

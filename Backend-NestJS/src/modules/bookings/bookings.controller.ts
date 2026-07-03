@@ -72,6 +72,15 @@ export class BookingsController {
     return this.bookingsService.updateByUser(id, userId, body);
   }
 
+  @Patch(':id/user/notes')
+  @Roles(Role.USER)
+  updateNotes(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('notes') notes: string,
+  ) {
+    return this.bookingsService.updateNotes(id, notes);
+  }
+
   @Delete(':id')
   remove(
     @GetUser('id') userId: string,

@@ -2,7 +2,6 @@
 
 import { Reservation } from '../types/reservations.type';
 import { BookingStatus } from '@/common/enums/booking-status.enum';
-import { PaymentType } from '@/common/enums/payment-type.enum';
 import { ActionButton } from '@/components/common/ActionButton';
 import {
   Calendar,
@@ -23,6 +22,7 @@ interface Props {
   onUpdate: (reservation: Reservation) => void;
   onDelete: () => void;
   onReview: (reservation: Reservation) => void;
+  onViewNotes: (reservation: Reservation) => void;
   isSubmitting?: boolean;
 }
 
@@ -33,6 +33,7 @@ export function ReservationCard({
   onUpdate,
   onDelete,
   onReview,
+  onViewNotes,
   isSubmitting,
 }: Props) {
   const totalPaid =
@@ -249,7 +250,10 @@ export function ReservationCard({
             </div>
           </div>
         ) : (
-          <p className="w-full cursor-pointer group/btn flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-all py-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl hover:border-blue-500/50">
+          <p
+            onClick={() => onViewNotes(reservation)}
+            className="w-full cursor-pointer group/btn flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-all py-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl hover:border-blue-500/50"
+          >
             <Notebook
               size={14}
               className="group-hover/btn:translate-x-1 transition-transform"

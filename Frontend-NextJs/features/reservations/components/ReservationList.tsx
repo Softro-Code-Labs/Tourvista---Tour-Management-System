@@ -19,14 +19,22 @@ import Pagination from '@/components/common/Pagination';
 
 import { PaymentType } from '@/common/enums/payment-type.enum';
 import { formatReservationId } from '@/lib/format/ids';
-import { Inbox, ListFilter } from 'lucide-react';
+import { Inbox, ListFilter, Notebook } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import ReviewModal from '@/features/reviews/components/ReviewModal';
 
 export function ReservationList() {
-  const { reservations, meta, filters, setFilter, onLoading, onRefresh } =
-    useReservations();
+  const {
+    reservations,
+    meta,
+    filters,
+    setFilter,
+    onLoading,
+    onRefresh,
+    updateReservationNotes,
+    isUpdatingNotes,
+  } = useReservations();
 
   const { isSubmitting: isPaying } = usePayments();
   const { deleteBooking, isSubmitting: isDeleting } = useBooking();
@@ -52,11 +60,26 @@ export function ReservationList() {
     reservationId: number | null;
   }>({ open: false, reservationId: null });
 
+  const [activeNotesTarget, setActiveNotesTarget] =
+    useState<Reservation | null>(null);
+  const [notesDraftText, setNotesDraftText] = useState('');
+
   const handleDelete = async () => {
     if (!deleteDialog.reservationId) return;
     if (await deleteBooking(deleteDialog.reservationId)) {
       setDeleteDialog({ open: false, reservationId: null });
       onRefresh();
+    }
+  };
+
+  const handleNotesSaveSubmit = async () => {
+    if (!activeNotesTarget) return;
+    const isSuccessful = await updateReservationNotes(
+      activeNotesTarget.id,
+      notesDraftText,
+    );
+    if (isSuccessful) {
+      setActiveNotesTarget(null);
     }
   };
 
@@ -137,6 +160,10 @@ export function ReservationList() {
                 tourId: reservation.tour.id,
               })
             }
+            onViewNotes={(targetRecord) => {
+              setActiveNotesTarget(targetRecord);
+              setNotesDraftText(targetRecord.notes || '');
+            }}
           />
         ))}
       </div>
@@ -255,6 +282,53 @@ export function ReservationList() {
           tourTitle={reviewingTour.title}
         />
       )}
+
+      {/* MODAL 5:. APPEND NOTES MANIPULATION DIALOG CONTEXT */}
+      <Dialog
+        open={!!activeNotesTarget}
+        onOpenChange={() => setActiveNotesTarget(null)}
+      >
+        <DialogContent className="sm:max-w-[450px] rounded-[2rem] p-8 overflow-hidden border-none bg-white dark:bg-slate-900">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="text-xl font-black flex items-center gap-2">
+              <Notebook className="text-blue-500" size={20} />
+              Reservation Notes
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+              Booking ID:{' '}
+              {activeNotesTarget
+                ? formatReservationId(activeNotesTarget.id)
+                : ''}
+            </p>
+
+            <textarea
+              value={notesDraftText}
+              onChange={(e) => setNotesDraftText(e.target.value)}
+              placeholder="Add personal handling details, specialized request instructions, or package customization parameters here..."
+              className="w-full min-h-[140px] p-4 text-sm bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-slate-700 dark:text-slate-200 placeholder:text-slate-400"
+            />
+
+            <div className="flex gap-3 justify-end pt-2">
+              <button
+                onClick={() => setActiveNotesTarget(null)}
+                className="px-5 py-3 rounded-xl border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-500 hover:bg-slate-50 cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isUpdatingNotes}
+                onClick={handleNotesSaveSubmit}
+                className="px-6 py-3 rounded-xl bg-slate-900 dark:bg-blue-600 text-white text-xs font-black uppercase tracking-wider disabled:opacity-50 cursor-pointer transition-opacity"
+              >
+                {isUpdatingNotes ? 'Saving...' : 'Save Notes'}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
