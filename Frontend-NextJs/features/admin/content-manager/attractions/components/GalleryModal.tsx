@@ -225,13 +225,13 @@ export default function AttractionItemGalleryModal({
         </section>
 
         {/* FOOTER ACTIONS */}
-        <DialogFooter className="px-12 pb-8 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+        <DialogFooter className="px-6 sm:px-12 py-6 sm:pb-8 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row gap-3">
           <ActionButton
             text="Cancel"
             icon={<X size={16} />}
             variant="secondary"
             onClick={onClose}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
 
           <ActionButton
@@ -239,7 +239,7 @@ export default function AttractionItemGalleryModal({
             icon={<UploadCloud size={16} />}
             variant="default"
             onClick={handleUpload}
-            className="flex-[2]"
+            className="w-full sm:flex-[2]"
           />
         </DialogFooter>
       </DialogContent>

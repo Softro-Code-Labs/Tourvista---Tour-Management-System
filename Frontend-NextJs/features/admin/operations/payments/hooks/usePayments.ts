@@ -1,8 +1,7 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { paymentService } from '../services/payments.service';
-import toast from 'react-hot-toast';
 import { PaymentFilters } from '../types/payments.type';
 import { useState } from 'react';
 import { PaymentType } from '@/common/enums/payment-type.enum';
@@ -43,7 +42,17 @@ export const usePaymentsAdmin = () => {
     placeholderData: (previousData) => previousData,
   });
 
-  // 4. HELPER FUNCTIONS
+  // 4. REFUND MUTATION
+  const refundMutation = useMutation({
+    mutationFn: (paymentId: number) => paymentService.refund(paymentId),
+    onSuccess: () => {
+      // Automatically refresh table data & counters smoothly
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      queryClient.invalidateQueries({ queryKey: ['payments-stats'] });
+    },
+  });
+
+  // 5. HELPER FUNCTIONS
   const setFilter = (key: string, value: any) => {
     setFilters((prev) => ({
       ...prev,
@@ -80,6 +89,10 @@ export const usePaymentsAdmin = () => {
     filters,
     setFilter,
     clearFilters,
+
+    // Refund
+    refundPayment: refundMutation.mutateAsync,
+    isRefunding: refundMutation.isPending,
 
     // Refetch
     refetch: () => queryClient.invalidateQueries({ queryKey: ['payments'] }),

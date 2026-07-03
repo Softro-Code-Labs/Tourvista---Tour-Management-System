@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { NumericFormat } from 'react-number-format';
@@ -37,7 +37,9 @@ export function PaymentModal({
   onCancel,
   onSuccess,
 }: PaymentFormProps) {
-  const { isSubmitting, initiatePayment, settlePayment } = usePayments();
+  const { isSubmitting, initiatePayment } = usePayments();
+  const [isProcessingGateway, setIsProcessingGateway] = useState(false);
+  const [showEmbeddedTarget, setShowEmbeddedTarget] = useState(false);
   const [paymentView, setPaymentView] = useState<PaymentType | 'options'>(
     isExistingPayment ? type : 'options',
   );
@@ -53,20 +55,91 @@ export function PaymentModal({
 
   const currentType = watch('type');
 
+  // Clean initialization setup for global windows context callbacks before mounting script elements
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    (window as any).seylanMpgsCompleteCallback = () => {
+      toast.success('Payment authorized successfully!');
+      setIsProcessingGateway(false);
+      onSuccess();
+    };
+
+    (window as any).seylanMpgsCancelCallback = () => {
+      toast.error('Payment window dismissed by user.');
+      setIsProcessingGateway(false);
+      setShowEmbeddedTarget(false);
+    };
+
+    (window as any).seylanMpgsErrorCallback = (error: any) => {
+      console.error('MPGS Error:', error);
+      toast.error('An error occurred during payment processing.');
+      setIsProcessingGateway(false);
+      setShowEmbeddedTarget(false);
+    };
+
+    return () => {
+      delete (window as any).seylanMpgsCompleteCallback;
+      delete (window as any).seylanMpgsCancelCallback;
+      delete (window as any).seylanMpgsErrorCallback;
+    };
+  }, [onSuccess]);
+
+  // 🔗 THE PAYHERE INTEGRATION LAYER
   const onSubmit: SubmitHandler<PaymentFormData> = async (data) => {
     try {
-      const result = isExistingPayment
-        ? await settlePayment(paymentId!)
-        : await initiatePayment(data);
+      setIsProcessingGateway(true);
 
-      if (result) {
-        toast.success(
-          isExistingPayment ? 'Balance Settled!' : 'Payment Initialized!',
-        );
-        onSuccess();
+      // 1. Fetch Session values from NestJS backend endpoint
+      const config = await initiatePayment(data);
+
+      if (!config || !config.sessionId) {
+        setIsProcessingGateway(false);
+        return;
       }
+
+      setShowEmbeddedTarget(true);
+
+      // 2. Dynamically build and append script tag with explicit data callback attributes
+      const scriptUrl =
+        'https://test-seylan.mtf.gateway.mastercard.com/static/checkout/checkout.min.js';
+
+      // Clean up previous instances if any exist
+      const existingScript = document.querySelector(
+        `script[src="${scriptUrl}"]`,
+      );
+      if (existingScript) existingScript.remove();
+
+      const script = document.createElement('script');
+      script.src = scriptUrl;
+
+      // Map script hooks to the global windows functions we isolated in our mount hook
+      script.setAttribute('data-error', 'seylanMpgsErrorCallback');
+      script.setAttribute('data-cancel', 'seylanMpgsCancelCallback');
+      script.setAttribute('data-complete', 'seylanMpgsCompleteCallback');
+      script.async = true;
+
+      script.onload = () => {
+        if (!(window as any).Checkout) {
+          toast.error('Failed to link into Checkout API context.');
+          return;
+        }
+
+        (window as any).Checkout.configure({
+          session: {
+            id: config.sessionId,
+          },
+        });
+
+        setTimeout(() => {
+          (window as any).Checkout.showPaymentPage();
+        }, 150);
+      };
+
+      document.body.appendChild(script);
     } catch (error) {
-      toast.error('Transaction failed. Please try again.');
+      setIsProcessingGateway(false);
+      toast.error('Could not construct payment execution framework.');
     }
   };
 
@@ -101,7 +174,8 @@ export function PaymentModal({
           </div>
           <button
             onClick={onCancel}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+            disabled={isSubmitting || isProcessingGateway}
+            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors disabled:opacity-50"
           >
             <X size={20} className="text-slate-400" />
           </button>
@@ -124,12 +198,13 @@ export function PaymentModal({
               <ActionButton
                 text="Pay Full Amount"
                 onClick={handleFullPayment}
-                disabled={isSubmitting}
+                disabled={isSubmitting || isProcessingGateway}
               />
               <ActionButton
                 text="Pay Advance (25%)"
                 variant="secondary"
                 onClick={switchToAdvance}
+                disabled={isSubmitting || isProcessingGateway}
               />
               <button
                 type="button"
@@ -156,14 +231,17 @@ export function PaymentModal({
                     render={({ field }) => (
                       <NumericFormat
                         value={field.value}
-                        readOnly={currentType === PaymentType.FULL}
+                        readOnly={
+                          currentType === PaymentType.FULL ||
+                          isProcessingGateway
+                        }
                         thousandSeparator
                         prefix="$ "
                         allowNegative={false}
                         onValueChange={(values) => {
                           const { floatValue } = values;
                           const minAllowed = totalAmount * 0.25;
-                          const maxAllowed = totalAmount;
+                          const maxAllowed = totalAmount * 0.75;
 
                           if (floatValue === undefined) {
                             field.onChange(0);
@@ -173,16 +251,19 @@ export function PaymentModal({
                           if (floatValue < minAllowed) {
                             field.onChange(minAllowed);
                             toast.error(
-                              `Minimum deposit is 25% ($${minAllowed})`,
+                              `Minimum deposit is 25% of total amount ($${minAllowed})`,
                             );
                             return;
                           }
 
                           if (floatValue > maxAllowed) {
                             field.onChange(maxAllowed);
-                            toast.error(`Maximum allowed is $${maxAllowed}`, {
-                              id: 'max-toast',
-                            });
+                            toast.error(
+                              `Maximum allowed is 75% of total amount $${maxAllowed}`,
+                              {
+                                id: 'max-toast',
+                              },
+                            );
                             return;
                           }
 
@@ -190,7 +271,8 @@ export function PaymentModal({
                         }}
                         className={cn(
                           'w-full pl-14 h-16 rounded-2xl text-xl font-black transition-all outline-none border-2',
-                          currentType === PaymentType.FULL
+                          currentType === PaymentType.FULL ||
+                            isProcessingGateway
                             ? 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 text-slate-500'
                             : 'bg-white dark:bg-slate-900 border-blue-500/30 focus:border-blue-500 dark:text-white',
                         )}
@@ -208,11 +290,15 @@ export function PaymentModal({
 
               <div className="flex flex-col gap-3">
                 <ActionButton
-                  text={isSubmitting ? 'Processing...' : 'Confirm & Secure'}
+                  text={
+                    isSubmitting || isProcessingGateway
+                      ? 'Connecting Gateway...'
+                      : 'Confirm & Secure'
+                  }
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || isProcessingGateway}
                 />
-                {!isExistingPayment && (
+                {!isExistingPayment && !isProcessingGateway && (
                   <button
                     type="button"
                     onClick={() => setPaymentView('options')}
@@ -227,7 +313,7 @@ export function PaymentModal({
         </form>
 
         {/* Footer Security Note */}
-        <div className="mt-8 pt-6 border-t border-slate-100 dark:border-slate-800 flex items-center justify-center gap-2">
+        <div className="mt-8 pt-6 border-t border-slate-100 dark:bg-transparent dark:border-slate-800 flex items-center justify-center gap-2">
           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
           <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">
             Encrypted SSL Connection

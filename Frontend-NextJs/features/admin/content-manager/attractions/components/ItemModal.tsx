@@ -232,16 +232,16 @@ export default function AttractionItemModal({
         </form>
 
         {/* FOOTER */}
-        <DialogFooter className="px-12 pb-8 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+        <DialogFooter className="px-6 sm:px-12 py-6 sm:pb-8 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row gap-3">
           <ActionButton
             text="Discard"
             type="button"
             icon={<Undo2 size={16} />}
             variant="outline"
             onClick={onClose}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
-          <div className="flex-1" />
+          <div className="hidden sm:block sm:flex-1" />
 
           <ActionButton
             text="Reset"
@@ -249,7 +249,7 @@ export default function AttractionItemModal({
             icon={<RefreshCcwDot size={16} />}
             variant="danger"
             onClick={handleReset}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
 
           <ActionButton
@@ -259,7 +259,7 @@ export default function AttractionItemModal({
             variant="default"
             form="attraction-item-form"
             disabled={isLoading}
-            className="flex-[1.5]"
+            className="w-full sm:flex-[1.5] sm:px-12"
           />
         </DialogFooter>
       </DialogContent>

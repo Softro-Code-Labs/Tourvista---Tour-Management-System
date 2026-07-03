@@ -190,7 +190,7 @@ model Booking {
 
   status              BookingStatus @default(PENDING)
 
-  payment             Payment?
+  payments            Payment[]
 
   notes               String?
 
@@ -213,7 +213,7 @@ enum BookingStatus {
 model Payment {
   id            Int           @id @default(autoincrement())
 
-  bookingId     Int           @unique
+  bookingId     Int           
   booking       Booking       @relation(fields: [bookingId], references: [id])
 
   userId        String
@@ -222,10 +222,10 @@ model Payment {
   amount        Float
   type          PaymentType
 
-  method        PaymentMethod @default(WEBXPAY)
+  method        PaymentMethod @default(SEYLAN_MPGS)
   status        PaymentStatus @default(PENDING)
 
-  transactionId String?       // WebXPay reference
+  transactionId String?       @unique
   gatewayData   Json?         // raw response from WebXPay
 
   createdAt     DateTime @default(now())  @db.Timestamptz(3)
@@ -246,7 +246,8 @@ enum PaymentStatus {
 }
 
 enum PaymentMethod {
-  WEBXPAY
+  SEYLAN_MPGS
+  CASH
 }
 
 

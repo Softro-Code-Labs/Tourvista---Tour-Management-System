@@ -12,11 +12,13 @@ export interface Reservation {
   notes?: string;
   createdAt: string;
   updatedAt: string;
-  payment?: {
-    id: number;
-    amount: number;
-    type: PaymentType;
-  };
+  payments?: [
+    {
+      id: number;
+      amount: number;
+      type: PaymentType;
+    },
+  ];
   tour: {
     id: number;
     title: string;

@@ -1,15 +1,47 @@
 'use client';
 
-import { User, Mail, CreditCard, Hash, Calendar } from 'lucide-react';
+import { useState } from 'react';
+import {
+  User,
+  Mail,
+  CreditCard,
+  Calendar,
+  Eye,
+  X,
+  Terminal,
+  RotateCcw,
+} from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Payment } from '../types/payments.type';
+import { formatReservationId, fromatePaymentId } from '@/lib/format/ids';
+import { RefundConfirmModal } from './RefundConfirmModal';
 
 interface Props {
   data: Payment[];
+  onRefund: (id: number) => Promise<any>;
+  isRefunding: boolean;
 }
 
-export function PaymentsTable({ data }: Props) {
+export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
+  const [selectedGatewayJson, setSelectedGatewayJson] = useState<Record<
+    string,
+    any
+  > | null>(null);
+  const [confirmRefundTarget, setConfirmRefundTarget] =
+    useState<Payment | null>(null);
+
+  const handleConfirmedRefundSubmit = async () => {
+    if (!confirmRefundTarget) return;
+    try {
+      await onRefund(confirmRefundTarget.id);
+    } catch (err) {
+      console.error('Refund submission failed', err);
+    } finally {
+      setConfirmRefundTarget(null);
+    }
+  };
+
   return (
     <div className="w-full space-y-6">
       {/* --- DESKTOP VIEW --- */}
@@ -26,14 +58,25 @@ export function PaymentsTable({ data }: Props) {
               <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                 Type & Method
               </th>
-              <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-right">
+              <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                 Status
+              </th>
+              <th className="p-5 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 text-right">
+                Actions
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
             {data.map((item) => (
-              <PaymentRow key={item.id} item={item} />
+              <PaymentRow
+                key={item.id}
+                item={item}
+                isGlobalRefunding={isRefunding}
+                onRefundTrigger={() => setConfirmRefundTarget(item)}
+                onViewJson={() =>
+                  setSelectedGatewayJson(item.gatewayData || {})
+                }
+              />
             ))}
           </tbody>
         </table>
@@ -42,9 +85,69 @@ export function PaymentsTable({ data }: Props) {
       {/* --- MOBILE VIEW --- */}
       <div className="xl:hidden grid grid-cols-1 md:grid-cols-2 gap-6">
         {data.map((item) => (
-          <PaymentCard key={item.id} item={item} />
+          <PaymentCard
+            key={item.id}
+            item={item}
+            isGlobalRefunding={isRefunding}
+            onRefundTrigger={() => setConfirmRefundTarget(item)}
+            onViewJson={() => setSelectedGatewayJson(item.gatewayData || {})}
+          />
         ))}
       </div>
+
+      {/* --- GATEWAY DATA JSON INSPECTOR MODAL OVERLAY --- */}
+      {selectedGatewayJson && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-3xl max-h-[80vh] flex flex-col bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400">
+                  <Terminal size={14} />
+                </div>
+                <div>
+                  <h3 className="font-black text-sm text-slate-900 dark:text-white uppercase tracking-wider">
+                    Gateway Callback Logs
+                  </h3>
+                  <p className="text-[10px] font-medium text-slate-400">
+                    Raw financial network diagnostic response payload
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedGatewayJson(null)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Code Body */}
+            <div className="p-6 overflow-y-auto flex-1 bg-slate-950 font-mono text-xs text-emerald-400/90 leading-relaxed selection:bg-emerald-500/20">
+              <pre className="whitespace-pre-wrap break-all">
+                {JSON.stringify(selectedGatewayJson, null, 2)}
+              </pre>
+            </div>
+
+            {/* Footer */}
+            <div className="p-4 bg-slate-50 dark:bg-slate-900/50 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+              <button
+                onClick={() => setSelectedGatewayJson(null)}
+                className="px-5 py-2 text-xs font-bold rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 hover:opacity-90 cursor-pointer transition-opacity"
+              >
+                Close Logs
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <RefundConfirmModal
+        target={confirmRefundTarget}
+        onClose={() => setConfirmRefundTarget(null)}
+        onConfirm={handleConfirmedRefundSubmit}
+        isRefunding={isRefunding}
+      />
     </div>
   );
 }
@@ -52,7 +155,17 @@ export function PaymentsTable({ data }: Props) {
 /**
  * DESKTOP ROW COMPONENT
  */
-function PaymentRow({ item }: { item: Payment }) {
+function PaymentRow({
+  item,
+  onViewJson,
+  onRefundTrigger,
+  isGlobalRefunding,
+}: {
+  item: Payment;
+  onViewJson: () => void;
+  onRefundTrigger: () => void;
+  isGlobalRefunding: boolean;
+}) {
   return (
     <tr className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
       <td className="p-5">
@@ -77,7 +190,19 @@ function PaymentRow({ item }: { item: Payment }) {
             ${item.amount.toLocaleString()}
           </span>
           <span className="text-[10px] font-medium text-slate-400 mt-1 flex items-center gap-1">
-            <Hash size={10} /> {item.transactionId}
+            {item.transactionId}
+          </span>
+          <span className="text-[10px] font-bold text-slate-500 mt-0.5 flex items-center gap-1">
+            <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[9px] font-black tracking-wider text-slate-400 uppercase">
+              Payment
+            </span>{' '}
+            {fromatePaymentId(item.id)}
+          </span>
+          <span className="text-[10px] font-bold text-slate-500 mt-0.5 flex items-center gap-1">
+            <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[9px] font-black tracking-wider text-slate-400 uppercase">
+              Booking
+            </span>{' '}
+            {formatReservationId(item.bookingId)}
           </span>
         </div>
       </td>
@@ -105,12 +230,34 @@ function PaymentRow({ item }: { item: Payment }) {
         </div>
       </td>
 
-      <td className="p-5 text-right">
+      <td className="p-5">
         <Badge
           className={`rounded-lg font-black text-[10px] uppercase px-3 py-1 ${getStatusStyles(item.status)}`}
         >
           {item.status}
         </Badge>
+      </td>
+
+      <td className="p-5 text-right">
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={onViewJson}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-bold text-xs cursor-pointer transition-all"
+          >
+            <Eye size={12} />
+            Inspect Logs
+          </button>
+
+          {item.status === 'SUCCESS' && (
+            <button
+              disabled={isGlobalRefunding}
+              onClick={onRefundTrigger}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 disabled:opacity-50 font-bold text-xs cursor-pointer transition-all"
+            >
+              <RotateCcw size={12} /> Refund
+            </button>
+          )}
+        </div>
       </td>
     </tr>
   );
@@ -119,7 +266,17 @@ function PaymentRow({ item }: { item: Payment }) {
 /**
  * MOBILE CARD COMPONENT
  */
-function PaymentCard({ item }: { item: Payment }) {
+function PaymentCard({
+  item,
+  onViewJson,
+  onRefundTrigger,
+  isGlobalRefunding,
+}: {
+  item: Payment;
+  onViewJson: () => void;
+  onRefundTrigger: () => void;
+  isGlobalRefunding: boolean;
+}) {
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-6 shadow-sm space-y-4">
       <div className="flex justify-between items-start">
@@ -144,6 +301,14 @@ function PaymentCard({ item }: { item: Payment }) {
       </div>
 
       <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 space-y-3">
+        <div className="flex justify-between items-center">
+          <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">
+            Booking ID
+          </span>
+          <span className="font-bold text-xs text-slate-700 dark:text-slate-300">
+            {formatReservationId(item.bookingId)}
+          </span>
+        </div>
         <div className="flex justify-between items-center">
           <span className="text-[10px] text-slate-400 uppercase font-black tracking-wider">
             Amount
@@ -172,9 +337,28 @@ function PaymentCard({ item }: { item: Payment }) {
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-slate-400">
-          <Hash size={12} />
           <span className="text-[10px] font-bold">{item.transactionId}</span>
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 pt-2">
+        <button
+          onClick={onViewJson}
+          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold text-xs cursor-pointer transition-colors"
+        >
+          <Eye size={13} />
+          Inspect Logs
+        </button>
+
+        {item.status === 'SUCCESS' && (
+          <button
+            disabled={isGlobalRefunding}
+            onClick={onRefundTrigger}
+            className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-100 dark:border-rose-900/40 font-bold text-xs disabled:opacity-50 cursor-pointer transition-colors"
+          >
+            <RotateCcw size={13} /> Refund
+          </button>
+        )}
       </div>
     </div>
   );

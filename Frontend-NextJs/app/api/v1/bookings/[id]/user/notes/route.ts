@@ -4,11 +4,12 @@ import { authApi } from '@/lib/api/client';
 type RouteContext = { params: Promise<{ id: string }> };
 
 /**
- * PATCH: Update payment details
+ * PATCH: Update booking details
  * Authenticated users only (travelers)
  */
-export async function PATCH(_req: NextRequest, context: RouteContext) {
+export async function PATCH(req: NextRequest, context: RouteContext) {
   const { id } = await context.params;
+  const formData = await req.json();
 
-  return await authApi.patch(`/payments/${id}`);
+  return await authApi.patch(`/bookings/${id}/user/notes`, formData);
 }

@@ -22,6 +22,9 @@ export default function PaymentsManager() {
     setFilter,
     clearFilters,
 
+    refundPayment,
+    isRefunding,
+
     refetch,
   } = usePaymentsAdmin();
 
@@ -82,7 +85,11 @@ export default function PaymentsManager() {
           {/* DATA TABLE & PAGINATION */}
           {showTable && (
             <div className="p-2 animate-in fade-in duration-500">
-              <PaymentsTable data={payments} />
+              <PaymentsTable
+                onRefund={refundPayment}
+                isRefunding={isRefunding}
+                data={payments}
+              />
 
               {meta && meta.totalPages > 1 && (
                 <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/50">

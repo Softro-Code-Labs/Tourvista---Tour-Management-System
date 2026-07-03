@@ -196,7 +196,7 @@ function ReservationRow({
       <td className="p-5 text-center">
         <button
           onClick={() => onDelete(res.id)}
-          className="p-2.5 rounded-2xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-all active:scale-90"
+          className="p-2.5 rounded-2xl text-slate-300 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 cursor-pointer transition-all active:scale-90"
         >
           <Trash2 size={18} />
         </button>
@@ -230,7 +230,7 @@ function ReservationCard({
         </div>
         <button
           onClick={() => onDelete(res.id)}
-          className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10 text-rose-500 active:scale-95"
+          className="p-3 rounded-2xl bg-rose-50 dark:bg-rose-500/10 text-rose-500 active:scale-95 cursor-pointer"
         >
           <Trash2 size={18} />
         </button>
@@ -289,7 +289,7 @@ function StatusDropdown({ res, options, onStatusChange, isUpdating }: any) {
         <Badge
           variant="outline"
           className={cn(
-            'flex items-center gap-2 capitalize font-black text-[10px] tracking-widest px-4 py-2 border-2 transition-all active:scale-95',
+            'flex items-center gap-2 capitalize font-black text-[10px] tracking-widest px-4 py-2 border-2 cursor-pointer transition-all active:scale-95',
             currentStatus.color,
             res.status === 'PENDING' &&
               'animate-pulse ring-4 ring-amber-500/10',

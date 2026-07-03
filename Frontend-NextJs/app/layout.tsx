@@ -1,10 +1,10 @@
 import { ClerkProvider } from '@clerk/nextjs';
-import { Toaster } from 'react-hot-toast';
 import { Providers } from './providers';
 import { CLIENT_ENV } from '@/config/env.client';
 import { Geist } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import Script from 'next/script';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -26,7 +26,14 @@ export default function RootLayout({
           signInFallbackRedirectUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
           afterSignOutUrl={CLIENT_ENV.CLERK_FALLBACK_REDIRECT_URL}
         >
-          <Providers>{children}</Providers>
+          <Providers>
+            {children}
+
+            <Script
+              src="https://www.payhere.lk/lib/payhere.js"
+              strategy="lazyOnload"
+            />
+          </Providers>
         </ClerkProvider>
       </body>
     </html>

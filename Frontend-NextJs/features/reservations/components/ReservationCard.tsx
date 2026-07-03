@@ -2,7 +2,6 @@
 
 import { Reservation } from '../types/reservations.type';
 import { BookingStatus } from '@/common/enums/booking-status.enum';
-import { PaymentType } from '@/common/enums/payment-type.enum';
 import { ActionButton } from '@/components/common/ActionButton';
 import {
   Calendar,
@@ -23,6 +22,7 @@ interface Props {
   onUpdate: (reservation: Reservation) => void;
   onDelete: () => void;
   onReview: (reservation: Reservation) => void;
+  onViewNotes: (reservation: Reservation) => void;
   isSubmitting?: boolean;
 }
 
@@ -33,13 +33,17 @@ export function ReservationCard({
   onUpdate,
   onDelete,
   onReview,
+  onViewNotes,
   isSubmitting,
 }: Props) {
-  const hasPayment = !!reservation.payment;
+  const totalPaid =
+    reservation.payments?.reduce((sum, p) => sum + p.amount, 0) ?? 0;
+  const hasPayment = totalPaid > 0;
   const isPending = reservation.status === BookingStatus.PENDING;
   const isCompleted = reservation.status === BookingStatus.COMPLETED;
-  const isAdvancePaid = reservation.payment?.type === PaymentType.ADVANCE;
-  const isFullPaid = reservation.payment?.type === PaymentType.FULL;
+
+  const isAdvancePaid = totalPaid > 0 && totalPaid < reservation.totalAmount;
+  const isFullPaid = totalPaid >= reservation.totalAmount;
 
   const statusColors = {
     [BookingStatus.PENDING]: cn(
@@ -150,7 +154,7 @@ export function ReservationCard({
                   Initial Payment
                 </p>
                 <p className="text-lg font-bold text-emerald-600">
-                  ${reservation.payment?.amount.toLocaleString()}
+                  ${totalPaid.toLocaleString()}
                 </p>
               </div>
             )
@@ -159,14 +163,18 @@ export function ReservationCard({
 
         {/* RECEIPT FOOTER (If payment exists) */}
         {hasPayment && (
-          <div className="flex items-center gap-2 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
-            <CreditCard size={12} className="text-slate-400" />
-            <p className="text-[10px] font-medium text-slate-400">
-              Receipt:{' '}
-              <span className="font-mono text-slate-600 dark:text-slate-300">
-                {fromatePaymentId(reservation.payment?.id ?? 0)}
-              </span>
-            </p>
+          <div className="flex flex-col gap-1 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
+            {reservation.payments?.map((p) => (
+              <div key={p.id} className="flex items-center gap-2">
+                <CreditCard size={12} className="text-slate-400" />
+                <p className="text-[10px] font-medium text-slate-400">
+                  Receipt:{' '}
+                  <span className="font-mono text-slate-600 dark:text-slate-300">
+                    {fromatePaymentId(p.id)} (${p.amount})
+                  </span>
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -215,10 +223,7 @@ export function ReservationCard({
                 Balance Outstanding
               </p>
               <p className="text-sm font-black text-blue-600 dark:text-blue-400">
-                $
-                {(
-                  reservation.totalAmount - (reservation.payment?.amount ?? 0)
-                ).toLocaleString()}
+                ${(reservation.totalAmount - totalPaid).toLocaleString()}
               </p>
             </div>
             <ActionButton
@@ -245,7 +250,10 @@ export function ReservationCard({
             </div>
           </div>
         ) : (
-          <p className="w-full cursor-pointer group/btn flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-all py-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl hover:border-blue-500/50">
+          <p
+            onClick={() => onViewNotes(reservation)}
+            className="w-full cursor-pointer group/btn flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 transition-all py-4 border-2 border-dashed border-slate-100 dark:border-slate-800 rounded-2xl hover:border-blue-500/50"
+          >
             <Notebook
               size={14}
               className="group-hover/btn:translate-x-1 transition-transform"

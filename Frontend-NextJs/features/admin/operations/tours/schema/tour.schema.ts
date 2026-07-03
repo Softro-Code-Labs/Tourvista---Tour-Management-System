@@ -33,7 +33,7 @@ export const tourSchema = z.object({
     .string()
     .nonempty('Description is required')
     .min(10, 'Description must be at least 10 characters')
-    .max(1000, 'Description cannot exceed 1000 characters'),
+    .max(2000, 'Description cannot exceed 2000 characters'),
   image: z.string().optional(),
   isActive: z.boolean(),
 });

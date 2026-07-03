@@ -126,16 +126,16 @@ export default function AttractionModal({
           </div>
         </form>
 
-        <DialogFooter className="px-12 pb-8 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+        <DialogFooter className="px-6 sm:px-12 py-6 sm:pb-8 border-t border-slate-100 dark:border-slate-800 flex flex-col-reverse sm:flex-row gap-3">
           <ActionButton
             text="Cancel"
             type="button"
             variant="outline"
             icon={<ArrowLeft size={16} />}
             onClick={onClose}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
-          <div className="flex-1" />
+          <div className="hidden sm:block sm:flex-1" />
 
           <ActionButton
             text="Reset"
@@ -146,7 +146,7 @@ export default function AttractionModal({
               reset(defaultValues);
               toast.success('Form reset successfully!');
             }}
-            className="flex-1"
+            className="w-full sm:flex-1"
           />
           <ActionButton
             text={attraction ? 'Save Changes' : 'Create Category'}
@@ -155,7 +155,7 @@ export default function AttractionModal({
             icon={<CheckCircle2 size={16} />}
             form="attraction-form"
             disabled={loading}
-            className="flex-[1.5] px-12 w-full"
+            className="w-full sm:flex-[1.5] sm:px-12"
           />
         </DialogFooter>
       </DialogContent>

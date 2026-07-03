@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 export function useReservations() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isUpdatingNotes, setIsUpdatingNotes] = useState(false);
 
   const [meta, setMeta] = useState<ReservationResponse['data']['meta']>({
     total: 0,
@@ -53,6 +54,28 @@ export function useReservations() {
     }
   }, [filters]);
 
+  const updateReservationNotes = async (id: number, notes: string) => {
+    setIsUpdatingNotes(true);
+    try {
+      const res = await reservationService.updateNotes(id, notes);
+      if (res.success) {
+        toast.success('Notes updated successfully');
+        await fetchReservations(); // Refresh local list state
+        return true;
+      } else {
+        toast.error(
+          `Failed to update notes: ${res.message || 'Unknown error'}`,
+        );
+        return false;
+      }
+    } catch (error) {
+      toast.error(`Error saving notes: ${(error as Error).message}`);
+      return false;
+    } finally {
+      setIsUpdatingNotes(false);
+    }
+  };
+
   const setFilter = (
     key: keyof ReservationFilters,
     value: ReservationFilters[keyof ReservationFilters],
@@ -85,6 +108,9 @@ export function useReservations() {
     filters,
     setFilter,
     clearFilters,
+
+    updateReservationNotes,
+    isUpdatingNotes,
 
     onRefresh: fetchReservations,
     onLoading: loading,
