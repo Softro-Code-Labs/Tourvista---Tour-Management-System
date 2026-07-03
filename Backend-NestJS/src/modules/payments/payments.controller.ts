@@ -7,6 +7,7 @@ import {
   Param,
   Query,
   Headers,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -57,5 +58,15 @@ export class PaymentsController {
   @ApiOperation({ summary: 'Returns all payments' })
   findAll(@Query() query: QueryPaymentDto) {
     return this.paymentsService.findAll(query);
+  }
+
+  @Patch(':id/refund')
+  @Roles(Role.ADMIN)
+  @ApiOperation({
+    summary:
+      'Admin initiated database ledger entry reversal and parent booking state reduction',
+  })
+  async refund(@Param('id', ParseIntPipe) id: number) {
+    return this.paymentsService.refund(Number(id));
   }
 }

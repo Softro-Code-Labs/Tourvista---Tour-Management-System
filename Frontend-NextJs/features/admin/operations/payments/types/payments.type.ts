@@ -8,11 +8,13 @@ export interface PaymentsState {
 
 export interface Payment {
   id: number;
+  bookingId: number;
   amount: number;
   type: PaymentType;
   method: PaymentMethod;
   status: PaymentStatus;
   transactionId: string;
+  gatewayData: Record<string, any>;
   createdAt: string;
   user: {
     firstName: string;

@@ -29,6 +29,7 @@ export class SeylanMpgsService {
     orderId: string,
     amount: number,
     currency: string = 'USD',
+    description: string = 'Test order',
   ): Promise<SeylanCheckoutSessionResponse> {
     const sessionUrl = `${this.baseGatewayUrl}/session`;
 
@@ -50,7 +51,7 @@ export class SeylanMpgsService {
         id: orderId,
         amount: amount.toFixed(2),
         currency: currency,
-        description: 'Test order',
+        description: description,
       },
     };
 
@@ -89,6 +90,62 @@ export class SeylanMpgsService {
       );
       throw new InternalServerErrorException(
         'Payment runtime initialization fault.',
+      );
+    }
+  }
+
+  /**
+   * Executes a secure server-to-server refund transaction payload mapping to MPGS API
+   */
+  async executeRefund(
+    orderId: string,
+    transactionId: string,
+    amount: number,
+    currency: string = 'USD',
+  ): Promise<any> {
+    const refundTxId = `REF-${Math.floor(Date.now() / 1000)}`;
+    const refundUrl = `${this.baseGatewayUrl}/order/${orderId}/transaction/${refundTxId}`;
+
+    const authCredentials = Buffer.from(
+      `merchant.${this.config.merchantId}:${this.config.apiPassword}`,
+    ).toString('base64');
+
+    const requestBody = {
+      apiOperation: 'REFUND',
+      transaction: {
+        amount: amount.toFixed(2),
+        currency: currency,
+      },
+    };
+
+    try {
+      const response = await fetch(refundUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Basic ${authCredentials}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        this.logger.error(
+          `Seylan Gateway Refund Rejection: Status ${response.status} | Payload: ${errorText}`,
+        );
+        throw new InternalServerErrorException(
+          'Gateway denied refund processing sequence.',
+        );
+      }
+
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      this.logger.error(
+        `Failed executing transaction refund context: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+      throw new InternalServerErrorException(
+        'Payment gateway refund transaction fault.',
       );
     }
   }

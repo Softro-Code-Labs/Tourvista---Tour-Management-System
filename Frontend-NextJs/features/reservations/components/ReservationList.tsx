@@ -115,9 +115,10 @@ export function ReservationList() {
             }
             onCompletePayment={(id) => {
               const resData = reservations.find((r) => r.id === id);
-              const remaining = resData
-                ? resData.totalAmount - (resData.payment?.amount ?? 0)
+              const paidAmount = resData?.payments
+                ? resData.payments.reduce((sum, p) => sum + p.amount, 0)
                 : 0;
+              const remaining = resData ? resData.totalAmount - paidAmount : 0;
               setActivePayment({
                 id,
                 totalAmount: resData?.totalAmount ?? 0,
@@ -194,14 +195,15 @@ export function ReservationList() {
         <PaymentModal
           bookingId={activePayment.id}
           paymentId={
-            reservations.find((r) => r.id === activePayment.id)?.payment?.id
+            reservations.find((r) => r.id === activePayment.id)?.payments?.[0]
+              ?.id
           }
           totalAmount={activePayment.totalAmount}
           initialAmount={activePayment.initialAmount}
           type={activePayment.type}
           isExistingPayment={
-            reservations.find((r) => r.id === activePayment.id)?.payment !==
-            null
+            (reservations.find((r) => r.id === activePayment.id)?.payments
+              ?.length ?? 0) > 0
           }
           onCancel={() => setActivePayment(null)}
           onSuccess={() => {

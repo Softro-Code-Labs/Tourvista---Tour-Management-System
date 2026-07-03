@@ -35,11 +35,14 @@ export function ReservationCard({
   onReview,
   isSubmitting,
 }: Props) {
-  const hasPayment = !!reservation.payment;
+  const totalPaid =
+    reservation.payments?.reduce((sum, p) => sum + p.amount, 0) ?? 0;
+  const hasPayment = totalPaid > 0;
   const isPending = reservation.status === BookingStatus.PENDING;
   const isCompleted = reservation.status === BookingStatus.COMPLETED;
-  const isAdvancePaid = reservation.payment?.type === PaymentType.ADVANCE;
-  const isFullPaid = reservation.payment?.type === PaymentType.FULL;
+
+  const isAdvancePaid = totalPaid > 0 && totalPaid < reservation.totalAmount;
+  const isFullPaid = totalPaid >= reservation.totalAmount;
 
   const statusColors = {
     [BookingStatus.PENDING]: cn(
@@ -150,7 +153,7 @@ export function ReservationCard({
                   Initial Payment
                 </p>
                 <p className="text-lg font-bold text-emerald-600">
-                  ${reservation.payment?.amount.toLocaleString()}
+                  ${totalPaid.toLocaleString()}
                 </p>
               </div>
             )
@@ -159,14 +162,18 @@ export function ReservationCard({
 
         {/* RECEIPT FOOTER (If payment exists) */}
         {hasPayment && (
-          <div className="flex items-center gap-2 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
-            <CreditCard size={12} className="text-slate-400" />
-            <p className="text-[10px] font-medium text-slate-400">
-              Receipt:{' '}
-              <span className="font-mono text-slate-600 dark:text-slate-300">
-                {fromatePaymentId(reservation.payment?.id ?? 0)}
-              </span>
-            </p>
+          <div className="flex flex-col gap-1 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
+            {reservation.payments?.map((p) => (
+              <div key={p.id} className="flex items-center gap-2">
+                <CreditCard size={12} className="text-slate-400" />
+                <p className="text-[10px] font-medium text-slate-400">
+                  Receipt:{' '}
+                  <span className="font-mono text-slate-600 dark:text-slate-300">
+                    {fromatePaymentId(p.id)} (${p.amount})
+                  </span>
+                </p>
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -215,10 +222,7 @@ export function ReservationCard({
                 Balance Outstanding
               </p>
               <p className="text-sm font-black text-blue-600 dark:text-blue-400">
-                $
-                {(
-                  reservation.totalAmount - (reservation.payment?.amount ?? 0)
-                ).toLocaleString()}
+                ${(reservation.totalAmount - totalPaid).toLocaleString()}
               </p>
             </div>
             <ActionButton
