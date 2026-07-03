@@ -15,7 +15,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export function PackageCard({ pkg }: { pkg: Package }) {
-  console.log('Rendering PackageCard for:', pkg.description);
   const [showDrawer, setShowDrawer] = useState(false);
   const [imgError, setImgError] = useState(false);
 

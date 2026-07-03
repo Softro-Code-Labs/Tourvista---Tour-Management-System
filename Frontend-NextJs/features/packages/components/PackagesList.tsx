@@ -7,18 +7,14 @@ import { Loader2, Compass, SearchX } from 'lucide-react';
 import Pagination from '@/components/common/Pagination';
 
 export default function PackagesList() {
-  const { packages, meta, loading, filters, setFilters, clearFilters } =
+  const { packages, meta, loading, filters, setFilter, clearFilters } =
     usePackages();
-
-  const handleFilterChange = (key: string, value: any) => {
-    setFilters((prev: any) => ({ ...prev, [key]: value, page: 1 }));
-  };
 
   return (
     <div className="space-y-10">
       <PackageSearchFilters
         filters={filters}
-        onFilterChange={handleFilterChange}
+        onFilterChange={setFilter}
         onClear={clearFilters}
       />
 
@@ -61,8 +57,8 @@ export default function PackagesList() {
             limits={[12, 24, 48]}
             total={meta.total}
             totalPages={meta.totalPages}
-            onPageChange={(p) => handleFilterChange('page', p)}
-            onLimitChange={(l) => handleFilterChange('limit', l)}
+            onPageChange={(p) => setFilter('page', p)}
+            onLimitChange={(l) => setFilter('limit', l)}
           />
         </>
       )}

@@ -57,6 +57,17 @@ export function usePackages() {
     }
   }, [filters]);
 
+  const setFilter = (
+    key: keyof PackageFilters,
+    value: PackageFilters[keyof PackageFilters],
+  ) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value,
+      page: key === 'page' ? (value as number) : 1,
+    }));
+  };
+
   const clearFilters = () =>
     setFilters({
       page: 1,
@@ -79,7 +90,7 @@ export function usePackages() {
     meta,
 
     filters,
-    setFilters,
+    setFilter,
     clearFilters,
 
     refresh: fetchPackages,
