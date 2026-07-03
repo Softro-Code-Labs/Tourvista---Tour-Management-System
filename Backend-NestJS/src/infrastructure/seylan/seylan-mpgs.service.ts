@@ -99,7 +99,6 @@ export class SeylanMpgsService {
    */
   async executeRefund(
     orderId: string,
-    transactionId: string,
     amount: number,
     currency: string = 'USD',
   ): Promise<any> {

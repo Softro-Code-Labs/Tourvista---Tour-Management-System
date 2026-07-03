@@ -97,7 +97,6 @@ export class PaymentsService {
    * STEP 2: Securely capture payment feedback webhooks without causing unique constraint drops
    */
   async processWebhook(secret: string, payload: any) {
-    console.log('payload', payload);
     this.verifyWebhookSecret(secret);
 
     const transactionType = payload.transaction?.type;
@@ -116,7 +115,6 @@ export class PaymentsService {
     }
 
     const internalOrderId = payload.order.id;
-    const uniqueDbTransactionId = `${internalOrderId}#${payload.transaction.id}`;
     const gatewayResult = payload.result;
     const transactionAmount =
       payload.transaction.amount ?? payload.order.amount;
@@ -149,7 +147,7 @@ export class PaymentsService {
       return await this.prisma.$transaction(async (tx) => {
         // Idempotency Check: Verify if this specific interaction has run before
         const existingPayment = await tx.payment.findFirst({
-          where: { transactionId: uniqueDbTransactionId },
+          where: { transactionId: internalOrderId },
         });
 
         if (existingPayment) {
@@ -216,7 +214,7 @@ export class PaymentsService {
                 type: PaymentType.FULL,
                 method: PaymentMethod.SEYLAN_MPGS,
                 status: PaymentStatus.REFUNDED,
-                transactionId: uniqueDbTransactionId,
+                transactionId: internalOrderId,
                 gatewayData: payload as any,
               },
             });
@@ -251,7 +249,7 @@ export class PaymentsService {
               type: dynamicType,
               method: PaymentMethod.SEYLAN_MPGS,
               status: targetStatus,
-              transactionId: uniqueDbTransactionId,
+              transactionId: internalOrderId,
               gatewayData: payload as any,
             },
           });
@@ -357,13 +355,9 @@ export class PaymentsService {
         );
       }
 
-      // 2. Parse the compound key back to what Seylan expects
-      const [gatewayOrderId, gatewayTxId] = payment.transactionId.split('#');
-
-      // 3. RUN THE REAL GATEWAY REFUND FIRST
+      // 2. RUN THE REAL GATEWAY REFUND FIRST
       const gatewayResponse = await this.seylanMpgsService.executeRefund(
-        gatewayOrderId,
-        gatewayTxId,
+        payment.transactionId,
         payment.amount,
       );
 
@@ -373,7 +367,7 @@ export class PaymentsService {
         );
       }
 
-      // 4. COMMIT TO LOCAL DATABASE ONCE GATEWAY APPROVES
+      // 3. COMMIT TO LOCAL DATABASE ONCE GATEWAY APPROVES
       return await this.prisma.$transaction(async (tx) => {
         const updatedPayment = await tx.payment.update({
           where: { id: paymentId },

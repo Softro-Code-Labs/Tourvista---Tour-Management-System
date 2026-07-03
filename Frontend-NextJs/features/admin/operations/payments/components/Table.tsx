@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Payment } from '../types/payments.type';
 import { formatReservationId, fromatePaymentId } from '@/lib/format/ids';
+import { RefundConfirmModal } from './RefundConfirmModal';
 
 interface Props {
   data: Payment[];
@@ -27,6 +28,19 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
     string,
     any
   > | null>(null);
+  const [confirmRefundTarget, setConfirmRefundTarget] =
+    useState<Payment | null>(null);
+
+  const handleConfirmedRefundSubmit = async () => {
+    if (!confirmRefundTarget) return;
+    try {
+      await onRefund(confirmRefundTarget.id);
+    } catch (err) {
+      console.error('Refund submission failed', err);
+    } finally {
+      setConfirmRefundTarget(null);
+    }
+  };
 
   return (
     <div className="w-full space-y-6">
@@ -58,7 +72,7 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
                 key={item.id}
                 item={item}
                 isGlobalRefunding={isRefunding}
-                onRefund={onRefund}
+                onRefundTrigger={() => setConfirmRefundTarget(item)}
                 onViewJson={() =>
                   setSelectedGatewayJson(item.gatewayData || {})
                 }
@@ -75,7 +89,7 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
             key={item.id}
             item={item}
             isGlobalRefunding={isRefunding}
-            onRefund={onRefund}
+            onRefundTrigger={() => setConfirmRefundTarget(item)}
             onViewJson={() => setSelectedGatewayJson(item.gatewayData || {})}
           />
         ))}
@@ -127,6 +141,13 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
           </div>
         </div>
       )}
+
+      <RefundConfirmModal
+        target={confirmRefundTarget}
+        onClose={() => setConfirmRefundTarget(null)}
+        onConfirm={handleConfirmedRefundSubmit}
+        isRefunding={isRefunding}
+      />
     </div>
   );
 }
@@ -137,28 +158,14 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
 function PaymentRow({
   item,
   onViewJson,
-  onRefund,
+  onRefundTrigger,
   isGlobalRefunding,
 }: {
   item: Payment;
   onViewJson: () => void;
-  onRefund: (id: number) => Promise<any>;
+  onRefundTrigger: () => void;
   isGlobalRefunding: boolean;
 }) {
-  const handleRefundClick = async () => {
-    if (
-      window.confirm(
-        `Are you sure you want to trigger a database refund for Transaction: ${item.transactionId}?`,
-      )
-    ) {
-      try {
-        await onRefund(item.id);
-      } catch (err) {
-        console.error('Refund submission failed', err);
-      }
-    }
-  };
-
   return (
     <tr className="group hover:bg-slate-50/50 dark:hover:bg-white/[0.02] transition-colors">
       <td className="p-5">
@@ -244,7 +251,7 @@ function PaymentRow({
           {item.status === 'SUCCESS' && (
             <button
               disabled={isGlobalRefunding}
-              onClick={handleRefundClick}
+              onClick={onRefundTrigger}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-100 disabled:opacity-50 font-bold text-xs cursor-pointer transition-all"
             >
               <RotateCcw size={12} /> Refund
@@ -262,28 +269,14 @@ function PaymentRow({
 function PaymentCard({
   item,
   onViewJson,
-  onRefund,
+  onRefundTrigger,
   isGlobalRefunding,
 }: {
   item: Payment;
   onViewJson: () => void;
-  onRefund: (id: number) => Promise<any>;
+  onRefundTrigger: () => void;
   isGlobalRefunding: boolean;
 }) {
-  const handleRefundClick = async () => {
-    if (
-      window.confirm(
-        `Issue complete refund for Booking Reference #${item.bookingId}?`,
-      )
-    ) {
-      try {
-        await onRefund(item.id);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-  };
-
   return (
     <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2.5rem] p-6 shadow-sm space-y-4">
       <div className="flex justify-between items-start">
@@ -360,7 +353,7 @@ function PaymentCard({
         {item.status === 'SUCCESS' && (
           <button
             disabled={isGlobalRefunding}
-            onClick={handleRefundClick}
+            onClick={onRefundTrigger}
             className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-950/20 dark:text-rose-400 border border-rose-100 dark:border-rose-900/40 font-bold text-xs disabled:opacity-50 cursor-pointer transition-colors"
           >
             <RotateCcw size={13} /> Refund

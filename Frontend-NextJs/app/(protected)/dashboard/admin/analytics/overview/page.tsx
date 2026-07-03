@@ -8,6 +8,7 @@ import {
   Calendar,
   MessageSquare,
   TrendingUp,
+  Loader2,
 } from 'lucide-react';
 import {
   LineChart,
@@ -21,68 +22,77 @@ import {
   Bar,
 } from 'recharts';
 import { cn } from '@/lib/utils';
-
-const monthlyData = [
-  { month: 'Jan', users: 320, bookings: 85, income: 2100 },
-  { month: 'Feb', users: 280, bookings: 70, income: 1850 },
-  { month: 'Mar', users: 410, bookings: 120, income: 3100 },
-  { month: 'Apr', users: 390, bookings: 110, income: 2950 },
-  { month: 'May', users: 520, bookings: 160, income: 4200 },
-  { month: 'Jun', users: 480, bookings: 140, income: 3900 },
-  { month: 'Jul', users: 610, bookings: 200, income: 5600 },
-  { month: 'Aug', users: 580, bookings: 180, income: 5100 },
-  { month: 'Sep', users: 640, bookings: 210, income: 6100 },
-  { month: 'Oct', users: 700, bookings: 240, income: 6800 },
-  { month: 'Nov', users: 680, bookings: 230, income: 6400 },
-  { month: 'Dec', users: 820, bookings: 310, income: 9200 },
-];
-
-const cards = [
-  {
-    title: 'Total Users',
-    value: '1,248',
-    icon: Users,
-    color: 'text-blue-500',
-    bg: 'bg-blue-500/10',
-  },
-  {
-    title: 'Tour Plans',
-    value: '5',
-    icon: MapPin,
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-500/10',
-  },
-  {
-    title: 'Total Income',
-    value: '$12,450',
-    icon: Globe,
-    color: 'text-violet-500',
-    bg: 'bg-violet-500/10',
-  },
-  {
-    title: 'Bookings',
-    value: '412',
-    icon: Calendar,
-    color: 'text-amber-500',
-    bg: 'bg-amber-500/10',
-  },
-  {
-    title: 'Messages',
-    value: '12',
-    icon: MessageSquare,
-    color: 'text-rose-500',
-    bg: 'bg-rose-500/10',
-  },
-];
+import { useAnalytics } from '@/features/admin/analytics/hooks/useAnalytics';
 
 export default function AdminDashboard() {
-  const [mounted, setMounted] = useState(false);
+  const { cards, monthlyData, isLoading, isError, errorMessage } =
+    useAnalytics();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <p className="text-sm text-slate-500 font-medium">
+          Syncing data feeds seamlessly...
+        </p>
+      </div>
+    );
+  }
 
-  if (!mounted) return null;
+  if (isError || !cards) {
+    return (
+      <div className="p-6 text-center border border-rose-200 bg-rose-50 dark:bg-rose-950/20 rounded-2xl">
+        <p className="text-sm text-rose-600 dark:text-rose-400 font-medium">
+          {errorMessage || 'Failed to populate platform parameters'}
+        </p>
+      </div>
+    );
+  }
+
+  const cardConfigs = [
+    {
+      title: 'Total Users',
+      value: cards.totalUsers.toLocaleString(),
+      icon: Users,
+      color: 'text-blue-500',
+      bg: 'bg-blue-500/10',
+    },
+    {
+      title: 'Tour Plans',
+      value: cards.totalTourPlans.toLocaleString(),
+      icon: MapPin,
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+    },
+    {
+      title: 'Bookings',
+      value: cards.totalBookings.toLocaleString(),
+      icon: Calendar,
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
+    },
+    {
+      title: 'Total Income',
+      value: `$${cards.totalIncome.toLocaleString()}`,
+      icon: Globe,
+      color: 'text-violet-500',
+      bg: 'bg-violet-500/10',
+    },
+    {
+      title: 'Messages',
+      value: cards.totalMessages.toLocaleString(),
+      icon: MessageSquare,
+      color: 'text-rose-500',
+      bg: 'bg-rose-500/10',
+    },
+    {
+      title: 'Reviews',
+      value: cards.totalReviews.toLocaleString(),
+      icon: TrendingUp,
+      color: 'text-cyan-500',
+      bg: 'bg-cyan-500/10',
+    },
+  ];
 
   return (
     <div className="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
@@ -102,8 +112,8 @@ export default function AdminDashboard() {
       </div>
 
       {/* STATS CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4 mb-10">
-        {cards.map((item, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-6 gap-4 mb-10">
+        {cardConfigs.map((item, i) => (
           <div
             key={i}
             className="group relative overflow-hidden rounded-2xl p-5 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:border-blue-500/50 dark:hover:border-blue-500/50 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/5"
@@ -136,17 +146,19 @@ export default function AdminDashboard() {
       <div className="grid lg:grid-cols-3 gap-6">
         <ChartCard
           title="Users Growth"
-          icon={TrendingUp}
+          icon={Users}
           dataKey="users"
           color="#3b82f6"
           type="line"
+          chartData={monthlyData}
         />
         <ChartCard
           title="Bookings Trend"
           icon={Calendar}
           dataKey="bookings"
           color="#10b981"
-          type="bar"
+          type="line"
+          chartData={monthlyData}
         />
         <ChartCard
           title="Income Flow"
@@ -154,13 +166,38 @@ export default function AdminDashboard() {
           dataKey="income"
           color="#8b5cf6"
           type="line"
+          chartData={monthlyData}
+        />
+
+        <ChartCard
+          title="Messages"
+          icon={MessageSquare}
+          dataKey="messages"
+          color="#ef4444"
+          type="line"
+          chartData={monthlyData}
+        />
+        <ChartCard
+          title="Reviews"
+          icon={TrendingUp}
+          dataKey="reviews"
+          color="#f59e0b"
+          type="line"
+          chartData={monthlyData}
         />
       </div>
     </div>
   );
 }
 
-function ChartCard({ title, icon: Icon, dataKey, color, type }: any) {
+function ChartCard({
+  title,
+  icon: Icon,
+  dataKey,
+  color,
+  type,
+  chartData,
+}: any) {
   return (
     <div className="p-6 rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 shadow-sm">
       <div className="flex items-center gap-2 mb-6">
@@ -173,7 +210,7 @@ function ChartCard({ title, icon: Icon, dataKey, color, type }: any) {
       <div className="h-[220px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           {type === 'line' ? (
-            <LineChart data={monthlyData}>
+            <LineChart data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
@@ -207,7 +244,7 @@ function ChartCard({ title, icon: Icon, dataKey, color, type }: any) {
               />
             </LineChart>
           ) : (
-            <BarChart data={monthlyData}>
+            <BarChart data={chartData}>
               <CartesianGrid
                 strokeDasharray="3 3"
                 vertical={false}
