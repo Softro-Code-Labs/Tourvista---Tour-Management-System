@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import {
   Users,
   MapPin,
@@ -54,29 +53,36 @@ export default function AdminDashboard() {
       title: 'Total Users',
       value: cards.totalUsers.toLocaleString(),
       icon: Users,
-      color: 'text-blue-500',
-      bg: 'bg-blue-500/10',
+      color: 'text-cyan-500',
+      bg: 'bg-cyan-500/10',
     },
     {
       title: 'Tour Plans',
       value: cards.totalTourPlans.toLocaleString(),
       icon: MapPin,
-      color: 'text-emerald-500',
-      bg: 'bg-emerald-500/10',
+      color: 'text-olive-500',
+      bg: 'bg-olive-500/10',
     },
     {
       title: 'Bookings',
       value: cards.totalBookings.toLocaleString(),
       icon: Calendar,
-      color: 'text-amber-500',
-      bg: 'bg-amber-500/10',
+      color: 'text-indigo-500',
+      bg: 'bg-indigo-500/10',
     },
     {
       title: 'Total Income',
       value: `$${cards.totalIncome.toLocaleString()}`,
       icon: Globe,
-      color: 'text-violet-500',
-      bg: 'bg-violet-500/10',
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+    },
+    {
+      title: 'Reviews',
+      value: cards.totalReviews.toLocaleString(),
+      icon: TrendingUp,
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
     },
     {
       title: 'Messages',
@@ -84,13 +90,6 @@ export default function AdminDashboard() {
       icon: MessageSquare,
       color: 'text-rose-500',
       bg: 'bg-rose-500/10',
-    },
-    {
-      title: 'Reviews',
-      value: cards.totalReviews.toLocaleString(),
-      icon: TrendingUp,
-      color: 'text-cyan-500',
-      bg: 'bg-cyan-500/10',
     },
   ];
 
@@ -148,7 +147,7 @@ export default function AdminDashboard() {
           title="Users Growth"
           icon={Users}
           dataKey="users"
-          color="#3b82f6"
+          color="oklch(78.9% 0.154 211.53)"
           type="line"
           chartData={monthlyData}
         />
@@ -156,7 +155,7 @@ export default function AdminDashboard() {
           title="Bookings Trend"
           icon={Calendar}
           dataKey="bookings"
-          color="#10b981"
+          color="oklch(67.3% 0.182 276.935)"
           type="line"
           chartData={monthlyData}
         />
@@ -164,16 +163,7 @@ export default function AdminDashboard() {
           title="Income Flow"
           icon={Globe}
           dataKey="income"
-          color="#8b5cf6"
-          type="line"
-          chartData={monthlyData}
-        />
-
-        <ChartCard
-          title="Messages"
-          icon={MessageSquare}
-          dataKey="messages"
-          color="#ef4444"
+          color="oklch(76.5% 0.177 163.223)"
           type="line"
           chartData={monthlyData}
         />
@@ -181,7 +171,15 @@ export default function AdminDashboard() {
           title="Reviews"
           icon={TrendingUp}
           dataKey="reviews"
-          color="#f59e0b"
+          color="oklch(82.8% 0.189 84.429)"
+          type="line"
+          chartData={monthlyData}
+        />
+        <ChartCard
+          title="Messages"
+          icon={MessageSquare}
+          dataKey="messages"
+          color="oklch(71.2% 0.194 13.428)"
           type="line"
           chartData={monthlyData}
         />

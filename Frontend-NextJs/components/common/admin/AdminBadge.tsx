@@ -17,7 +17,8 @@ interface AdminBadgeProps {
     | 'green'
     | 'cyan'
     | 'orange'
-    | 'slate';
+    | 'slate'
+    | 'olive';
 }
 
 export const AdminBadge = ({
@@ -45,6 +46,8 @@ export const AdminBadge = ({
       'bg-orange-500/10 border-orange-500/20 text-orange-600 dark:text-orange-400',
     slate:
       'bg-slate-500/10 border-slate-500/20 text-slate-600 dark:text-slate-400',
+    olive:
+      'bg-olive-500/10 border-olive-500/20 text-olive-600 dark:text-olive-400',
   };
 
   return (

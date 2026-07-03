@@ -14,7 +14,8 @@ type HeaderVariant =
   | 'green'
   | 'cyan'
   | 'orange'
-  | 'slate';
+  | 'slate'
+  | 'olive';
 
 interface PageHeaderProps {
   title: string;
@@ -86,6 +87,11 @@ export const PageHeader = ({
       bg: 'bg-slate-500/10 border-slate-500/20',
       text: 'text-slate-600 dark:text-slate-400',
       hover: 'bg-slate-500/5',
+    },
+    olive: {
+      bg: 'bg-olive-500/10 border-olive-500/20',
+      text: 'text-olive-600 dark:text-olive-400',
+      hover: 'bg-olive-500/5',
     },
   };
 

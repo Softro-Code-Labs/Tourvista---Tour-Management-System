@@ -2,7 +2,6 @@
 
 import { LucideIcon, SlidersHorizontal, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button'; // Assuming you have a UI Button component
 import { ActionButton } from '../ActionButton';
 
 interface StatBadgeProps {
@@ -23,6 +22,7 @@ interface StatBadgeProps {
     | 'orange'
     | 'slate';
   onClick?: () => void;
+  buttonVariant?: 'default' | 'secondary' | 'outline' | 'danger' | 'success';
 }
 
 export const StatBadge = ({
@@ -33,6 +33,7 @@ export const StatBadge = ({
   className,
   variant = 'blue',
   onClick,
+  buttonVariant = 'default',
 }: StatBadgeProps) => {
   const variantStyles = {
     emerald: 'text-emerald-600 dark:text-emerald-400',
@@ -83,6 +84,7 @@ export const StatBadge = ({
           icon={<Plus />}
           onClick={onClick}
           className="flex-1"
+          variant={buttonVariant}
         />
       ) : (
         <>

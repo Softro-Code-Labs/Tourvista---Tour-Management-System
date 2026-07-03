@@ -40,7 +40,7 @@ export default function TourHeader({ stats, isLoading, onClick }: Props) {
     <header className="pb-2 space-y-6">
       {/* 2. TOP BADGE */}
       <div className="flex justify-center md:justify-start">
-        <AdminBadge label="Tours" variant="blue" />
+        <AdminBadge label="Tours" variant="olive" />
       </div>
 
       {/* 3. MAIN HEADER CONTENT */}
@@ -51,6 +51,7 @@ export default function TourHeader({ stats, isLoading, onClick }: Props) {
             highlight="Manager"
             subtitle="Manage your tours and events. Create, update, and delete tours easily."
             icon={Map}
+            variant="olive"
           />
         </div>
 
@@ -63,6 +64,7 @@ export default function TourHeader({ stats, isLoading, onClick }: Props) {
             icon={SlidersHorizontal}
             variant="green"
             onClick={onClick}
+            buttonVariant="secondary"
           />
         </div>
       </div>

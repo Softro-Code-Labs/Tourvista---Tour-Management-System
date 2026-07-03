@@ -39,6 +39,7 @@ export interface PaymentResponse {
 export interface PaymentFilters {
   page?: number;
   limit?: number;
+  search?: string;
   minAmount?: number;
   maxAmount?: number;
   type?: PaymentType;

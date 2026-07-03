@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-import { MessageFilters as MessageFilterState } from '../types/message.types';
+import { MessageFilters as MessageFilterState } from '../types/inquiries.type';
 
 type Props = {
   filters: MessageFilterState;
@@ -31,7 +31,7 @@ type Props = {
   ) => void;
 };
 
-export default function MessageFilters({ filters, setFilter }: Props) {
+export default function InquiryFilters({ filters, setFilter }: Props) {
   const handleReset = () => {
     setFilter('search', '');
     setFilter('isRead', 'all');
@@ -49,7 +49,7 @@ export default function MessageFilters({ filters, setFilter }: Props) {
     <div className="rounded-[2.5rem] p-7 mb-8 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl shadow-slate-200/20 dark:shadow-none">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600">
+          <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600">
             <Filter size={20} strokeWidth={2.5} />
           </div>
           <div>
@@ -66,7 +66,7 @@ export default function MessageFilters({ filters, setFilter }: Props) {
           variant="ghost"
           size="sm"
           onClick={handleReset}
-          className="h-10 px-5 gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-2xl transition-all cursor-pointer"
+          className="h-10 px-5 gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-2xl transition-all cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5" /> Reset Filters
         </Button>
@@ -76,12 +76,12 @@ export default function MessageFilters({ filters, setFilter }: Props) {
         {/* SEARCH  */}
         <FilterGroup label="Keyword Search" className="lg:col-span-2">
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-300" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-rose-500 transition-colors duration-300" />
             <Input
               placeholder="Search by name, email or content..."
               value={filters.search}
               onChange={(e) => updateFilter('search', e.target.value)}
-              className="h-12 pl-12 rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/5 transition-all text-sm font-medium"
+              className="h-12 pl-12 rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 focus:border-rose-500/50 focus:ring-4 focus:ring-rose-500/5 transition-all text-sm font-medium"
             />
           </div>
         </FilterGroup>
@@ -94,7 +94,7 @@ export default function MessageFilters({ filters, setFilter }: Props) {
               updateFilter('isRead', val as MessageFilterState['isRead'])
             }
           >
-            <SelectTrigger className="w-full py-5.5 rounded-2xl cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-sm font-bold focus:ring-4 focus:ring-blue-500/5 transition-all">
+            <SelectTrigger className="w-full py-5.5 rounded-2xl cursor-pointer bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-sm font-bold focus:ring-4 focus:ring-rose-500/5 transition-all">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-1">
@@ -106,7 +106,7 @@ export default function MessageFilters({ filters, setFilter }: Props) {
               </SelectItem>
               <SelectItem
                 value="true"
-                className="cursor-pointer rounded-xl py-2.5 text-blue-600 font-bold"
+                className="cursor-pointer rounded-xl py-2.5 text-rose-600 font-bold"
               >
                 Read & Archived
               </SelectItem>
@@ -161,11 +161,11 @@ function DatePickerField({
         <Button
           variant={'outline'}
           className={cn(
-            'h-12 w-full cursor-pointer justify-start text-left font-bold text-xs rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all focus:ring-4 focus:ring-blue-500/5',
+            'h-12 w-full cursor-pointer justify-start text-left font-bold text-xs rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all focus:ring-4 focus:ring-rose-500/5',
             !date && 'text-slate-400',
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4 text-blue-500 shrink-0" />
+          <CalendarIcon className="mr-2 h-4 w-4 text-rose-500 shrink-0" />
           <span className="truncate">
             {date ? format(date, 'MMM dd') : placeholder}
           </span>

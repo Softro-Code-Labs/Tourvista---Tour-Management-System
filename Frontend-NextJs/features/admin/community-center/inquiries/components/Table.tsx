@@ -13,7 +13,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Message } from '../types/message.types';
+import { Message } from '../types/inquiries.type';
 
 type Props = {
   messages: Message[];
@@ -22,7 +22,7 @@ type Props = {
   onDelete: (message: Message) => void;
 };
 
-export default function MessageTable({
+export default function InquiriesTable({
   messages,
   loading,
   onToggleReadStatus,
@@ -33,7 +33,7 @@ export default function MessageTable({
   if (loading)
     return (
       <EmptyState
-        icon={<Loader2 className="animate-spin text-blue-500" />}
+        icon={<Loader2 className="animate-spin text-rose-500" />}
         title="Syncing Inquiries"
         subtitle="Refreshing your message stream..."
       />
@@ -75,13 +75,13 @@ function MessageCard({
       className={cn(
         'group relative overflow-hidden transition-all duration-300 rounded-[2rem] border',
         !message.isRead
-          ? 'bg-white dark:bg-slate-900 border-blue-100 dark:border-blue-900/30 shadow-md shadow-blue-500/5'
+          ? 'bg-white dark:bg-slate-900 border-rose-100 dark:border-rose-900/30 shadow-md shadow-rose-500/5'
           : 'bg-slate-50/50 dark:bg-slate-900/40 border-slate-100 dark:border-slate-800',
       )}
     >
       {/* SIDEBAR INDICATOR */}
       {!message.isRead && (
-        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-blue-500 rounded-r-full" />
+        <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-500 rounded-r-full" />
       )}
 
       {/* MAIN ROW */}
@@ -95,7 +95,7 @@ function MessageCard({
             className={cn(
               'h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 transition-all',
               !message.isRead
-                ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
+                ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-400',
             )}
           >
@@ -119,7 +119,7 @@ function MessageCard({
                 {message.subject}
               </h3>
               {!message.isRead && (
-                <Badge className="bg-blue-500/10 text-blue-600 border-none text-[9px] font-black tracking-widest uppercase px-2 py-0">
+                <Badge className="bg-rose-500/10 text-rose-600 border-none text-[9px] font-black tracking-widest uppercase px-2 py-0">
                   NEW
                 </Badge>
               )}
@@ -148,7 +148,7 @@ function MessageCard({
 
             {/* TIME */}
             <div className="flex items-center gap-1.5">
-              <div className="h-1 w-1 rounded-full bg-blue-500/50" />
+              <div className="h-1 w-1 rounded-full bg-rose-500/50" />
               <p className="text-[9px] font-bold uppercase tracking-widest text-slate-400 leading-none">
                 {new Date(message.createdAt).toLocaleTimeString('en-US', {
                   hour: '2-digit',
@@ -195,8 +195,8 @@ function MessageCard({
         <div className="px-6 pb-8 animate-in fade-in slide-in-from-top-4 duration-500">
           <div className="bg-slate-50/50 dark:bg-slate-800/40 rounded-[1.5rem] p-6 border border-slate-100/50 dark:border-slate-700/30">
             <div className="flex items-center gap-2 mb-4">
-              <ArrowRight size={14} className="text-blue-500" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600/50">
+              <ArrowRight size={14} className="text-rose-500" />
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-rose-600/50">
                 Message Content
               </span>
             </div>
@@ -233,7 +233,7 @@ function ActionButton({ onClick, icon, isDanger }: any) {
         'h-9 w-9 rounded-xl transition-all cursor-pointer',
         isDanger
           ? 'hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-500/10'
-          : 'hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-500/10',
+          : 'hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10',
         'text-slate-400',
       )}
     >

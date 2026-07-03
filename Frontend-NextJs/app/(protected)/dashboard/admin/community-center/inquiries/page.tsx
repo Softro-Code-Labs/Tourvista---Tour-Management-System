@@ -1,17 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { SlidersHorizontal, Inbox, Sparkles, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useMessages } from '@/features/admin/community-center/inquiries/hooks/useMessages';
-import MessageFilters from '@/features/admin/community-center/inquiries/components/MessageFilters';
-import MessageTable from '@/features/admin/community-center/inquiries/components/MessageTable';
-import { Message } from '@/features/admin/community-center/inquiries/types/message.types';
+import { useMessages } from '@/features/admin/community-center/inquiries/hooks/useInquiries';
+import InquiryFilters from '@/features/admin/community-center/inquiries/components/FilterBar';
+import InquiriesTable from '@/features/admin/community-center/inquiries/components/Table';
+import { Message } from '@/features/admin/community-center/inquiries/types/inquiries.type';
 import Pagination from '@/components/common/Pagination';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
+import { InquiriesHeader } from '@/features/admin/community-center/inquiries/components/Header';
 
 export default function ManageMessages() {
   const {
+    stats,
+    loadingStats,
+
     messages,
     meta,
     loading,
@@ -36,56 +39,10 @@ export default function ManageMessages() {
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#020617] p-4 md:p-8 transition-colors duration-500">
       <div className="max-w-[1400px] mx-auto space-y-8">
         {/* SYNCED HEADER */}
-        <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-2">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
-              <Sparkles size={12} className="animate-pulse" />
-              <span className="text-[10px] font-black uppercase tracking-[0.2em]">
-                Communications Hub
-              </span>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="h-16 w-16 bg-white dark:bg-slate-900 rounded-[1.5rem] shadow-xl shadow-blue-500/10 flex items-center justify-center border border-slate-100 dark:border-slate-800">
-                <Inbox size={32} className="text-blue-600" strokeWidth={1.5} />
-              </div>
-              <div>
-                <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
-                  Inbox <span className="text-blue-600">Studio</span>
-                </h1>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                    <Activity size={10} />
-                    <span className="text-[11px] font-bold uppercase tracking-tight">
-                      {meta.total} Total Submissions
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-3 px-5 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm">
-              <div className="text-right">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-                  System Status
-                </p>
-                <p className="text-xs font-bold text-emerald-500 flex items-center justify-end gap-1.5">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />{' '}
-                  Live Sync Active
-                </p>
-              </div>
-              <div className="h-8 w-[1px] bg-slate-100 dark:bg-slate-800 mx-1" />
-              <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-xl">
-                <SlidersHorizontal size={18} className="text-slate-400" />
-              </div>
-            </div>
-          </div>
-        </header>
+        <InquiriesHeader stats={stats} isLoading={loadingStats} />
 
         <main className="space-y-8">
-          <MessageFilters filters={filters} setFilter={setFilter} />
+          <InquiryFilters filters={filters} setFilter={setFilter} />
           <section
             className={cn(
               'relative transition-all duration-500',
@@ -94,7 +51,7 @@ export default function ManageMessages() {
                 : 'opacity-100',
             )}
           >
-            <MessageTable
+            <InquiriesTable
               messages={messages}
               loading={loading}
               onToggleReadStatus={toggleReadStatus}

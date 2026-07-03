@@ -14,6 +14,7 @@ export const usePaymentsAdmin = () => {
   const [filters, setFilters] = useState<PaymentFilters>({
     page: 1,
     limit: 10,
+    search: '',
     minAmount: undefined as number | undefined,
     maxAmount: undefined as number | undefined,
     type: undefined as PaymentType | undefined,

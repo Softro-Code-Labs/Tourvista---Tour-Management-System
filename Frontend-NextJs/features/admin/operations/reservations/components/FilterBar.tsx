@@ -42,7 +42,7 @@ export default function ReservationFilterBar({
       {/* 1. TOP HEADER AREA */}
       <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
         <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-100/50 dark:border-blue-500/10">
+          <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-500/10">
             <Filter size={22} strokeWidth={2.5} />
           </div>
           <div className="space-y-0.5">
@@ -80,7 +80,7 @@ export default function ReservationFilterBar({
               onChange('status', val === 'all' ? undefined : val)
             }
           >
-            <SelectTrigger className="!h-12 w-full cursor-pointer rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-[13px] font-bold ring-offset-transparent focus:ring-1 focus:ring-blue-500/20">
+            <SelectTrigger className="!h-12 w-full cursor-pointer rounded-2xl bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50 text-[13px] font-bold ring-offset-transparent focus:ring-1 focus:ring-indigo-500/20">
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800 p-1.5 shadow-xl">
@@ -122,9 +122,9 @@ export default function ReservationFilterBar({
 
         {/* BUDGET RANGE */}
         <FilterGroup label="Budget Range" className="md:col-span-4">
-          <div className="flex items-center h-12 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 px-4 group focus-within:border-blue-500/30 transition-all">
+          <div className="flex items-center h-12 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 px-4 group focus-within:border-indigo-500/30 transition-all">
             <div className="flex items-center flex-1">
-              <span className="text-[10px] font-black text-blue-500/60 mr-1.5">
+              <span className="text-[10px] font-black text-indigo-500/60 mr-1.5">
                 $
               </span>
               <Input
@@ -137,7 +137,7 @@ export default function ReservationFilterBar({
             </div>
             <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-3" />
             <div className="flex items-center flex-1">
-              <span className="text-[10px] font-black text-blue-500/60 mr-1.5">
+              <span className="text-[10px] font-black text-indigo-500/60 mr-1.5">
                 $
               </span>
               <Input
@@ -200,10 +200,10 @@ function DatePickerField({
             'h-12 w-full cursor-pointer justify-start text-left font-bold text-[13px] rounded-2xl transition-all',
             'bg-slate-50/50 dark:bg-slate-800/40 border-slate-100 dark:border-slate-700/50',
             !date ? 'text-slate-400' : 'text-slate-900 dark:text-white',
-            'hover:border-blue-500/30 hover:bg-slate-100 dark:hover:bg-slate-800/60',
+            'hover:border-indigo-500/30 hover:bg-slate-100 dark:hover:bg-slate-800/60',
           )}
         >
-          <CalendarIcon className="mr-2.5 h-4 w-4 text-blue-500 shrink-0 opacity-70" />
+          <CalendarIcon className="mr-2.5 h-4 w-4 text-indigo-500 shrink-0 opacity-70" />
           <span className="truncate">
             {date ? format(date, 'MMM dd, yyyy') : placeholder}
           </span>

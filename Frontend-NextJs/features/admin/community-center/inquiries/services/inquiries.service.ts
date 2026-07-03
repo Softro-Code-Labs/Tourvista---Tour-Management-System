@@ -1,3 +1,8 @@
+export async function getMessageStats() {
+  const res = await fetch('/api/v1/contact/stats');
+  return res.json();
+}
+
 export async function getMessages(params: Record<string, any> = {}) {
   const query = new URLSearchParams(params).toString();
   const res = await fetch(`/api/v1/contact?${query}`);

@@ -80,8 +80,24 @@ export function PaymentsFilterBar({
 
       {/* 2. MAIN FILTER GRID */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* SEARCH BY ID */}
+        <FilterGroup label="Search ID" className="md:col-span-4">
+          <div className="relative md:flex-[2] min-w-full">
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-500 transition-colors"
+              size={18}
+            />
+            <Input
+              placeholder="Search by ID..."
+              className="pl-12 h-12 rounded-2xl border-slate-100 bg-slate-50/50 dark:bg-slate-800/50 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 transition-all text-base dark:border-slate-800"
+              value={filters.search || ''}
+              onChange={(e) => onChange('search', e.target.value)}
+            />
+          </div>
+        </FilterGroup>
+
         {/* PAYMENT STATUS */}
-        <FilterGroup label="Payment Status" className="md:col-span-2">
+        <FilterGroup label="Payment Status" className="md:col-span-4">
           <Select
             value={filters.status?.toString() || 'all'}
             onValueChange={(val) =>
@@ -130,7 +146,7 @@ export function PaymentsFilterBar({
         </FilterGroup>
 
         {/* PAYMENT TYPE */}
-        <FilterGroup label="Payment Type" className="md:col-span-2">
+        <FilterGroup label="Payment Type" className="md:col-span-4">
           <Select
             value={filters.type?.toString() || 'all'}
             onValueChange={(val) =>
@@ -161,7 +177,7 @@ export function PaymentsFilterBar({
         </FilterGroup>
 
         {/* BUDGET RANGE */}
-        <FilterGroup label="Budget Range" className="md:col-span-4">
+        <FilterGroup label="Budget Range" className="md:col-span-6">
           <div className="flex items-center h-12 bg-slate-50/50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 px-4 group focus-within:border-blue-500/30 transition-all">
             <div className="flex items-center flex-1">
               <span className="text-[10px] font-black text-emerald-500/60 mr-1.5">
@@ -192,7 +208,7 @@ export function PaymentsFilterBar({
         </FilterGroup>
 
         {/* DATE RANGE */}
-        <FilterGroup label="Date Range" className="md:col-span-4">
+        <FilterGroup label="Date Range" className="md:col-span-6">
           <div className="grid grid-cols-2 gap-3">
             <DatePickerField
               placeholder="From"

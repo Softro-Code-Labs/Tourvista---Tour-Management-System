@@ -1,3 +1,7 @@
+export interface InquiriesState {
+  total: number;
+}
+
 export interface Message {
   id: number;
   name: string;
