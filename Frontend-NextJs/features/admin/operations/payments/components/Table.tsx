@@ -5,7 +5,6 @@ import {
   User,
   Mail,
   CreditCard,
-  Hash,
   Calendar,
   Eye,
   X,
@@ -184,7 +183,7 @@ function PaymentRow({
             ${item.amount.toLocaleString()}
           </span>
           <span className="text-[10px] font-medium text-slate-400 mt-1 flex items-center gap-1">
-            <Hash size={10} /> {item.transactionId}
+            {item.transactionId}
           </span>
           <span className="text-[10px] font-bold text-slate-500 mt-0.5 flex items-center gap-1">
             <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[9px] font-black tracking-wider text-slate-400 uppercase">
@@ -345,7 +344,6 @@ function PaymentCard({
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-slate-400">
-          <Hash size={12} />
           <span className="text-[10px] font-bold">{item.transactionId}</span>
         </div>
       </div>

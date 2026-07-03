@@ -97,6 +97,7 @@ export class PaymentsService {
    * STEP 2: Securely capture payment feedback webhooks without causing unique constraint drops
    */
   async processWebhook(secret: string, payload: any) {
+    console.log('payload', payload);
     this.verifyWebhookSecret(secret);
 
     const transactionType = payload.transaction?.type;

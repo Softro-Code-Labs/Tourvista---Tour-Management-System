@@ -251,16 +251,19 @@ export function PaymentModal({
                           if (floatValue < minAllowed) {
                             field.onChange(minAllowed);
                             toast.error(
-                              `Minimum deposit is 25% ($${minAllowed})`,
+                              `Minimum deposit is 25% of total amount ($${minAllowed})`,
                             );
                             return;
                           }
 
                           if (floatValue > maxAllowed) {
                             field.onChange(maxAllowed);
-                            toast.error(`Maximum allowed is $${maxAllowed}`, {
-                              id: 'max-toast',
-                            });
+                            toast.error(
+                              `Maximum allowed is 75% of total amount $${maxAllowed}`,
+                              {
+                                id: 'max-toast',
+                              },
+                            );
                             return;
                           }
 
