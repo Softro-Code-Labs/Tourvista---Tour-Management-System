@@ -38,9 +38,15 @@ export function ReservationCard({
 }: Props) {
   const totalPaid =
     reservation.payments?.reduce((sum, p) => sum + p.amount, 0) ?? 0;
+  const totalRefunded =
+    reservation.payments?.reduce(
+      (sum, p) => sum + (p.refundedAmount ?? 0),
+      0,
+    ) ?? 0;
   const hasPayment = totalPaid > 0;
   const isPending = reservation.status === BookingStatus.PENDING;
   const isCompleted = reservation.status === BookingStatus.COMPLETED;
+  const isCancelled = reservation.status === BookingStatus.CANCELLED;
 
   const isAdvancePaid = totalPaid > 0 && totalPaid < reservation.totalAmount;
   const isFullPaid = totalPaid >= reservation.totalAmount;
@@ -161,6 +167,23 @@ export function ReservationCard({
           )}
         </div>
 
+        {totalRefunded > 0 && (
+          <div className="flex items-center gap-2 p-3 bg-rose-500/5 dark:bg-rose-500/10 rounded-2xl border border-rose-500/20 text-rose-600 dark:text-rose-400">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500" />
+            </span>
+            <div className="flex justify-between items-center w-full">
+              <span className="text-[10px] font-black uppercase tracking-wider">
+                Total Refunded Balance
+              </span>
+              <span className="text-sm font-black">
+                ${totalRefunded.toLocaleString()}
+              </span>
+            </div>
+          </div>
+        )}
+
         {/* RECEIPT FOOTER (If payment exists) */}
         {hasPayment && (
           <div className="flex flex-col gap-1 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800">
@@ -216,7 +239,7 @@ export function ReservationCard({
               />
             </div>
           </section>
-        ) : isAdvancePaid ? (
+        ) : isAdvancePaid && !isCancelled ? (
           <div className="bg-blue-500/5 dark:bg-blue-500/10 p-4 rounded-3xl border border-blue-500/20">
             <div className="flex justify-between items-center mb-3">
               <p className="text-[10px] font-black text-blue-500 uppercase">

@@ -45,7 +45,13 @@ export const usePaymentsAdmin = () => {
 
   // 4. REFUND MUTATION
   const refundMutation = useMutation({
-    mutationFn: (paymentId: number) => paymentService.refund(paymentId),
+    mutationFn: ({
+      paymentId,
+      amount,
+    }: {
+      paymentId: number;
+      amount: number;
+    }) => paymentService.refund(paymentId, amount),
     onSuccess: () => {
       // Automatically refresh table data & counters smoothly
       queryClient.invalidateQueries({ queryKey: ['payments'] });
@@ -92,7 +98,8 @@ export const usePaymentsAdmin = () => {
     clearFilters,
 
     // Refund
-    refundPayment: refundMutation.mutateAsync,
+    refundPayment: (paymentId: number, amount: number) =>
+      refundMutation.mutateAsync({ paymentId, amount }),
     isRefunding: refundMutation.isPending,
 
     // Refetch

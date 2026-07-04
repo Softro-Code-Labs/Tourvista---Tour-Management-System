@@ -240,34 +240,29 @@ export function PaymentModal({
                         allowNegative={false}
                         onValueChange={(values) => {
                           const { floatValue } = values;
+                          field.onChange(
+                            floatValue === undefined ? 0 : floatValue,
+                          );
+                        }}
+                        onBlur={() => {
+                          field.onBlur();
+                          const val = field.value || 0;
                           const minAllowed = totalAmount * 0.25;
                           const maxAllowed = totalAmount * 0.75;
 
-                          if (floatValue === undefined) {
-                            field.onChange(0);
-                            return;
-                          }
-
-                          if (floatValue < minAllowed) {
+                          if (val < minAllowed) {
                             field.onChange(minAllowed);
                             toast.error(
                               `Minimum deposit is 25% of total amount ($${minAllowed})`,
+                              { id: 'min-toast' },
                             );
-                            return;
-                          }
-
-                          if (floatValue > maxAllowed) {
+                          } else if (val > maxAllowed) {
                             field.onChange(maxAllowed);
                             toast.error(
-                              `Maximum allowed is 75% of total amount $${maxAllowed}`,
-                              {
-                                id: 'max-toast',
-                              },
+                              `Maximum allowed is 75% of total amount ($${maxAllowed})`,
+                              { id: 'max-toast' },
                             );
-                            return;
                           }
-
-                          field.onChange(floatValue);
                         }}
                         className={cn(
                           'w-full pl-14 h-16 rounded-2xl text-xl font-black transition-all outline-none border-2',

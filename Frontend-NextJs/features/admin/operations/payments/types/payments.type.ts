@@ -10,6 +10,7 @@ export interface Payment {
   id: number;
   bookingId: number;
   amount: number;
+  refundedAmount: number;
   type: PaymentType;
   method: PaymentMethod;
   status: PaymentStatus;

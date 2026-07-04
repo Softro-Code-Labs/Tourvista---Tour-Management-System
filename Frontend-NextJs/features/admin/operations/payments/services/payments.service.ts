@@ -25,8 +25,9 @@ export const paymentService = {
   getAll: (params: Record<string, any> = {}): Promise<PaymentResponse> =>
     apiRequest(`${BASE_URL}/admin?${new URLSearchParams(params)}`),
 
-  refund: (id: number): Promise<any> =>
+  refund: (id: number, amount: number): Promise<any> =>
     apiRequest(`${BASE_URL}/${id}/refund`, {
       method: 'PATCH',
+      body: JSON.stringify({ amount }),
     }),
 };

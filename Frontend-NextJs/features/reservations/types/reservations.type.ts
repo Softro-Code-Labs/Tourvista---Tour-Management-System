@@ -16,6 +16,7 @@ export interface Reservation {
     {
       id: number;
       amount: number;
+      refundedAmount: number;
       type: PaymentType;
     },
   ];

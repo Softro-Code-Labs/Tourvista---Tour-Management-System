@@ -19,7 +19,7 @@ import { RefundConfirmModal } from './RefundConfirmModal';
 
 interface Props {
   data: Payment[];
-  onRefund: (id: number) => Promise<any>;
+  onRefund: (id: number, amount: number) => Promise<any>;
   isRefunding: boolean;
 }
 
@@ -31,10 +31,10 @@ export function PaymentsTable({ data, onRefund, isRefunding }: Props) {
   const [confirmRefundTarget, setConfirmRefundTarget] =
     useState<Payment | null>(null);
 
-  const handleConfirmedRefundSubmit = async () => {
+  const handleConfirmedRefundSubmit = async (amount: number) => {
     if (!confirmRefundTarget) return;
     try {
-      await onRefund(confirmRefundTarget.id);
+      await onRefund(confirmRefundTarget.id, amount);
     } catch (err) {
       console.error('Refund submission failed', err);
     } finally {
@@ -187,7 +187,12 @@ function PaymentRow({
       <td className="p-5">
         <div className="flex flex-col">
           <span className="font-black text-base text-slate-900 dark:text-white flex items-center gap-1.5">
-            ${item.amount.toLocaleString()}
+            ${item.amount.toLocaleString()}{' '}
+            {item.refundedAmount > 0 && (
+              <span className="text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-950/30 px-2 py-0.5 rounded-lg border border-rose-100 dark:border-rose-900/30 ml-1">
+                Refunded: ${item.refundedAmount.toLocaleString()}
+              </span>
+            )}
           </span>
           <span className="text-[10px] font-medium text-slate-400 mt-1 flex items-center gap-1">
             {item.transactionId}
@@ -314,7 +319,12 @@ function PaymentCard({
             Amount
           </span>
           <span className="font-black text-slate-900 dark:text-white">
-            ${item.amount.toLocaleString()}
+            ${item.amount.toLocaleString()}{' '}
+            {item.refundedAmount > 0 && (
+              <span className="text-xs font-bold text-rose-500 bg-rose-50 dark:bg-rose-950/30 px-2 py-0.5 rounded-lg border border-rose-100 dark:border-rose-900/30 ml-1">
+                Refunded: ${item.refundedAmount.toLocaleString()}
+              </span>
+            )}
           </span>
         </div>
         <div className="flex justify-between items-center">
