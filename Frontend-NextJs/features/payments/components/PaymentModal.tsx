@@ -102,7 +102,7 @@ export function PaymentModal({
 
       // 2. Dynamically build and append script tag with explicit data callback attributes
       const scriptUrl =
-        'https://test-seylan.mtf.gateway.mastercard.com/static/checkout/checkout.min.js';
+        'https://seylan.gateway.mastercard.com/static/checkout/checkout.min.js';
 
       // Clean up previous instances if any exist
       const existingScript = document.querySelector(

@@ -6,7 +6,7 @@ export const paymentSchema = z.object({
 
   amount: z.coerce
     .number('Please enter an amount to pay.')
-    .min(10, { message: 'At least $10 is required' }),
+    .min(5, { message: 'At least $5 is required' }),
 
   type: z.enum(
     [PaymentType.ADVANCE, PaymentType.FULL],
