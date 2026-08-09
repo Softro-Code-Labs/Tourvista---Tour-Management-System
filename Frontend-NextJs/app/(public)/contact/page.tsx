@@ -2,21 +2,22 @@ import ContactForm from '@/features/contact/components/ContactForm';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | Tourvista Sri Lanka - Plan Your Dream Trip',
+  title: 'Contact Us',
   description:
     'Need help planning your Sri Lankan adventure? Contact Tourvista for customized tour packages, travel advice, and 24/7 customer support. Get in touch via email or phone.',
   keywords: [
-    'Contact Tourvista Tours Sri Lanka',
+    'contact Tourvista Tours',
     'Sri Lanka travel planning',
-    'Customized tour packages Sri Lanka',
-    'Tourvista customer support',
+    'customized tour packages Sri Lanka',
   ],
+  alternates: {
+    canonical: '/contact',
+  },
   openGraph: {
     title: "Contact Tourvista | Let's Plan Your Next Adventure",
     description:
       'Get in touch with Tourvista Sri Lanka for any inquiries, feedback, or travel collaborations.',
     url: 'https://tourvistatours.com/contact',
-    siteName: 'Tourvista Tours',
     images: [
       {
         url: '/images/og-packages.png',
@@ -25,7 +26,7 @@ export const metadata: Metadata = {
         alt: 'Contact Tourvista Tours Sri Lanka',
       },
     ],
-    locale: 'si-LK',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {

@@ -2,25 +2,25 @@ import SectionTitle from '../../../components/sections/SectionTitle';
 import AttractionsUserList from '@/features/attractions/components/AttractionsUserList';
 
 export const metadata = {
-  title: 'Top Attractions in Sri Lanka | Iconic Landmarks & Hidden Gems',
+  title: 'Top Attractions in Sri Lanka',
   description:
-    "Explore Sri Lanka's must-visit landmarks. From the ancient Sigiriya Rock Fortress to the misty peaks of Ella, world-class Yala safaris, and the pristine beaches of Mirissa and Unawatuna. Plan your sightseeing with Tourvista Tours.",
+    "Explore Sri Lanka's must-visit landmarks. From the ancient Sigiriya Rock Fortress to the misty peaks of Ella, world-class Yala safaris, and the pristine beaches of Mirissa and Unawatuna.",
   keywords: [
-    'Must visit places in Sri Lanka',
-    'Sigiriya Rock Fortress guide',
-    'Ella Sri Lanka travel',
-    'Yala National Park safari 2026',
+    'Sri Lanka attractions',
+    'must visit places in Sri Lanka',
+    'Sigiriya Rock Fortress',
+    'Ella Sri Lanka',
+    'Yala National Park safari',
     'Sri Lanka beach vacations',
-    'Best waterfalls in Sri Lanka',
-    'Nine Arch Bridge Ella',
-    'Diyaluma Falls hiking',
   ],
+  alternates: {
+    canonical: '/attractions',
+  },
   openGraph: {
-    title: 'Iconic Sri Lankan Attractions | Explore with Tourvista',
+    title: 'Top Attractions in Sri Lanka | Tourvista Tours',
     description:
       'Discover the pearl of the Indian Ocean. A curated guide to the best fortresses, mountains, and beaches in Sri Lanka.',
     url: 'https://tourvistatours.com/attractions',
-    siteName: 'Tourvista Tours',
     images: [
       {
         url: '/images/og-packages.png',
@@ -34,7 +34,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sri Lanka Attractions | The Ultimate Sightseeing Guide',
+    title: 'Top Attractions in Sri Lanka | Tourvista Tours',
     description:
       'Explore Sigiriya, Ella, and the beautiful South Coast with Tourvista.',
     images: ['/images/og-packages.png'],

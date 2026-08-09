@@ -3,28 +3,29 @@ import PackagesList from '@/features/packages/components/PackagesList';
 import { BrandIcons } from '@/components/Icons';
 
 export const metadata: Metadata = {
-  title: 'Luxury Tour Packages | TourVista Sri Lanka',
+  title: 'Sri Lanka Tour Packages',
   description:
-    'Experience the soul of Sri Lanka with our curated collection of premium tour packages. From misty tea mountains to golden coastal escapes.',
+    'Browse curated Sri Lanka tour packages with Tourvista. Multi-day itineraries covering tea country, ancient cities, wildlife safaris, and coastal escapes, tailored for every traveler.',
   keywords: [
-    'Sri Lanka Tours',
-    'Luxury Travel Sri Lanka',
-    'Tour Packages',
-    'Tourvista Tours',
+    'Sri Lanka tour packages',
+    'Sri Lanka tours',
+    'luxury travel Sri Lanka',
+    'Sri Lanka holiday packages',
   ],
-  authors: [{ name: 'TourVista' }],
+  alternates: {
+    canonical: '/packages',
+  },
   openGraph: {
-    title: 'Luxury Tour Packages | TourVista Sri Lanka',
+    title: 'Sri Lanka Tour Packages | Tourvista Tours',
     description:
       'Explore handcrafted Sri Lankan adventures designed for the modern traveler.',
     url: 'https://tourvistatours.com/packages',
-    siteName: 'Tourvista Tours Sri Lanka',
     images: [
       {
         url: '/images/og-packages.png',
         width: 1200,
         height: 630,
-        alt: 'TourVista Premium Packages',
+        alt: 'Tourvista Tours Sri Lanka tour packages',
       },
     ],
     locale: 'en_US',
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Luxury Tour Packages | TourVista Sri Lanka',
+    title: 'Sri Lanka Tour Packages | Tourvista Tours',
     description: 'Curated adventures across the paradise island.',
     images: ['/images/og-packages.png'],
   },

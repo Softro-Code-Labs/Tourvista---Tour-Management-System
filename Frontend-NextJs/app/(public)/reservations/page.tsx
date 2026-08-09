@@ -2,28 +2,24 @@ import { Metadata } from 'next';
 import { ReservationList } from '@/features/reservations/components/ReservationList';
 
 export const metadata: Metadata = {
-  title: 'My Reservations | TourVista Sri Lanka',
+  title: 'My Reservations',
   description:
     'Manage your curated Sri Lankan adventures and tour bookings in one place.',
-  keywords: [
-    'Sri Lanka Tours',
-    'Luxury Travel Sri Lanka',
-    'Tour Reservations',
-    'Tourvista Tours',
-  ],
-  authors: [{ name: 'Tourvista Tours' }],
+  robots: {
+    index: false,
+    follow: true,
+  },
   openGraph: {
-    title: 'My Reservations | TourVista Sri Lanka',
+    title: 'My Reservations | Tourvista Tours',
     description: 'Track your luxury tour payments and booking details.',
     url: 'https://tourvistatours.com/reservations',
-    siteName: 'Tourvista Tours Sri Lanka',
     images: [{ url: '/images/og-reservations.png', width: 1200, height: 630 }],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'My Reservations | TourVista Sri Lanka',
+    title: 'My Reservations | Tourvista Tours',
     description: 'Track your luxury tour payments and booking details.',
     images: ['/images/og-reservations.png'],
   },

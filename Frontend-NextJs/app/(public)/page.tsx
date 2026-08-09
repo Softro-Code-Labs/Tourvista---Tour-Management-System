@@ -7,40 +7,41 @@ import { BrandIcons } from '@/components/Icons';
 import ReviewList from '@/features/reviews/components/ReviewList';
 
 export const metadata = {
-  title: 'Tourvista Tours | Premier Sri Lanka Tours & Tailor-Made Travel',
+  title: 'Sri Lanka Tours & Travel Packages',
   description:
-    'Experience the wonder of Sri Lanka with Tourvista. From the misty mountains of Ella to the golden beaches of Mirissa, we offer curated travel guides and luxury tours for international travelers.',
+    'Book curated Sri Lanka tours with Tourvista. From misty Ella to golden Mirissa beaches, discover tailor-made tour packages and expert local guides for your Sri Lankan adventure.',
   keywords: [
+    'Sri Lanka tours',
+    'Sri Lanka tour packages',
+    'best Sri Lanka tours 2026',
     'Sri Lanka travel packages',
-    'Best Sri Lanka tours 2026',
     'Sri Lanka private driver',
     'luxury travel Sri Lanka',
-    'Sri Lanka sightseeing',
-    'cultural tours Sri Lanka',
   ],
-  authors: [{ name: 'Tourvista Tours' }],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Explore Sri Lanka with Tourvista Tours',
+    title: 'Sri Lanka Tours & Travel Packages',
     description:
       'Discover unforgettable destinations and authentic experiences in the pearl of the Indian Ocean.',
     url: 'https://tourvistatours.com',
-    siteName: 'Tourvista Tours',
     images: [
       {
-        url: 'https://tourvistatours.com/logo.webp',
+        url: '/logo.webp',
         width: 1200,
         height: 630,
         alt: 'Tourvista Tours Sri Lanka',
       },
     ],
-    locale: 'si-LK',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Tourvista Tours | Explore Sri Lanka',
+    title: 'Sri Lanka Tours & Travel Packages',
     description: 'Curated Sri Lankan travel experiences and luxury tours.',
-    images: ['https://tourvistatours.com/logo.webp'],
+    images: ['/logo.webp'],
   },
 };
 

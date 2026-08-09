@@ -2,23 +2,24 @@ import SectionTitle from '../../../components/sections/SectionTitle';
 import ShowcasesUserList from '@/features/showcases/components/ShowcasesUserList';
 
 export const metadata = {
-  title: 'Tours & Activities | Curated Sri Lankan Adventures | Tourvista Tours',
+  title: 'Sri Lanka Tours & Activities',
   description:
     'Experience the best of Sri Lanka. From the misty peaks of Ella to kayaking in Bentota and historic city walks. Book your authentic Sri Lankan tour with Tourvista today.',
   keywords: [
-    'Best Sri Lanka tour packages 2026',
+    'Sri Lanka tours',
+    'best Sri Lanka tour packages',
     'Sri Lanka adventure activities',
-    'Hiking tours Sri Lanka',
-    'Water sports Sri Lanka',
-    'Guided sightseeing tours',
-    'Sri Lanka holiday packages',
+    'hiking tours Sri Lanka',
+    'guided sightseeing tours Sri Lanka',
   ],
+  alternates: {
+    canonical: '/showcases',
+  },
   openGraph: {
-    title: 'Unforgettable Tours & Activities in Sri Lanka | Tourvista Tours',
+    title: 'Sri Lanka Tours & Activities | Tourvista Tours',
     description:
       'Adventure, culture, and nature. Explore our handpicked Sri Lankan experiences.',
-    url: 'https://tourvistatours.com/tours',
-    siteName: 'Tourvista Tours',
+    url: 'https://tourvistatours.com/showcases',
     images: [
       {
         url: '/images/og-packages.png',
@@ -32,7 +33,7 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Sri Lanka Tours & Activities | Unforgettable Experiences',
+    title: 'Sri Lanka Tours & Activities | Tourvista Tours',
     description:
       'Book your next adventure in Sri Lanka. From hiking and kayaking to cultural city walks.',
     images: ['/images/og-packages.png'],
