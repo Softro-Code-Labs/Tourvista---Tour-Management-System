@@ -10,6 +10,7 @@ import {
   Info,
   X,
   ImageOff,
+  Car,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -28,6 +29,7 @@ export function PackageCard({ pkg }: { pkg: Package }) {
       loc: pkg.location,
       price: pkg.price.toString(),
       dur: pkg?.duration.toString(),
+      veh: pkg?.vehicle.toString(),
       min: pkg?.minGuests.toString(),
       max: pkg?.maxGuests.toString(),
     });
@@ -76,10 +78,19 @@ export function PackageCard({ pkg }: { pkg: Package }) {
         {/* CONTENT AREA */}
         <div className="p-10 space-y-8">
           <div className="space-y-4">
+            {/* LOCATION BADGE */}
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-blue-500 bg-blue-50 dark:bg-blue-500/10 w-fit px-3 py-1.5 rounded-xl">
               <MapPin size={12} />
               {pkg.location}
             </div>
+
+            {/* VEHICLE TYPE BADGE */}
+            {pkg.vehicle && (
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 bg-emerald-50 dark:bg-emerald-500/10 w-fit px-3 py-1.5 rounded-xl">
+                <Car size={12} />
+                Vehicle: {pkg.vehicle}
+              </div>
+            )}
 
             <h3 className="text-3xl font-black text-slate-900 dark:text-white leading-[1] tracking-tight">
               {pkg.title}

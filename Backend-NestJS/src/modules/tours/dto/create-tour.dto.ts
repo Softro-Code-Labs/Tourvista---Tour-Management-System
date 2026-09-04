@@ -1,5 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import {
+  IsEnum,
   IsString,
   IsNumber,
   IsOptional,
@@ -10,6 +11,7 @@ import {
   MaxLength,
   Max,
 } from 'class-validator';
+import { VehicleType } from '../../../common/enums/vehicle-type.enum';
 
 export class CreateTourDto {
   @IsString()
@@ -39,6 +41,10 @@ export class CreateTourDto {
   @IsNumber()
   @Min(0, { message: 'Duration must not be negative' })
   duration!: number;
+
+  @IsEnum(VehicleType)
+  @IsNotEmpty({ message: 'Vehicle Type is required' })
+  vehicle: VehicleType;
 
   @Type(() => Number)
   @IsNumber()

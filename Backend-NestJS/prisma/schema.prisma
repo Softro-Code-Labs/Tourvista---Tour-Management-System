@@ -155,6 +155,7 @@ model Tour {
   location    String
   price       Float
   duration    Int      // days
+  vehicle     VehicleType @default(TUK_TUK)
 
   minGuests   Int       @default(1)
   maxGuests   Int       @default(10)
@@ -167,6 +168,13 @@ model Tour {
 
   bookings    Booking[]
   reviews     Review[]
+}
+
+enum VehicleType {
+  TUK_TUK
+  CAR
+  VAN
+  BUS
 }
 
 

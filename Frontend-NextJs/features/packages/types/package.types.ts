@@ -1,3 +1,5 @@
+import { VehicleType } from '@/common/enums/vehicle-type.enum';
+
 export interface Package {
   id: string;
   title: string;
@@ -5,6 +7,7 @@ export interface Package {
   location: string;
   price: number;
   duration: number;
+  vehicle: VehicleType;
   minGuests: number;
   maxGuests: number;
   image?: string;

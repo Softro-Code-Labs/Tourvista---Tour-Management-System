@@ -1,3 +1,4 @@
+import { VehicleType } from '@/common/enums/vehicle-type.enum';
 import { z } from 'zod';
 
 export const tourSchema = z.object({
@@ -15,6 +16,7 @@ export const tourSchema = z.object({
     .number('Duration is required')
     .nonnegative("Duration can't be negative")
     .min(1, 'Duration must be at least 1 day'),
+  vehicle: z.enum(VehicleType, 'Vehicle is required'),
   minGuests: z
     .number('Minimum guests is required')
     .nonnegative("Minimum guests can't be negative")

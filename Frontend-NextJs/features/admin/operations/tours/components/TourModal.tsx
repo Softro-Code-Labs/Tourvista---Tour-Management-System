@@ -6,6 +6,7 @@ import { NumericFormat } from 'react-number-format';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   ArrowRight,
+  Car,
   Clock,
   ImagePlus,
   Info,
@@ -15,6 +16,13 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { tourSchema, TourFormData } from '../schema/tour.schema';
 import { Tour } from '../types/tour.types';
@@ -31,6 +39,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import toast from 'react-hot-toast';
+import { VehicleType } from '@/common/enums/vehicle-type.enum';
 
 interface Props {
   isOpen: boolean;
@@ -69,6 +78,7 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
               location: tour.location,
               price: tour.price,
               duration: tour.duration,
+              vehicle: tour.vehicle,
               minGuests: tour.minGuests,
               maxGuests: tour.maxGuests,
               isActive: tour.isActive,
@@ -295,6 +305,35 @@ export default function TourModal({ isOpen, onClose, onSuccess, tour }: Props) {
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* VEHICLE TYPE SELECTION */}
+            <div className="space-y-2">
+              <Label className="text-sm font-bold flex items-center gap-2">
+                <Car size={14} className="text-blue-500" /> Vehicle Type
+              </Label>
+              <Controller
+                name="vehicle"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    value={typeof field.value === 'string' ? field.value : ''}
+                  >
+                    <SelectTrigger className="h-12 rounded-lg w-full border-slate-100 bg-slate-50/50 text-medium">
+                      <SelectValue placeholder="Select vehicle type" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-lg">
+                      {/* Replace with Object.values(VehicleType) if using TS Enum */}
+                      {Object.keys(VehicleType).map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
             </div>
 
             {/* GUEST LIMITS SECTION */}

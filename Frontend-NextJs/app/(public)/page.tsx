@@ -73,13 +73,21 @@ export default function Home() {
           size="lg"
         />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12">
-          {['Adventure', 'Cultural', 'Wildlife', 'Beaches'].map((cat) => (
-            <div
-              key={cat}
-              className="group p-6 rounded-2xl border border-gray-100 dark:border-white/5 bg-white dark:bg-white/[0.02] text-center hover:border-blue-500 transition-all cursor-pointer"
+          {[
+            { name: 'Adventure', slug: 'attractions' },
+            { name: 'Cultural', slug: 'culture' },
+            { name: 'Wildlife', slug: 'attractions' },
+            { name: 'Beaches', slug: 'attractions' },
+          ].map((cat) => (
+            <Link
+              key={cat.slug}
+              href={`/${cat.slug}`}
+              className="group p-6 rounded-2xl border border-gray-100 dark:border-white/5 bg-white dark:bg-white/[0.02] text-center hover:border-blue-500 transition-all cursor-pointer block"
             >
-              <p className="font-bold text-gray-900 dark:text-white">{cat}</p>
-            </div>
+              <p className="font-bold text-gray-900 dark:text-white">
+                {cat.name}
+              </p>
+            </Link>
           ))}
         </div>
       </section>
